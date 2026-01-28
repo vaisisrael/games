@@ -1,152 +1,228 @@
-[data-parasha-games] .game {
-  border: 1px solid #ccc;
-  margin: 8px 0;
-}
+/* =========================================================
+   Parasha Games – Clean CSS (Accordion + Memory redesign)
+   ========================================================= */
 
-[data-parasha-games] .game-toggle {
-  width: 100%;
-  padding: 10px;
-  font-weight: bold;
-  cursor: pointer;
-}
+/* Font: Rubik */
+@import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;800&display=swap');
 
-[data-parasha-games] .game-body {
-  padding: 10px;
-  background: #f7f7f7;
-}
-
-[data-parasha-games] .game { border: 1px solid #ccc; margin: 8px 0; }
-[data-parasha-games] .game-toggle { width: 100%; padding: 10px; font-weight: bold; cursor: pointer; }
-[data-parasha-games] .game-body { padding: 10px; background: #f7f7f7; }
-
-[data-parasha-games] .mem-topbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
-[data-parasha-games] .mem-topbar button { cursor: pointer; }
-[data-parasha-games] .mem-stats { font-size: 14px; }
-
-[data-parasha-games] .mem-grid { display: grid; gap: 8px; }
-[data-parasha-games] .mem-card {
-  height: 56px;
-  font-size: 26px;
-  cursor: pointer;
-  border: 1px solid #bbb;
-  background: white;
-}
-[data-parasha-games] .mem-card[aria-disabled="true"] { opacity: 0.55; cursor: default; }
-[data-parasha-games] .mem-card.mem-face-down { font-size: 18px; }
-
-
-/* ===== Memory game – visual upgrade (square cards + nicer colors/fonts) ===== */
-
-/* צבעים + טיפוגרפיה כללית לאזור המשחק */
 [data-parasha-games]{
+  /* Theme variables */
   --pg-bg: #f6f7fb;
   --pg-surface: #ffffff;
   --pg-border: rgba(0,0,0,.10);
-  --pg-text: #1f2937;
+  --pg-text: #111827;
   --pg-muted: #6b7280;
   --pg-accent: #2563eb;
   --pg-accent2: #7c3aed;
   --pg-shadow: 0 10px 25px rgba(0,0,0,.08);
 
-  font-family: system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans Hebrew", "Heebo", sans-serif;
+  font-family: "Rubik", system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans Hebrew", "Heebo", sans-serif;
   color: var(--pg-text);
 }
 
-/* מסגרת “כרטיס” נעימה למשחק */
-[data-parasha-games] [data-game="memory"],
-[data-parasha-games] .game-memory,
-[data-parasha-games] .memory-game{
-  background: linear-gradient(180deg, var(--pg-bg), #fff);
+/* -----------------------
+   Accordion (games list)
+   ----------------------- */
+
+[data-parasha-games] .game{
   border: 1px solid var(--pg-border);
   border-radius: 14px;
-  box-shadow: var(--pg-shadow);
-  padding: 14px;
+  margin: 10px 0;
+  overflow: hidden;
+  background: var(--pg-surface);
+  box-shadow: 0 8px 18px rgba(0,0,0,.06);
 }
 
-/* כותרת המשחק */
-[data-parasha-games] [data-game="memory"] .title,
-[data-parasha-games] .game-memory .title,
-[data-parasha-games] .memory-game .title{
+[data-parasha-games] .game-toggle{
+  width: 100%;
+  padding: 12px 14px;
+  cursor: pointer;
   font-weight: 800;
+  font-size: 15px;
   letter-spacing: .2px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+
+  background: linear-gradient(90deg, rgba(37,99,235,.10), rgba(124,58,237,.08));
+  border: 0;
+  color: var(--pg-text);
 }
 
-/* גריד קלפים – ריווח נעים ומותאם מובייל */
-[data-parasha-games] [data-game="memory"] .grid,
-[data-parasha-games] .game-memory .grid,
-[data-parasha-games] .memory-game .grid,
-[data-parasha-games] [data-game="memory"] .cards,
-[data-parasha-games] .game-memory .cards,
-[data-parasha-games] .memory-game .cards{
+[data-parasha-games] .game-toggle::after{
+  content: "▾";
+  font-weight: 900;
+  color: rgba(17, 24, 39, .55);
+  transform: translateY(-1px);
+}
+
+/* אם בעתיד תרצה חיווי “פתוח” עם חץ למעלה – רק אם ה-JS מוסיף aria-expanded */
+[data-parasha-games] .game-toggle[aria-expanded="true"]::after{
+  content: "▴";
+}
+
+[data-parasha-games] .game-body{
+  padding: 14px;
+  background: linear-gradient(180deg, var(--pg-bg), #fff);
+  border-top: 1px solid rgba(0,0,0,.06);
+}
+
+/* -----------------------
+   Memory – top bar
+   ----------------------- */
+
+[data-parasha-games] .mem-topbar{
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+[data-parasha-games] .mem-topbar button{
+  cursor: pointer;
+  border: 1px solid var(--pg-border);
+  background: linear-gradient(90deg, rgba(37,99,235,.10), rgba(124,58,237,.08));
+  border-radius: 12px;
+  padding: 8px 10px;
+  font-weight: 800;
+  color: var(--pg-text);
+}
+
+[data-parasha-games] .mem-stats{
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--pg-muted);
+}
+
+/* -----------------------
+   Memory – grid + cards
+   ----------------------- */
+
+/* Grid: cards not huge, responsive, centered */
+[data-parasha-games] .mem-grid{
+  --card: clamp(58px, 9.5vw, 92px); /* גודל קלף סביר (לא ענק) */
   display: grid;
   gap: 10px;
-  grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
-  align-items: stretch;
+  grid-template-columns: repeat(auto-fit, minmax(var(--card), 1fr));
+  justify-items: center;
 }
 
-/* הקלפים עצמם – מרובעים + צבע + “קליקיות” */
-[data-parasha-games] [data-game="memory"] button,
-[data-parasha-games] .game-memory button,
-[data-parasha-games] .memory-game button,
-[data-parasha-games] [data-game="memory"] .card,
-[data-parasha-games] .game-memory .card,
-[data-parasha-games] .memory-game .card{
-  aspect-ratio: 1 / 1;              /* ✅ מרובע */
+/* Card base */
+[data-parasha-games] .mem-card{
   width: 100%;
+  max-width: var(--card);
+  aspect-ratio: 1 / 1;          /* ✅ מרובע */
+  height: auto;                 /* מבטל את ה-56px הישן */
   border-radius: 14px;
   border: 1px solid var(--pg-border);
-  background:
-    radial-gradient(120% 120% at 10% 10%, rgba(37,99,235,.14), transparent 60%),
-    radial-gradient(120% 120% at 90% 90%, rgba(124,58,237,.12), transparent 55%),
-    var(--pg-surface);
+  background: var(--pg-surface);
   box-shadow: 0 8px 18px rgba(0,0,0,.07);
   cursor: pointer;
-  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
-  display: grid;
-  place-items: center;
   user-select: none;
 
-  /* טקסט/אימוג’י גדול ונעים */
+  /* Center content */
+  display: grid;
+  place-items: center;
+
+  /* Typography for emoji/symbol */
   font-weight: 800;
   font-size: clamp(18px, 3.2vw, 28px);
   color: var(--pg-text);
+
+  /* Flip support */
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform .35s ease, box-shadow .12s ease, border-color .12s ease;
+  will-change: transform;
+  overflow: hidden;
 }
 
-/* הובר/פוקוס */
-[data-parasha-games] [data-game="memory"] button:hover,
-[data-parasha-games] .game-memory button:hover,
-[data-parasha-games] .memory-game button:hover,
-[data-parasha-games] [data-game="memory"] .card:hover,
-[data-parasha-games] .game-memory .card:hover,
-[data-parasha-games] .memory-game .card:hover{
+/* Hover */
+[data-parasha-games] .mem-card:hover{
   transform: translateY(-2px);
   box-shadow: 0 14px 28px rgba(0,0,0,.10);
   border-color: rgba(37,99,235,.35);
 }
 
-[data-parasha-games] [data-game="memory"] button:focus-visible,
-[data-parasha-games] .game-memory button:focus-visible,
-[data-parasha-games] .memory-game button:focus-visible{
+[data-parasha-games] .mem-card:focus-visible{
   outline: 3px solid rgba(37,99,235,.28);
   outline-offset: 2px;
 }
 
-/* טקסטים קטנים (ניסיונות/התאמות) – להפוך לקריא יותר */
-[data-parasha-games] [data-game="memory"] .stats,
-[data-parasha-games] .game-memory .stats,
-[data-parasha-games] .memory-game .stats{
-  color: var(--pg-muted);
-  font-weight: 600;
+/* Disabled */
+[data-parasha-games] .mem-card[aria-disabled="true"]{
+  opacity: 0.55;
+  cursor: default;
+  transform: none;
 }
 
-/* כפתור “פאזל”/איפוס – אם קיים בתוך אותו כרטיס */
-[data-parasha-games] [data-game="memory"] .btn,
-[data-parasha-games] .game-memory .btn,
-[data-parasha-games] .memory-game .btn{
-  border-radius: 12px;
-  border: 1px solid var(--pg-border);
-  background: linear-gradient(90deg, rgba(37,99,235,.10), rgba(124,58,237,.08));
-  font-weight: 800;
-  padding: 10px 12px;
+/* ------------------------------------------
+   Card faces: "front" (face-down) and "back"
+   ------------------------------------------ */
+
+/* BACK FACE = symbol/emoji side (default).
+   We keep it as-is; the actual emoji/text is in the button content. */
+[data-parasha-games] .mem-card{
+  /* no extra pseudo needed for the symbol side */
 }
 
+/* FRONT FACE (face-down) = branded text.
+   Your JS already marks face-down with .mem-face-down,
+   so we treat that as "show front". */
+[data-parasha-games] .mem-card::after{
+  content: "פרשת השבוע בניחותא";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+
+  font-weight: 700;
+  font-size: 12px;
+  color: rgba(17, 24, 39, .35); /* אפרפר */
+  letter-spacing: .2px;
+  transform: rotate(-12deg);
+
+  /* This pseudo is the FRONT face */
+  backface-visibility: hidden;
+}
+
+/* Hide front when card is revealed:
+   When NOT face-down, we want the brand to disappear. */
+[data-parasha-games] .mem-card:not(.mem-face-down)::after{
+  opacity: 0;
+}
+
+/* 3) Flip animation on reveal:
+   If your "face-down" means "closed", then on open (not face-down) we rotate. */
+[data-parasha-games] .mem-card:not(.mem-face-down){
+  transform: rotateY(180deg);
+}
+
+/* Reduce "קלף" size if it still appears somewhere as plain text on the front */
+[data-parasha-games] .mem-card.mem-face-down{
+  font-size: 0; /* מסתיר טקסט "קלף" אם הוא התוכן במצב סגור */
+}
+
+/* Restore emoji size when open */
+[data-parasha-games] .mem-card:not(.mem-face-down){
+  font-size: clamp(18px, 3.2vw, 28px);
+}
+
+/* Click feedback */
+[data-parasha-games] .mem-card:active{
+  transform: translateY(1px) scale(.98);
+}
+
+/* Motion accessibility */
+@media (prefers-reduced-motion: reduce){
+  [data-parasha-games] .mem-card{
+    transition: none;
+  }
+  [data-parasha-games] .mem-card:hover{
+    transform: none;
+  }
+}
