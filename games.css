@@ -1,0 +1,16 @@
+[data-parasha-games] .game {
+  border: 1px solid #ccc;
+  margin: 8px 0;
+}
+
+[data-parasha-games] .game-toggle {
+  width: 100%;
+  padding: 10px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+[data-parasha-games] .game-body {
+  padding: 10px;
+  background: #f7f7f7;
+}
