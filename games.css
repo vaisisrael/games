@@ -11,7 +11,6 @@
   --pg-text: #111827;
   --pg-muted: #6b7280;
 
-  --pg-shadow: 0 10px 25px rgba(0,0,0,.08);
   --pg-shadow2: 0 14px 28px rgba(0,0,0,.10);
 
   font-family: "Rubik", system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans Hebrew", "Heebo", sans-serif;
@@ -21,7 +20,6 @@
 /* -----------------------
    Accordion
    ----------------------- */
-
 [data-parasha-games] .game{
   border: 1px solid var(--pg-border);
   border-radius: 14px;
@@ -34,7 +32,6 @@
 [data-parasha-games] .game-toggle{
   width: 100%;
   padding: 12px 14px;
-
   cursor: pointer;
   font-weight: 800;
   font-size: 15px;
@@ -57,10 +54,6 @@
   transform: translateY(-1px);
 }
 
-[data-parasha-games] .game-toggle[aria-expanded="true"]::after{
-  content: "▴";
-}
-
 [data-parasha-games] .game-body{
   padding: 14px;
   background: linear-gradient(180deg, var(--pg-bg), #fff);
@@ -70,20 +63,20 @@
 /* -----------------------
    Memory – topbar
    ----------------------- */
-
 [data-parasha-games] .mem-topbar{
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-start;
   flex-wrap: wrap;
 
-  row-gap: 10px;
-  column-gap: 10px;
+  /* ✅ רווחים קטנים יותר */
+  gap: 6px;
 
   margin-bottom: 12px;
   font-family: inherit;
 }
 
+/* כפתורים */
 [data-parasha-games] .mem-topbar button{
   font-family: inherit;
   cursor: pointer;
@@ -92,7 +85,7 @@
   background: linear-gradient(90deg, rgba(37,99,235,.10), rgba(124,58,237,.08));
   border-radius: 12px;
 
-  padding: 8px 10px;
+  padding: 7px 10px;
   font-weight: 800;
   font-size: 14px;
   color: var(--pg-text);
@@ -101,42 +94,57 @@
   transition: box-shadow .12s ease, border-color .12s ease, filter .12s ease;
 }
 
-/* hover קוסמטי בלבד (בלי transform) */
+/* hover קוסמטי בלבד */
 [data-parasha-games] .mem-topbar button:hover{
   box-shadow: 0 10px 22px rgba(0,0,0,.08);
   border-color: rgba(37,99,235,.30);
 }
 
+/* ✅ מצב "לחוץ" לרמות */
+[data-parasha-games] .mem-level[aria-pressed="true"]{
+  border-color: rgba(37,99,235,.55);
+  box-shadow: 0 10px 22px rgba(37,99,235,.12);
+  filter: saturate(1.08);
+}
+
+/* סטטיסטיקה – תמיד אחרי הכפתורים, וברוחב יציב */
 [data-parasha-games] .mem-stats{
+  margin-inline-start: auto;  /* דוחף את הסטטיסטיקה לקצה (ב-RTL זה שמאל) */
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+
   font-size: 14px;
   font-weight: 700;
   color: var(--pg-muted);
+
+  /* ✅ הספרות לא מזיזות את הטקסט */
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
   white-space: nowrap;
 }
 
-/* -----------------------
-   Memory – grid
-   קומפקטי: מתכווץ לתוכן, לא נמרח לרוחב הדף
-   ----------------------- */
+/* ✅ השעון "מימין לניסיונות": מציבים אותו ליד ניסיונות (לא בקצה) */
+[data-parasha-games] .mem-tries{ order: 1; }
+[data-parasha-games] .mem-time{  order: 2; }
+[data-parasha-games] .mem-matches{order: 3; }
 
+/* -----------------------
+   Memory – grid (קומפקטי)
+   ----------------------- */
 [data-parasha-games] .mem-grid{
   --card: clamp(64px, 9vw, 92px);
 
   display: grid;
   gap: 12px;
 
-  /* חשוב: הגריד ייקח רק את רוחב התוכן */
   width: fit-content;
   margin-inline: auto;
 
-  /* ברירת מחדל; JS יעדכן לפי כמות הקלפים (4×4 וכו') */
-  grid-template-columns: repeat(4, var(--card));
+  grid-template-columns: repeat(4, var(--card)); /* JS יעדכן בפועל */
 }
 
-/* -----------------------
-   Memory – cards
-   ----------------------- */
-
+/* cards */
 [data-parasha-games] .mem-card{
   width: var(--card);
   aspect-ratio: 1 / 1;
@@ -165,7 +173,7 @@
   will-change: transform;
 }
 
-/* hover קוסמטי בלבד (בלי transform) */
+/* ✅ hover קוסמטי בלבד – בלי transform */
 [data-parasha-games] .mem-card:hover{
   box-shadow: var(--pg-shadow2);
   border-color: rgba(37,99,235,.35);
@@ -180,7 +188,7 @@
   cursor: default;
 }
 
-/* מצב סגור: להעלים "קלף" ולהראות גב ממותג */
+/* סגור: להעלים "קלף" ולהראות גב ממותג */
 [data-parasha-games] .mem-card.mem-face-down{
   font-size: 0;
 }
@@ -203,12 +211,11 @@
   backface-visibility: hidden;
 }
 
-/* פתוח: להסתיר את הכתובת האלכסונית */
 [data-parasha-games] .mem-card:not(.mem-face-down)::after{
   opacity: 0;
 }
 
-/* אנימציית flip */
+/* flip */
 [data-parasha-games] .mem-card:not(.mem-face-down){
   transform: rotateY(180deg);
   font-size: clamp(18px, 3.2vw, 28px);
