@@ -378,3 +378,119 @@
     init();
   }
 })();
+
+/* ===== Memory game – visual upgrade (square cards + nicer colors/fonts) ===== */
+
+/* צבעים + טיפוגרפיה כללית לאזור המשחק */
+[data-parasha-games]{
+  --pg-bg: #f6f7fb;
+  --pg-surface: #ffffff;
+  --pg-border: rgba(0,0,0,.10);
+  --pg-text: #1f2937;
+  --pg-muted: #6b7280;
+  --pg-accent: #2563eb;
+  --pg-accent2: #7c3aed;
+  --pg-shadow: 0 10px 25px rgba(0,0,0,.08);
+
+  font-family: system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans Hebrew", "Heebo", sans-serif;
+  color: var(--pg-text);
+}
+
+/* מסגרת “כרטיס” נעימה למשחק */
+[data-parasha-games] [data-game="memory"],
+[data-parasha-games] .game-memory,
+[data-parasha-games] .memory-game{
+  background: linear-gradient(180deg, var(--pg-bg), #fff);
+  border: 1px solid var(--pg-border);
+  border-radius: 14px;
+  box-shadow: var(--pg-shadow);
+  padding: 14px;
+}
+
+/* כותרת המשחק */
+[data-parasha-games] [data-game="memory"] .title,
+[data-parasha-games] .game-memory .title,
+[data-parasha-games] .memory-game .title{
+  font-weight: 800;
+  letter-spacing: .2px;
+}
+
+/* גריד קלפים – ריווח נעים ומותאם מובייל */
+[data-parasha-games] [data-game="memory"] .grid,
+[data-parasha-games] .game-memory .grid,
+[data-parasha-games] .memory-game .grid,
+[data-parasha-games] [data-game="memory"] .cards,
+[data-parasha-games] .game-memory .cards,
+[data-parasha-games] .memory-game .cards{
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(72px, 1fr));
+  align-items: stretch;
+}
+
+/* הקלפים עצמם – מרובעים + צבע + “קליקיות” */
+[data-parasha-games] [data-game="memory"] button,
+[data-parasha-games] .game-memory button,
+[data-parasha-games] .memory-game button,
+[data-parasha-games] [data-game="memory"] .card,
+[data-parasha-games] .game-memory .card,
+[data-parasha-games] .memory-game .card{
+  aspect-ratio: 1 / 1;              /* ✅ מרובע */
+  width: 100%;
+  border-radius: 14px;
+  border: 1px solid var(--pg-border);
+  background:
+    radial-gradient(120% 120% at 10% 10%, rgba(37,99,235,.14), transparent 60%),
+    radial-gradient(120% 120% at 90% 90%, rgba(124,58,237,.12), transparent 55%),
+    var(--pg-surface);
+  box-shadow: 0 8px 18px rgba(0,0,0,.07);
+  cursor: pointer;
+  transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+  display: grid;
+  place-items: center;
+  user-select: none;
+
+  /* טקסט/אימוג’י גדול ונעים */
+  font-weight: 800;
+  font-size: clamp(18px, 3.2vw, 28px);
+  color: var(--pg-text);
+}
+
+/* הובר/פוקוס */
+[data-parasha-games] [data-game="memory"] button:hover,
+[data-parasha-games] .game-memory button:hover,
+[data-parasha-games] .memory-game button:hover,
+[data-parasha-games] [data-game="memory"] .card:hover,
+[data-parasha-games] .game-memory .card:hover,
+[data-parasha-games] .memory-game .card:hover{
+  transform: translateY(-2px);
+  box-shadow: 0 14px 28px rgba(0,0,0,.10);
+  border-color: rgba(37,99,235,.35);
+}
+
+[data-parasha-games] [data-game="memory"] button:focus-visible,
+[data-parasha-games] .game-memory button:focus-visible,
+[data-parasha-games] .memory-game button:focus-visible{
+  outline: 3px solid rgba(37,99,235,.28);
+  outline-offset: 2px;
+}
+
+/* טקסטים קטנים (ניסיונות/התאמות) – להפוך לקריא יותר */
+[data-parasha-games] [data-game="memory"] .stats,
+[data-parasha-games] .game-memory .stats,
+[data-parasha-games] .memory-game .stats{
+  color: var(--pg-muted);
+  font-weight: 600;
+}
+
+/* כפתור “פאזל”/איפוס – אם קיים בתוך אותו כרטיס */
+[data-parasha-games] [data-game="memory"] .btn,
+[data-parasha-games] .game-memory .btn,
+[data-parasha-games] .memory-game .btn{
+  border-radius: 12px;
+  border: 1px solid var(--pg-border);
+  background: linear-gradient(90deg, rgba(37,99,235,.10), rgba(124,58,237,.08));
+  font-weight: 800;
+  padding: 10px 12px;
+}
+
