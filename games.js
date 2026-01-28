@@ -1,39 +1,46 @@
 (() => {
   "use strict";
 
-  // 1) רץ רק אם שלד המשחקים קיים בעמוד
-  function hasGamesSkeleton() {
-    return !!document.querySelector("[data-parasha-games]");
-  }
-
-  // 2) חילוץ "תווית פרשה" מתוך labels שמופיעים בעמוד (ניסיון בכמה מקומות אפשריים)
   function extractParashaLabel() {
-    // א) חיפוש בקישורי תוויות (בדרך כלל זה הכי יציב)
-    const labelLinks = Array.from(document.querySelectorAll('a[rel="tag"], a[href*="/search/label/"]'));
-    const texts = labelLinks.map(a => (a.textContent || "").trim()).filter(Boolean);
-
-    // תבנית: "X-YY פרשת משהו"
+    const links = Array.from(
+      document.querySelectorAll('a[rel="tag"], a[href*="/search/label/"]')
+    );
+    const texts = links.map(a => (a.textContent || "").trim());
     const re = /^\d+\-\d+\s+פרשת\s+.+$/;
-
     return texts.find(t => re.test(t)) || null;
   }
 
-  // 3) נקודת כניסה
-  function init() {
-    if (!hasGamesSkeleton()) return;
+  function initAccordion(root) {
+    const games = Array.from(root.querySelectorAll(".game"));
+    let openGame = null;
 
-    const parashaLabel = extractParashaLabel();
-    if (!parashaLabel) {
-      console.warn("Parasha games: no parasha label found (X-YY פרשת ...).");
-      return;
-    }
+    games.forEach(game => {
+      const btn = game.querySelector(".game-toggle");
+      const body = game.querySelector(".game-body");
 
-    console.log("Parasha games init for:", parashaLabel);
+      body.style.display = "none";
 
-    // TODO: כאן נכניס בשלב הבא את ה-Accordion ואת השליפות מ-Sheets
+      btn.addEventListener("click", () => {
+        if (openGame && openGame !== body) {
+          openGame.style.display = "none";
+        }
+        const isOpen = body.style.display === "block";
+        body.style.display = isOpen ? "none" : "block";
+        openGame = body.style.display === "block" ? body : null;
+      });
+    });
   }
 
-  // 4) להריץ בבטחה
+  function init() {
+    const root = document.querySelector("[data-parasha-games]");
+    if (!root) return;
+
+    const parashaLabel = extractParashaLabel();
+    console.log("Parasha games init for:", parashaLabel);
+
+    initAccordion(root);
+  }
+
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", init);
   } else {
