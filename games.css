@@ -14,3 +14,22 @@
   padding: 10px;
   background: #f7f7f7;
 }
+
+[data-parasha-games] .game { border: 1px solid #ccc; margin: 8px 0; }
+[data-parasha-games] .game-toggle { width: 100%; padding: 10px; font-weight: bold; cursor: pointer; }
+[data-parasha-games] .game-body { padding: 10px; background: #f7f7f7; }
+
+[data-parasha-games] .mem-topbar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+[data-parasha-games] .mem-topbar button { cursor: pointer; }
+[data-parasha-games] .mem-stats { font-size: 14px; }
+
+[data-parasha-games] .mem-grid { display: grid; gap: 8px; }
+[data-parasha-games] .mem-card {
+  height: 56px;
+  font-size: 26px;
+  cursor: pointer;
+  border: 1px solid #bbb;
+  background: white;
+}
+[data-parasha-games] .mem-card[aria-disabled="true"] { opacity: 0.55; cursor: default; }
+[data-parasha-games] .mem-card.mem-face-down { font-size: 18px; }
