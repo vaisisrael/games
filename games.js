@@ -109,31 +109,38 @@
   }
 
   function renderMemoryGame(body, model) {
-    // model: { symbols:[], alts:[], level1, level2, parashaLabel }
-
     const hasLevel1 = clampEven(model.level1) > 0;
     const hasLevel2 = clampEven(model.level2) > 0;
     const showLevelButtons = hasLevel1 && hasLevel2;
 
     body.innerHTML = `
       <div class="mem-topbar">
-        ${showLevelButtons ? `<button type="button" class="mem-level" data-level="1">רמה 1</button>` : ``}
-        ${showLevelButtons ? `<button type="button" class="mem-level" data-level="2">רמה 2</button>` : ``}
+        ${showLevelButtons ? `<button type="button" class="mem-level" data-level="1" aria-pressed="true">רמה 1</button>` : ``}
+        ${showLevelButtons ? `<button type="button" class="mem-level" data-level="2" aria-pressed="false">רמה 2</button>` : ``}
         <button type="button" class="mem-reset">איפוס</button>
-        <div class="mem-stats" aria-live="polite"></div>
+
+        <div class="mem-stats" aria-live="polite">
+          <span class="mem-tries"></span>
+          <span class="mem-matches"></span>
+          <span class="mem-time"></span>
+        </div>
       </div>
+
       <div class="mem-grid" role="grid"></div>
     `;
 
     const grid = body.querySelector(".mem-grid");
-    const stats = body.querySelector(".mem-stats");
     const btnReset = body.querySelector(".mem-reset");
     const btnL1 = body.querySelector('.mem-level[data-level="1"]');
     const btnL2 = body.querySelector('.mem-level[data-level="2"]');
 
+    const elTries = body.querySelector(".mem-tries");
+    const elMatches = body.querySelector(".mem-matches");
+    const elTime = body.querySelector(".mem-time");
+
     let state = null;
 
-    // כדי שאיפוס יעשה ערבוב חדש בכל פעם
+    // ערבוב חדש בכל איפוס
     let shuffleNonce = 0;
 
     // Timer
@@ -148,9 +155,13 @@
     function startTimer() {
       stopTimer();
       timerStartMs = Date.now();
-      timerIntervalId = setInterval(() => {
-        updateStats();
-      }, 1000);
+      timerIntervalId = setInterval(updateStats, 1000);
+    }
+
+    function setActiveLevel(levelNum) {
+      if (!showLevelButtons) return;
+      if (btnL1) btnL1.setAttribute("aria-pressed", levelNum === 1 ? "true" : "false");
+      if (btnL2) btnL2.setAttribute("aria-pressed", levelNum === 2 ? "true" : "false");
     }
 
     function buildDeck(cardCount) {
@@ -172,21 +183,18 @@
         deck.push({ ...it, uid: it.key + "-b" });
       });
 
-      // ערבוב "חדש" בכל איפוס באמצעות nonce פנימי
       const seed = `${model.parashaLabel}|${cardCount}|memory|${shuffleNonce}`;
       return seededShuffle(deck, seed);
     }
 
     function updateStats() {
-      if (!state) {
-        stats.textContent = "";
-        return;
-      }
+      if (!state) return;
+
       const elapsed = timerStartMs ? Date.now() - timerStartMs : 0;
-      stats.textContent =
-        `ניסיונות: ${state.tries} | ` +
-        `התאמות: ${state.matchedPairs}/${state.totalPairs} | ` +
-        `זמן: ${formatTime(elapsed)}`;
+
+      elTries.textContent = `ניסיונות: ${state.tries}`;
+      elMatches.textContent = `התאמות: ${state.matchedPairs}/${state.totalPairs}`;
+      elTime.textContent = `זמן: ${formatTime(elapsed)}`;
     }
 
     function setCardFace(btn, faceUp) {
@@ -219,12 +227,13 @@
       if (!cardCount) {
         state = null;
         grid.innerHTML = "";
-        stats.textContent = "אין נתונים מספיקים לרמת המשחק.";
+        elTries.textContent = "";
+        elMatches.textContent = "אין נתונים מספיקים לרמת המשחק.";
+        elTime.textContent = "";
         stopTimer();
         return;
       }
 
-      // ערבוב חדש בכל איפוס
       shuffleNonce += 1;
 
       const deck = buildDeck(cardCount);
@@ -242,7 +251,7 @@
         byUid: new Map(deck.map((c) => [c.uid, c])),
       };
 
-      // גריד “מרובע” לפי cols
+      // גריד "מרובע"
       grid.style.gridTemplateColumns = `repeat(${cols}, var(--card))`;
       grid.innerHTML = "";
 
@@ -256,6 +265,7 @@
         grid.appendChild(btn);
       });
 
+      setActiveLevel(levelNum);
       startTimer();
       updateStats();
     }
@@ -305,7 +315,6 @@
       }, 700);
     }
 
-    // events
     grid.addEventListener("click", (ev) => {
       const btn = ev.target.closest(".mem-card");
       if (!btn) return;
@@ -319,10 +328,8 @@
       btnL2.addEventListener("click", () => reset(2));
     }
 
-    // init
     reset(1);
 
-    // expose reset for accordion-close behavior
     return {
       reset: () => {
         stopTimer();
@@ -332,9 +339,7 @@
   }
 
   async function initMemoryGame(gameBody, parashaLabel) {
-    const url = `${CONTROL_API}?mode=memory&parasha=${encodeURIComponent(
-      parashaLabel
-    )}`;
+    const url = `${CONTROL_API}?mode=memory&parasha=${encodeURIComponent(parashaLabel)}`;
     const res = await fetch(url);
     const data = await res.json();
 
@@ -357,7 +362,7 @@
     return renderMemoryGame(gameBody, model);
   }
 
-  // ====== ACCORDION (כולל reset אוטומטי בעת מעבר למשחק אחר) ======
+  // ====== ACCORDION ======
   function initAccordion(root, onOpenChange) {
     let openBody = null;
 
@@ -388,21 +393,16 @@
     const parashaLabel = extractParashaLabel();
     if (!parashaLabel) return;
 
-    const res = await fetch(
-      `${CONTROL_API}?parasha=${encodeURIComponent(parashaLabel)}`
-    );
+    const res = await fetch(`${CONTROL_API}?parasha=${encodeURIComponent(parashaLabel)}`);
     const data = await res.json();
     if (!data.row) return;
 
-    const activeIds = GAMES_DEFINITION.map((g) => g.id).filter(
-      (id) => data.row[id] === true
-    );
-
+    const activeIds = GAMES_DEFINITION.map((g) => g.id).filter((id) => data.row[id] === true);
     if (activeIds.length === 0) return;
 
     buildGames(root, activeIds);
 
-    const gameControllers = new Map(); // id -> controller
+    const gameControllers = new Map();
 
     async function onOpenChange(bodyEl, isOpen) {
       const gameEl = bodyEl.closest(".game");
