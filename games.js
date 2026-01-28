@@ -2,7 +2,7 @@
   "use strict";
 
   // ========= הגדרות =========
-  const CONTROL_API = "PASTE_WEB_APP_URL_HERE";
+  const CONTROL_API = "https://script.google.com/macros/s/AKfycbxrhT-W8F7ij4nivSEsJb3an6Hu8Iat0k1cZpTEc43AyMmnTPI0UgeKXEqcQNOmSxjJsA/exec";
 
   const GAMES_DEFINITION = [
     { id: "memory",    title: "🧠 משחק זיכרון" },
