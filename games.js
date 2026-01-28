@@ -2,14 +2,15 @@
   "use strict";
 
   // ====== CONFIG ======
-  const CONTROL_API = "https://script.google.com/macros/s/AKfycbzoUoopq8rv8PdN2qe1DZXF73G5Mo8hBgdUqTef-v6z9ukSRua8HswwoyhHCm4fWktHdg/exec"; // <-- שים כאן את כתובת ה-Web App שלך
+  const CONTROL_API =
+    "https://script.google.com/macros/s/AKfycbzoUoopq8rv8PdN2qe1DZXF73G5Mo8hBgdUqTef-v6z9ukSRua8HswwoyhHCm4fWktHdg/exec"; // <-- כתובת ה-Web App שלך
 
   const GAMES_DEFINITION = [
-    { id: "memory",    title: "🧠 משחק זיכרון" },
-    { id: "puzzle",    title: "🧩 פאזל" },
+    { id: "memory", title: "🧠 משחק זיכרון" },
+    { id: "puzzle", title: "🧩 פאזל" },
     { id: "truefalse", title: "✅ נכון / ❌ לא נכון" },
     { id: "dragmatch", title: "🔗 גרור והתאם" },
-    { id: "emoji",     title: "😄 חידת אימוג'ים" }
+    { id: "emoji", title: "😄 חידת אימוג'ים" },
   ];
 
   // ====== PARASHA LABEL ======
@@ -17,29 +18,27 @@
     const links = Array.from(
       document.querySelectorAll('a[rel="tag"], a[href*="/search/label/"]')
     );
-    const texts = links.map(a => (a.textContent || "").trim());
+    const texts = links.map((a) => (a.textContent || "").trim());
     const re = /^\d+\-\d+\s+פרשת\s+.+$/;
-    return texts.find(t => re.test(t)) || null;
+    return texts.find((t) => re.test(t)) || null;
   }
 
   // ====== DOM BUILD ======
   function buildGames(root, activeIds) {
     root.innerHTML = "";
 
-    GAMES_DEFINITION
-      .filter(g => activeIds.includes(g.id))
-      .forEach(game => {
-        const el = document.createElement("div");
-        el.className = "game";
-        el.dataset.game = game.id;
+    GAMES_DEFINITION.filter((g) => activeIds.includes(g.id)).forEach((game) => {
+      const el = document.createElement("div");
+      el.className = "game";
+      el.dataset.game = game.id;
 
-        el.innerHTML = `
-          <button class="game-toggle" type="button">${game.title}</button>
-          <div class="game-body" style="display:none"></div>
-        `;
+      el.innerHTML = `
+        <button class="game-toggle" type="button">${game.title}</button>
+        <div class="game-body" style="display:none"></div>
+      `;
 
-        root.appendChild(el);
-      });
+      root.appendChild(el);
+    });
   }
 
   // ====== SEEDED SHUFFLE (דטרמיניסטי לפי פרשה) ======
@@ -51,14 +50,16 @@
     }
     return h >>> 0;
   }
+
   function mulberry32(seed) {
     return function () {
-      let t = (seed += 0x6D2B79F5);
+      let t = (seed += 0x6d2b79f5);
       t = Math.imul(t ^ (t >>> 15), t | 1);
       t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
       return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
   }
+
   function seededShuffle(arr, seedStr) {
     const a = arr.slice();
     const rand = mulberry32(hashStringToUint32(seedStr));
@@ -73,7 +74,7 @@
   function parseCsvList(s) {
     return String(s || "")
       .split(",")
-      .map(x => x.trim())
+      .map((x) => x.trim())
       .filter(Boolean);
   }
 
@@ -85,10 +86,17 @@
 
   function renderMemoryGame(body, model) {
     // model: { symbols:[], alts:[], level1, level2, parashaLabel }
+
+    const hasLevel1 = clampEven(model.level1) > 0;
+    const hasLevel2 = clampEven(model.level2) > 0;
+
+    // אם אין level2 — אין "בחירת רמה", ולכן לא מציגים גם "רמה 1"
+    const showLevelButtons = hasLevel1 && hasLevel2;
+
     body.innerHTML = `
       <div class="mem-topbar">
-        <button type="button" class="mem-level" data-level="1">רמה 1</button>
-        <button type="button" class="mem-level" data-level="2">רמה 2</button>
+        ${showLevelButtons ? `<button type="button" class="mem-level" data-level="1">רמה 1</button>` : ``}
+        ${showLevelButtons ? `<button type="button" class="mem-level" data-level="2">רמה 2</button>` : ``}
         <button type="button" class="mem-reset">איפוס</button>
         <div class="mem-stats" aria-live="polite"></div>
       </div>
@@ -103,36 +111,35 @@
 
     let state = null;
 
-    function computeCols(cardCount) {
-      // פשוט ויציב לילדים
-      if (cardCount <= 8) return 4;
-      if (cardCount <= 12) return 4;
-      if (cardCount <= 16) return 4;
-      if (cardCount <= 20) return 5;
-      return 6;
-    }
-
     function buildDeck(cardCount) {
       const maxPairs = Math.min(model.symbols.length, model.alts.length);
       const pairsNeeded = Math.min(cardCount / 2, maxPairs);
 
       const items = [];
       for (let i = 0; i < pairsNeeded; i++) {
-        items.push({ key: String(i), symbol: model.symbols[i], alt: model.alts[i] });
+        items.push({
+          key: String(i),
+          symbol: model.symbols[i],
+          alt: model.alts[i],
+        });
       }
 
       // דופליקציה לזוגות
       const deck = [];
-      items.forEach(it => {
+      items.forEach((it) => {
         deck.push({ ...it, uid: it.key + "-a" });
         deck.push({ ...it, uid: it.key + "-b" });
       });
 
-      // ערבוב דטרמיניסטי לפי פרשה + כמות קלפים + רמה
+      // ערבוב דטרמיניסטי לפי פרשה + כמות קלפים
       return seededShuffle(deck, `${model.parashaLabel}|${cardCount}|memory`);
     }
 
     function updateStats() {
+      if (!state) {
+        stats.textContent = "";
+        return;
+      }
       stats.textContent = `ניסיונות: ${state.tries} | התאמות: ${state.matchedPairs}/${state.totalPairs}`;
     }
 
@@ -158,20 +165,22 @@
       btn.disabled = !!locked;
     }
 
-    function reset(level) {
-      const levelNum = level === 2 ? 2 : 1;
+    function reset(requestedLevel) {
+      // אם אין בחירת רמות (אין level2) — תמיד רמה 1
+      const levelNum = showLevelButtons ? (requestedLevel === 2 ? 2 : 1) : 1;
+
       const wanted = levelNum === 2 ? model.level2 : model.level1;
       const cardCount = clampEven(wanted);
 
       // אם אין מספיק נתונים—נציג הודעה ברורה
       if (!cardCount) {
+        state = null;
         grid.innerHTML = "";
         stats.textContent = "אין נתונים מספיקים לרמת המשחק.";
         return;
       }
 
       const deck = buildDeck(cardCount);
-      const cols = computeCols(deck.length);
 
       state = {
         level: levelNum,
@@ -182,13 +191,14 @@
         matchedPairs: 0,
         totalPairs: deck.length / 2,
         matchedUids: new Set(),
-        byUid: new Map(deck.map(c => [c.uid, c])),
+        byUid: new Map(deck.map((c) => [c.uid, c])),
       };
 
-      grid.style.gridTemplateColumns = `repeat(${cols}, 1fr)`;
+      // חשוב: לא לקבוע gridTemplateColumns כאן – ה-CSS שלך מנהל את זה
+      grid.style.gridTemplateColumns = "";
       grid.innerHTML = "";
 
-      deck.forEach(card => {
+      deck.forEach((card) => {
         const btn = document.createElement("button");
         btn.type = "button";
         btn.className = "mem-card mem-face-down";
@@ -224,8 +234,8 @@
       state.tries += 1;
 
       const buttons = Array.from(grid.querySelectorAll(".mem-card"));
-      const b1 = buttons.find(b => b.dataset.uid === u1);
-      const b2 = buttons.find(b => b.dataset.uid === u2);
+      const b1 = buttons.find((b) => b.dataset.uid === u1);
+      const b2 = buttons.find((b) => b.dataset.uid === u2);
 
       if (c1 && c2 && c1.key === c2.key) {
         // התאמה
@@ -259,8 +269,11 @@
     });
 
     btnReset.addEventListener("click", () => reset(state?.level || 1));
-    btnL1.addEventListener("click", () => reset(1));
-    btnL2.addEventListener("click", () => reset(2));
+
+    if (showLevelButtons) {
+      btnL1.addEventListener("click", () => reset(1));
+      btnL2.addEventListener("click", () => reset(2));
+    }
 
     // init default level 1
     reset(1);
@@ -270,9 +283,12 @@
   }
 
   async function initMemoryGame(gameBody, parashaLabel) {
-    const url = `${CONTROL_API}?mode=memory&parasha=${encodeURIComponent(parashaLabel)}`;
+    const url = `${CONTROL_API}?mode=memory&parasha=${encodeURIComponent(
+      parashaLabel
+    )}`;
     const res = await fetch(url);
     const data = await res.json();
+
     if (!data.row) {
       gameBody.innerHTML = `<div>לא נמצאו נתוני זיכרון לפרשה זו.</div>`;
       return { reset: () => {} };
@@ -281,7 +297,6 @@
     const symbols = parseCsvList(data.row.symbols);
     const alts = parseCsvList(data.row.alts);
 
-    // בחירה "מהתחלה" כבר מובנית: אנחנו לוקחים לפי סדר המערכים
     const model = {
       parashaLabel,
       symbols,
@@ -297,7 +312,7 @@
   function initAccordion(root, onOpenChange) {
     let openBody = null;
 
-    root.querySelectorAll(".game").forEach(game => {
+    root.querySelectorAll(".game").forEach((game) => {
       const btn = game.querySelector(".game-toggle");
       const body = game.querySelector(".game-body");
 
@@ -326,13 +341,15 @@
     if (!parashaLabel) return;
 
     // שליפת Control (איזה משחקים פעילים)
-    const res = await fetch(`${CONTROL_API}?parasha=${encodeURIComponent(parashaLabel)}`);
+    const res = await fetch(
+      `${CONTROL_API}?parasha=${encodeURIComponent(parashaLabel)}`
+    );
     const data = await res.json();
     if (!data.row) return;
 
-    const activeIds = GAMES_DEFINITION
-      .map(g => g.id)
-      .filter(id => data.row[id] === true);
+    const activeIds = GAMES_DEFINITION.map((g) => g.id).filter(
+      (id) => data.row[id] === true
+    );
 
     if (activeIds.length === 0) return;
 
@@ -378,4 +395,3 @@
     init();
   }
 })();
-
