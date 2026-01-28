@@ -1,8 +1,9 @@
 /* =========================================================
-   Parasha Games – Clean CSS (Accordion + Memory redesign)
+   Parasha Games – FULL CSS (Accordion + Memory)
+   Clean, consistent, no patches
    ========================================================= */
 
-/* Font: Rubik */
+/* Rubik font */
 @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;600;800&display=swap');
 
 [data-parasha-games]{
@@ -14,14 +15,16 @@
   --pg-muted: #6b7280;
   --pg-accent: #2563eb;
   --pg-accent2: #7c3aed;
+
   --pg-shadow: 0 10px 25px rgba(0,0,0,.08);
+  --pg-shadow2: 0 14px 28px rgba(0,0,0,.10);
 
   font-family: "Rubik", system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans Hebrew", "Heebo", sans-serif;
   color: var(--pg-text);
 }
 
 /* -----------------------
-   Accordion (games list)
+   Accordion (game cards)
    ----------------------- */
 
 [data-parasha-games] .game{
@@ -36,6 +39,7 @@
 [data-parasha-games] .game-toggle{
   width: 100%;
   padding: 12px 14px;
+
   cursor: pointer;
   font-weight: 800;
   font-size: 15px;
@@ -49,6 +53,7 @@
   background: linear-gradient(90deg, rgba(37,99,235,.10), rgba(124,58,237,.08));
   border: 0;
   color: var(--pg-text);
+  font-family: inherit;
 }
 
 [data-parasha-games] .game-toggle::after{
@@ -58,7 +63,7 @@
   transform: translateY(-1px);
 }
 
-/* אם בעתיד תרצה חיווי “פתוח” עם חץ למעלה – רק אם ה-JS מוסיף aria-expanded */
+/* (Optional) if JS uses aria-expanded */
 [data-parasha-games] .game-toggle[aria-expanded="true"]::after{
   content: "▴";
 }
@@ -75,21 +80,49 @@
 
 [data-parasha-games] .mem-topbar{
   display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
+  flex-wrap: wrap;
+
+  /* consistent spacing */
+  row-gap: 10px;
+  column-gap: 10px;
+
   margin-bottom: 12px;
+  font-family: inherit;
 }
 
 [data-parasha-games] .mem-topbar button{
+  font-family: inherit;
   cursor: pointer;
+
   border: 1px solid var(--pg-border);
   background: linear-gradient(90deg, rgba(37,99,235,.10), rgba(124,58,237,.08));
   border-radius: 12px;
+
   padding: 8px 10px;
   font-weight: 800;
+  font-size: 14px;
   color: var(--pg-text);
+
+  box-shadow: 0 6px 14px rgba(0,0,0,.06);
+  transition: box-shadow .12s ease, border-color .12s ease, filter .12s ease;
+}
+
+/* small visual hover (cosmetic only) */
+[data-parasha-games] .mem-topbar button:hover{
+  box-shadow: 0 10px 22px rgba(0,0,0,.08);
+  border-color: rgba(37,99,235,.30);
+}
+
+/* spacing between "level" buttons */
+[data-parasha-games] .mem-topbar button + button{
+  margin-inline-start: 4px; /* tighter between buttons */
+}
+
+/* add a bit more space before the last button (usually reset) */
+[data-parasha-games] .mem-topbar button:last-of-type{
+  margin-inline-start: 10px; /* small, not too big */
 }
 
 [data-parasha-games] .mem-stats{
@@ -99,52 +132,58 @@
 }
 
 /* -----------------------
-   Memory – grid + cards
+   Memory – grid
+   Make columns actual card width (equal gaps)
    ----------------------- */
 
-/* Grid: cards not huge, responsive, centered */
 [data-parasha-games] .mem-grid{
-  --card: clamp(58px, 9.5vw, 92px); /* גודל קלף סביר (לא ענק) */
+  --card: clamp(58px, 9.5vw, 92px);
+
   display: grid;
-  gap: 10px;
-  grid-template-columns: repeat(auto-fit, minmax(var(--card), 1fr));
-  justify-items: center;
+
+  /* columns are actual card width -> equal spacing rows/cols */
+  grid-template-columns: repeat(auto-fit, var(--card));
+  justify-content: center;
+
+  gap: 12px;
 }
 
-/* Card base */
+/* -----------------------
+   Memory – cards (square, nice)
+   hover cosmetic only: shadow/border, NO transform
+   ----------------------- */
+
 [data-parasha-games] .mem-card{
-  width: 100%;
-  max-width: var(--card);
-  aspect-ratio: 1 / 1;          /* ✅ מרובע */
-  height: auto;                 /* מבטל את ה-56px הישן */
+  width: var(--card);
+  aspect-ratio: 1 / 1;
+  height: auto;
+
   border-radius: 14px;
   border: 1px solid var(--pg-border);
-  background: var(--pg-surface);
+  background: #fff;
   box-shadow: 0 8px 18px rgba(0,0,0,.07);
+
   cursor: pointer;
   user-select: none;
 
-  /* Center content */
   display: grid;
   place-items: center;
 
-  /* Typography for emoji/symbol */
   font-weight: 800;
   font-size: clamp(18px, 3.2vw, 28px);
   color: var(--pg-text);
 
-  /* Flip support */
   position: relative;
+  overflow: hidden;
+
   transform-style: preserve-3d;
   transition: transform .35s ease, box-shadow .12s ease, border-color .12s ease;
   will-change: transform;
-  overflow: hidden;
 }
 
-/* Hover */
+/* cosmetic hover (no transform changes here) */
 [data-parasha-games] .mem-card:hover{
-  transform: translateY(-2px);
-  box-shadow: 0 14px 28px rgba(0,0,0,.10);
+  box-shadow: var(--pg-shadow2);
   border-color: rgba(37,99,235,.35);
 }
 
@@ -153,76 +192,57 @@
   outline-offset: 2px;
 }
 
-/* Disabled */
 [data-parasha-games] .mem-card[aria-disabled="true"]{
-  opacity: 0.55;
+  opacity: .55;
   cursor: default;
-  transform: none;
 }
 
-/* ------------------------------------------
-   Card faces: "front" (face-down) and "back"
-   ------------------------------------------ */
-
-/* BACK FACE = symbol/emoji side (default).
-   We keep it as-is; the actual emoji/text is in the button content. */
-[data-parasha-games] .mem-card{
-  /* no extra pseudo needed for the symbol side */
+/* Face-down: hide original "קלף" content by shrinking text,
+   show branded diagonal label via ::after */
+[data-parasha-games] .mem-card.mem-face-down{
+  font-size: 0;
 }
 
-/* FRONT FACE (face-down) = branded text.
-   Your JS already marks face-down with .mem-face-down,
-   so we treat that as "show front". */
+/* Branded diagonal label (card back) */
 [data-parasha-games] .mem-card::after{
   content: "פרשת השבוע בניחותא";
   position: absolute;
   inset: 0;
+
   display: grid;
   place-items: center;
 
   font-weight: 700;
   font-size: 12px;
-  color: rgba(17, 24, 39, .35); /* אפרפר */
+  color: rgba(17, 24, 39, .35);
   letter-spacing: .2px;
   transform: rotate(-12deg);
 
-  /* This pseudo is the FRONT face */
+  pointer-events: none;
   backface-visibility: hidden;
 }
 
-/* Hide front when card is revealed:
-   When NOT face-down, we want the brand to disappear. */
+/* When revealed (not face-down): hide brand label */
 [data-parasha-games] .mem-card:not(.mem-face-down)::after{
   opacity: 0;
 }
 
-/* 3) Flip animation on reveal:
-   If your "face-down" means "closed", then on open (not face-down) we rotate. */
+/* Flip animation on reveal */
 [data-parasha-games] .mem-card:not(.mem-face-down){
   transform: rotateY(180deg);
-}
-
-/* Reduce "קלף" size if it still appears somewhere as plain text on the front */
-[data-parasha-games] .mem-card.mem-face-down{
-  font-size: 0; /* מסתיר טקסט "קלף" אם הוא התוכן במצב סגור */
-}
-
-/* Restore emoji size when open */
-[data-parasha-games] .mem-card:not(.mem-face-down){
   font-size: clamp(18px, 3.2vw, 28px);
 }
 
-/* Click feedback */
+/* Click feedback without interfering with flip:
+   We'll do a subtle filter change instead of transform */
 [data-parasha-games] .mem-card:active{
-  transform: translateY(1px) scale(.98);
+  filter: brightness(.98);
 }
 
-/* Motion accessibility */
+/* Reduce motion */
 @media (prefers-reduced-motion: reduce){
-  [data-parasha-games] .mem-card{
+  [data-parasha-games] .mem-card,
+  [data-parasha-games] .mem-topbar button{
     transition: none;
-  }
-  [data-parasha-games] .mem-card:hover{
-    transform: none;
   }
 }
