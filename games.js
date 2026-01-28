@@ -3,7 +3,7 @@
 
   // ====== CONFIG ======
   const CONTROL_API =
-    "https://script.google.com/macros/s/AKfycbzoUoopq8rv8PdN2qe1DZXF73G5Mo8hBgdUqTef-v6z9ukSRua8HswwoyhHCm4fWktHdg/exec"; // <-- כתובת ה-Web App שלך
+    "https://script.google.com/macros/s/AKfycbzoUoopq8rv8PdN2qe1DZXF73G5Mo8hBgdUqTef-v6z9ukSRua8HswwoyhHCm4fWktHdg/exec";
 
   const GAMES_DEFINITION = [
     { id: "memory", title: "🧠 משחק זיכרון" },
@@ -41,7 +41,7 @@
     });
   }
 
-  // ====== SEEDED SHUFFLE (דטרמיניסטי לפי פרשה) ======
+  // ====== SEEDED SHUFFLE ======
   function hashStringToUint32(str) {
     let h = 2166136261;
     for (let i = 0; i < str.length; i++) {
@@ -70,7 +70,7 @@
     return a;
   }
 
-  // ====== MEMORY GAME (FULL) ======
+  // ====== MEMORY GAME ======
   function parseCsvList(s) {
     return String(s || "")
       .split(",")
@@ -84,13 +84,35 @@
     return n % 2 === 0 ? n : n - 1;
   }
 
+  // בוחר מספר עמודות שמחלק את N ושואף לריבוע (קרוב ל-sqrt)
+  function bestCols(n) {
+    const target = Math.sqrt(n);
+    let best = 1;
+    let bestScore = Infinity;
+
+    for (let c = 1; c <= n; c++) {
+      if (n % c !== 0) continue;
+      const score = Math.abs(c - target);
+      if (score < bestScore) {
+        bestScore = score;
+        best = c;
+      }
+    }
+    return best;
+  }
+
+  function formatTime(ms) {
+    const totalSec = Math.floor(ms / 1000);
+    const mm = String(Math.floor(totalSec / 60)).padStart(2, "0");
+    const ss = String(totalSec % 60).padStart(2, "0");
+    return `${mm}:${ss}`;
+  }
+
   function renderMemoryGame(body, model) {
     // model: { symbols:[], alts:[], level1, level2, parashaLabel }
 
     const hasLevel1 = clampEven(model.level1) > 0;
     const hasLevel2 = clampEven(model.level2) > 0;
-
-    // אם אין level2 — אין "בחירת רמה", ולכן לא מציגים גם "רמה 1"
     const showLevelButtons = hasLevel1 && hasLevel2;
 
     body.innerHTML = `
@@ -111,6 +133,26 @@
 
     let state = null;
 
+    // כדי שאיפוס יעשה ערבוב חדש בכל פעם
+    let shuffleNonce = 0;
+
+    // Timer
+    let timerStartMs = 0;
+    let timerIntervalId = null;
+
+    function stopTimer() {
+      if (timerIntervalId) clearInterval(timerIntervalId);
+      timerIntervalId = null;
+    }
+
+    function startTimer() {
+      stopTimer();
+      timerStartMs = Date.now();
+      timerIntervalId = setInterval(() => {
+        updateStats();
+      }, 1000);
+    }
+
     function buildDeck(cardCount) {
       const maxPairs = Math.min(model.symbols.length, model.alts.length);
       const pairsNeeded = Math.min(cardCount / 2, maxPairs);
@@ -124,15 +166,15 @@
         });
       }
 
-      // דופליקציה לזוגות
       const deck = [];
       items.forEach((it) => {
         deck.push({ ...it, uid: it.key + "-a" });
         deck.push({ ...it, uid: it.key + "-b" });
       });
 
-      // ערבוב דטרמיניסטי לפי פרשה + כמות קלפים
-      return seededShuffle(deck, `${model.parashaLabel}|${cardCount}|memory`);
+      // ערבוב "חדש" בכל איפוס באמצעות nonce פנימי
+      const seed = `${model.parashaLabel}|${cardCount}|memory|${shuffleNonce}`;
+      return seededShuffle(deck, seed);
     }
 
     function updateStats() {
@@ -140,7 +182,11 @@
         stats.textContent = "";
         return;
       }
-      stats.textContent = `ניסיונות: ${state.tries} | התאמות: ${state.matchedPairs}/${state.totalPairs}`;
+      const elapsed = timerStartMs ? Date.now() - timerStartMs : 0;
+      stats.textContent =
+        `ניסיונות: ${state.tries} | ` +
+        `התאמות: ${state.matchedPairs}/${state.totalPairs} | ` +
+        `זמן: ${formatTime(elapsed)}`;
     }
 
     function setCardFace(btn, faceUp) {
@@ -166,21 +212,23 @@
     }
 
     function reset(requestedLevel) {
-      // אם אין בחירת רמות (אין level2) — תמיד רמה 1
       const levelNum = showLevelButtons ? (requestedLevel === 2 ? 2 : 1) : 1;
-
       const wanted = levelNum === 2 ? model.level2 : model.level1;
       const cardCount = clampEven(wanted);
 
-      // אם אין מספיק נתונים—נציג הודעה ברורה
       if (!cardCount) {
         state = null;
         grid.innerHTML = "";
         stats.textContent = "אין נתונים מספיקים לרמת המשחק.";
+        stopTimer();
         return;
       }
 
+      // ערבוב חדש בכל איפוס
+      shuffleNonce += 1;
+
       const deck = buildDeck(cardCount);
+      const cols = bestCols(deck.length);
 
       state = {
         level: levelNum,
@@ -194,8 +242,8 @@
         byUid: new Map(deck.map((c) => [c.uid, c])),
       };
 
-      // חשוב: לא לקבוע gridTemplateColumns כאן – ה-CSS שלך מנהל את זה
-      grid.style.gridTemplateColumns = "";
+      // גריד “מרובע” לפי cols
+      grid.style.gridTemplateColumns = `repeat(${cols}, var(--card))`;
       grid.innerHTML = "";
 
       deck.forEach((card) => {
@@ -208,6 +256,7 @@
         grid.appendChild(btn);
       });
 
+      startTimer();
       updateStats();
     }
 
@@ -217,8 +266,6 @@
 
       const uid = btn.dataset.uid;
       if (state.matchedUids.has(uid)) return;
-
-      // לא לאפשר לפתוח אותו קלף פעמיים
       if (state.open.includes(uid)) return;
 
       setCardFace(btn, true);
@@ -226,7 +273,6 @@
 
       if (state.open.length < 2) return;
 
-      // שני קלפים פתוחים
       const [u1, u2] = state.open;
       const c1 = state.byUid.get(u1);
       const c2 = state.byUid.get(u2);
@@ -238,7 +284,6 @@
       const b2 = buttons.find((b) => b.dataset.uid === u2);
 
       if (c1 && c2 && c1.key === c2.key) {
-        // התאמה
         state.matchedUids.add(u1);
         state.matchedUids.add(u2);
         state.matchedPairs += 1;
@@ -249,7 +294,6 @@
         return;
       }
 
-      // לא התאמה: לסגור אחרי רגע
       state.lock = true;
       updateStats();
 
@@ -275,11 +319,16 @@
       btnL2.addEventListener("click", () => reset(2));
     }
 
-    // init default level 1
+    // init
     reset(1);
 
     // expose reset for accordion-close behavior
-    return { reset: () => reset(1) };
+    return {
+      reset: () => {
+        stopTimer();
+        reset(1);
+      },
+    };
   }
 
   async function initMemoryGame(gameBody, parashaLabel) {
@@ -318,7 +367,6 @@
 
       btn.addEventListener("click", async () => {
         if (openBody && openBody !== body) {
-          // סגירת הקודם + איפוס מצב
           openBody.style.display = "none";
           await onOpenChange(openBody, false);
         }
@@ -340,7 +388,6 @@
     const parashaLabel = extractParashaLabel();
     if (!parashaLabel) return;
 
-    // שליפת Control (איזה משחקים פעילים)
     const res = await fetch(
       `${CONTROL_API}?parasha=${encodeURIComponent(parashaLabel)}`
     );
@@ -355,14 +402,11 @@
 
     buildGames(root, activeIds);
 
-    // registry למשחקים שדורשים reset
     const gameControllers = new Map(); // id -> controller
 
-    // onOpenChange: בבחירה במשחק, נטען אותו (אם צריך) ונאפס בעת סגירה
     async function onOpenChange(bodyEl, isOpen) {
       const gameEl = bodyEl.closest(".game");
       const gameId = gameEl?.dataset?.game || "";
-
       if (!gameId) return;
 
       if (!isOpen) {
@@ -371,7 +415,6 @@
         return;
       }
 
-      // פתיחה: אם כבר נטען—לא טוענים שוב
       if (gameControllers.has(gameId)) return;
 
       if (gameId === "memory") {
@@ -381,7 +424,6 @@
         return;
       }
 
-      // משחקים אחרים (כרגע placeholder)
       bodyEl.innerHTML = `<div>(כאן ייבנה המשחק: ${gameId})</div>`;
       gameControllers.set(gameId, { reset: () => {} });
     }
