@@ -1,4 +1,4 @@
-/* memory.css – Memory game UI (banner + square cards + nice typography) */
+/* memory.css – Memory game UI (topbar groups + banner + square cards) */
 
 [data-parasha-games] .mem-wrap{
   --m-bg: #f6f7fb;
@@ -20,7 +20,7 @@
   padding: 12px;
 }
 
-/* ===== Topbar layout (fixed sides, RTL-safe) ===== */
+/* ===== Topbar (RTL-safe grouping) ===== */
 [data-parasha-games] .mem-topbar{
   display:flex;
   align-items:center;
@@ -29,22 +29,21 @@
   margin-bottom: 10px;
 }
 
-/* actions (buttons) – stay on the RIGHT in RTL pages */
 [data-parasha-games] .mem-actions{
   display:flex;
   align-items:center;
   gap:8px;
 }
 
-/* stats – pushed to the opposite edge (LEFT in RTL) */
 [data-parasha-games] .mem-stats{
   margin-inline-start: auto;
   display:flex;
   align-items:center;
   gap:10px;
-  font-weight: 800;
+  font-weight: 900;
   color: var(--m-muted);
   white-space: nowrap;
+  font-variant-numeric: tabular-nums; /* prevents jitter */
 }
 
 [data-parasha-games] .mem-actions .mem-btn{
@@ -72,6 +71,7 @@
   cursor: default;
 }
 
+/* ===== Match banner ===== */
 [data-parasha-games] .mem-banner{
   margin: 8px 0 10px;
   border-radius: 14px;
@@ -92,9 +92,10 @@
   display:none !important;
 }
 
+/* ===== Grid & cards ===== */
 [data-parasha-games] .mem-grid{
   --gap: 10px;
-  --cell: 86px;
+  --cell: 92px;
 
   display:grid;
   gap: var(--gap);
@@ -129,6 +130,8 @@
   color: rgba(0,0,0,.35);
   font-size: 13px;
   font-style: italic;
+  text-align: center;
+  padding: 6px;
 }
 
 [data-parasha-games] .mem-card[aria-disabled="true"]{
