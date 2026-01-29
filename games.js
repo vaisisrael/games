@@ -6,7 +6,7 @@
     "https://script.google.com/macros/s/AKfycbzoUoopq8rv8PdN2qe1DZXF73G5Mo8hBgdUqTef-v6z9ukSRua8HswwoyhHCm4fWktHdg/exec";
 
   // version for cache busting (also used when loading game modules)
-  const BUILD_VERSION = "2026-01-29-fix-02";
+  const BUILD_VERSION = "2026-01-29-fix-03";
 
   const GAMES_DEFINITION = [
     { id: "memory", title: "🧠 משחק זיכרון", js: "memory.js", css: "memory.css" },
@@ -80,18 +80,19 @@
     });
   }
 
-  // ====== ACCORDION CSS (Injected + enforced for ~2s to beat Blogger desktop theme) ======
-  function applyAccordionCss() {
+  // ====== ACCORDION CSS (Injected + enforced briefly) ======
+  function ensureAccordionStyleExists() {
     const id = "pg-accordion-style";
-    const old = document.getElementById(id);
-    if (old) old.remove();
+    let style = document.getElementById(id);
+    if (!style) {
+      style = document.createElement("style");
+      style.id = id;
+      document.head.appendChild(style);
+    }
 
-    const style = document.createElement("style");
-    style.id = id;
+    // Update text only (no remove/append) — stable, no loops.
     style.textContent = `
-/* ===== Parasha Games – Accordion (CSS enforced) ===== */
-
-/* We scope everything to [data-parasha-games][data-pg-acc="1"] to win specificity */
+/* ===== Parasha Games – Accordion (stable inject) ===== */
 [data-parasha-games][data-pg-acc="1"]{
   --pg-bg: #f6f7fb;
   --pg-border: rgba(0,0,0,.10);
@@ -103,7 +104,6 @@
   display:block !important;
 }
 
-/* Accordion item */
 [data-parasha-games][data-pg-acc="1"] .game{
   border: 1px solid var(--pg-border) !important;
   border-radius: 16px !important;
@@ -113,7 +113,6 @@
   box-shadow: var(--pg-shadow) !important;
 }
 
-/* Title button – hard reset then rebuild */
 [data-parasha-games][data-pg-acc="1"] .game-toggle{
   all: unset !important;
 
@@ -144,36 +143,26 @@
   outline-offset: 2px !important;
 }
 
-/* Body */
 [data-parasha-games][data-pg-acc="1"] .game-body{
   padding: 12px !important;
   background: rgba(255,255,255,.78) !important;
   border-top: 1px solid rgba(0,0,0,.06) !important;
 }
     `.trim();
-
-    document.head.appendChild(style);
   }
 
   function enforceAccordionCssForAWhile() {
-    // enforce for ~2 seconds (Blogger desktop often injects styles late)
-    applyAccordionCss();
+    ensureAccordionStyleExists();
 
+    // enforce for ~1.8 seconds (enough for Blogger desktop late styles)
     const start = Date.now();
     const interval = setInterval(() => {
-      applyAccordionCss();
-      if (Date.now() - start > 2200) clearInterval(interval);
-    }, 180);
+      ensureAccordionStyleExists();
+      if (Date.now() - start > 1800) clearInterval(interval);
+    }, 150);
 
-    // also after full load
-    window.addEventListener("load", () => applyAccordionCss(), { once: true });
-
-    // and if new <style>/<link> are appended later (rare, but happens on some themes)
-    try {
-      const obs = new MutationObserver(() => applyAccordionCss());
-      obs.observe(document.head, { childList: true });
-      setTimeout(() => obs.disconnect(), 2500);
-    } catch (_) {}
+    // once after full load
+    window.addEventListener("load", () => ensureAccordionStyleExists(), { once: true });
   }
 
   // ====== DOM BUILD ======
@@ -242,7 +231,7 @@
 
     buildGames(root, activeIds);
 
-    // re-apply after we built DOM (helps in some themes)
+    // enforce again right after DOM build (helps on some templates)
     enforceAccordionCssForAWhile();
 
     const controllers = new Map();
