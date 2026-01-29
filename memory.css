@@ -1,139 +1,129 @@
-/* memory.css – Memory game UI */
+/* memory.css – Memory game UI (banner + square cards + nice typography) */
 
-[data-parasha-games]{
-  --pg-surface: #ffffff;
-  --pg-border: rgba(0,0,0,.10);
-  --pg-text: #1f2937;
-  --pg-muted: rgba(17,24,39,.58);
-  --pg-shadow: 0 10px 25px rgba(0,0,0,.08);
-  --pg-shadow2: 0 14px 28px rgba(0,0,0,.10);
+[data-parasha-games] .mem-wrap{
+  --m-bg: #f6f7fb;
+  --m-surface: #ffffff;
+  --m-border: rgba(0,0,0,.10);
+  --m-text: #1f2937;
+  --m-muted: #6b7280;
+  --m-shadow: 0 10px 25px rgba(0,0,0,.08);
+
+  font-family: system-ui, -apple-system, "Segoe UI", "Rubik", Arial, "Noto Sans Hebrew", "Heebo", sans-serif;
+  color: var(--m-text);
 }
 
-/* Top bar */
+[data-parasha-games] .mem-cardbox{
+  background: linear-gradient(180deg, var(--m-bg), #fff);
+  border: 1px solid var(--m-border);
+  border-radius: 16px;
+  box-shadow: var(--m-shadow);
+  padding: 12px;
+}
+
 [data-parasha-games] .mem-topbar{
-  display: flex;
-  align-items: center;
-  gap: 6px;
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap:10px;
   flex-wrap: wrap;
   margin-bottom: 10px;
 }
 
-[data-parasha-games] .mem-topbar button{
-  font-family: inherit;
-  cursor: pointer;
-  border: 1px solid var(--pg-border);
-  background: linear-gradient(90deg, rgba(37,99,235,.10), rgba(124,58,237,.08));
-  border-radius: 12px;
-  padding: 7px 10px;
-  font-weight: 900;
-  font-size: 14px;
-  color: rgba(17,24,39,.92);
-  box-shadow: 0 6px 14px rgba(0,0,0,.06);
-  transition: box-shadow .12s ease, border-color .12s ease;
+[data-parasha-games] .mem-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
 }
 
-[data-parasha-games] .mem-topbar button:hover{
-  box-shadow: 0 10px 22px rgba(0,0,0,.08);
+[data-parasha-games] .mem-actions .mem-btn{
+  border: 1px solid var(--m-border);
+  background: #eef2ff;
+  border-radius: 12px;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-weight: 900;
+  font-size: 14px;
+  user-select:none;
+}
+
+[data-parasha-games] .mem-actions .mem-btn[aria-pressed="true"]{
+  background: #dbeafe;
   border-color: rgba(37,99,235,.35);
 }
 
-[data-parasha-games] .mem-level[aria-pressed="true"]{
-  border-color: rgba(37,99,235,.55);
-  box-shadow: 0 10px 22px rgba(37,99,235,.12);
+[data-parasha-games] .mem-actions .mem-btn:hover{
+  box-shadow: 0 6px 14px rgba(0,0,0,.06);
 }
 
-/* Stats (tries + time + matched) */
 [data-parasha-games] .mem-stats{
-  margin-inline-start: auto;
-  color: var(--pg-muted);
-  font-weight: 900;
-  font-size: 14px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight: 800;
+  color: var(--m-muted);
   white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum" 1;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
 }
 
-/* Match banner */
 [data-parasha-games] .mem-banner{
-  min-height: 28px;
-  margin: 0 0 10px 0;
-  padding: 6px 10px;
-  border-radius: 12px;
-  border: 1px solid rgba(0,0,0,.06);
-  background: rgba(255,255,255,.76);
-  box-shadow: 0 8px 18px rgba(0,0,0,.05);
-  color: rgba(17,24,39,.82);
+  margin: 8px 0 10px;
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,.08);
+  background: rgba(250,204,21,.14);
+  padding: 8px 10px;
   font-weight: 900;
-  font-size: 13px;
+  text-align: center;
   opacity: 0;
-  transform: translateY(2px);
-  transition: opacity .18s ease, transform .18s ease;
+  transform: translateY(-2px);
+  transition: opacity .14s ease, transform .14s ease;
 }
-
-[data-parasha-games] .mem-banner.mem-banner--show{
+[data-parasha-games] .mem-banner.is-on{
   opacity: 1;
   transform: translateY(0);
 }
-
-/* Grid */
-[data-parasha-games] .mem-grid{
-  display: grid;
-  gap: 10px; /* same for rows/cols */
+[data-parasha-games] .mem-banner[hidden]{
+  display:none !important;
 }
 
-/* Cards */
+[data-parasha-games] .mem-grid{
+  --gap: 10px;
+  --cell: 86px;
+
+  display:grid;
+  gap: var(--gap);
+  justify-content: center;
+  align-content: start;
+}
+
 [data-parasha-games] .mem-card{
+  width: var(--cell);
   aspect-ratio: 1 / 1;
-  width: 100%;
   border-radius: 16px;
-  border: 1px solid var(--pg-border);
+  border: 1px solid var(--m-border);
   background:
-    radial-gradient(120% 120% at 12% 12%, rgba(37,99,235,.12), transparent 60%),
-    radial-gradient(120% 120% at 90% 90%, rgba(124,58,237,.10), transparent 55%),
-    var(--pg-surface);
+    radial-gradient(120% 120% at 10% 10%, rgba(37,99,235,.14), transparent 60%),
+    radial-gradient(120% 120% at 90% 90%, rgba(124,58,237,.12), transparent 55%),
+    var(--m-surface);
   box-shadow: 0 8px 18px rgba(0,0,0,.07);
   cursor: pointer;
-  display: grid;
-  place-items: center;
-  user-select: none;
+  user-select:none;
+
+  display:grid;
+  place-items:center;
+
   font-weight: 900;
-  font-size: clamp(18px, 3.2vw, 30px);
-  color: var(--pg-text);
-  transition: box-shadow .12s ease, border-color .12s ease; /* no transform */
-}
-
-[data-parasha-games] .mem-card:hover{
-  box-shadow: var(--pg-shadow2);
-  border-color: rgba(37,99,235,.35);
-}
-
-[data-parasha-games] .mem-card[aria-disabled="true"]{
-  opacity: 0.55;
-  cursor: default;
+  font-size: 28px;
+  line-height: 1;
 }
 
 [data-parasha-games] .mem-card.mem-face-down{
-  position: relative;
-  overflow: hidden;
-}
-
-[data-parasha-games] .mem-card.mem-face-down::before{
-  content: "פרשת השבוע בניחותא";
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  transform: rotate(-18deg);
-  color: rgba(17,24,39,.20);
-  font-weight: 900;
-  letter-spacing: .2px;
+  background: #fff;
+  box-shadow: 0 6px 14px rgba(0,0,0,.06);
+  color: rgba(0,0,0,.35);
   font-size: 13px;
-  pointer-events: none;
+  font-style: italic;
 }
 
-@media (prefers-reduced-motion: reduce){
-  [data-parasha-games] .mem-banner{ transition:none; }
+[data-parasha-games] .mem-card[aria-disabled="true"]{
+  opacity: .55;
+  cursor: default;
 }
