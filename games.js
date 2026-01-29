@@ -5,8 +5,8 @@
   const CONTROL_API =
     "https://script.google.com/macros/s/AKfycbzoUoopq8rv8PdN2qe1DZXF73G5Mo8hBgdUqTef-v6z9ukSRua8HswwoyhHCm4fWktHdg/exec";
 
-  // חשוב: זה גם שובר קאש לקבצי המשחקים
-  const BUILD_VERSION = "2026-01-29-fix-01";
+  // version for cache busting (also used when loading game modules)
+  const BUILD_VERSION = "2026-01-29-fix-02";
 
   const GAMES_DEFINITION = [
     { id: "memory", title: "🧠 משחק זיכרון", js: "memory.js", css: "memory.css" },
@@ -16,95 +16,13 @@
     { id: "emoji", title: "😄 חידת אימוג'ים" }
   ];
 
-  // ====== GLOBAL REGISTRY (no guessing, always exists) ======
+  // ====== GLOBAL REGISTRY (always exists) ======
   window.ParashaGames = window.ParashaGames || {};
   window.ParashaGames.registry = window.ParashaGames.registry || new Map();
 
-  // helper: games call this to register
   window.ParashaGamesRegister = function (id, factory) {
     window.ParashaGames.registry.set(id, factory);
   };
-
-  // ====== ACCORDION CSS (Injected HARD, multiple times to beat Theme) ======
-  function applyAccordionCss() {
-    const id = "pg-accordion-only-style";
-    const old = document.getElementById(id);
-    if (old) old.remove();
-
-    const style = document.createElement("style");
-    style.id = id;
-    style.textContent = `
-/* ===== Parasha Games – Accordion (unified in games.js) ===== */
-[data-parasha-games]{
-  --pg-bg: #f6f7fb;
-  --pg-border: rgba(0,0,0,.10);
-  --pg-text: #1f2937;
-  --pg-shadow: 0 10px 25px rgba(0,0,0,.08);
-
-  font-family: system-ui, -apple-system, "Segoe UI", "Rubik", Arial, "Noto Sans Hebrew", "Heebo", sans-serif !important;
-  color: var(--pg-text) !important;
-  display:block !important;
-}
-
-/* Accordion item */
-[data-parasha-games][data-parasha-games] .game{
-  border: 1px solid var(--pg-border) !important;
-  border-radius: 16px !important;
-  margin: 10px 0 !important;
-  overflow: hidden !important;
-  background: linear-gradient(180deg, var(--pg-bg), #fff) !important;
-  box-shadow: var(--pg-shadow) !important;
-}
-
-/* Title button – hard reset then rebuild */
-[data-parasha-games][data-parasha-games] .game-toggle{
-  all: unset !important;
-
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  gap:8px !important;
-
-  width:100% !important;
-  padding: 12px 14px !important;
-
-  font-weight: 900 !important;
-  font-size: 16px !important;
-  line-height: 1.25 !important;
-  color: var(--pg-text) !important;
-
-  cursor:pointer !important;
-  background: transparent !important;
-  user-select:none !important;
-}
-
-[data-parasha-games][data-parasha-games] .game-toggle:hover{
-  background: rgba(0,0,0,.03) !important;
-}
-
-[data-parasha-games][data-parasha-games] .game-toggle:focus-visible{
-  outline: 3px solid rgba(37,99,235,.22) !important;
-  outline-offset: 2px !important;
-}
-
-/* Body */
-[data-parasha-games][data-parasha-games] .game-body{
-  padding: 12px !important;
-  background: rgba(255,255,255,.78) !important;
-  border-top: 1px solid rgba(0,0,0,.06) !important;
-}
-    `.trim();
-
-    document.head.appendChild(style);
-  }
-
-  // inject now + after theme load tricks
-  function forceAccordionCss() {
-    applyAccordionCss();
-    setTimeout(applyAccordionCss, 0);
-    setTimeout(applyAccordionCss, 600);
-    window.addEventListener("load", applyAccordionCss, { once: true });
-  }
 
   // ====== PARASHA LABEL ======
   function extractParashaLabel() {
@@ -116,20 +34,21 @@
     return texts.find(t => re.test(t)) || null;
   }
 
-  // ====== ASSET LOADER ======
+  // ====== BASE URL ======
   function baseUrlForThisScript() {
     const s = document.currentScript && document.currentScript.src;
     if (!s) return "https://vaisisrael.github.io/games/";
     return s.substring(0, s.lastIndexOf("/") + 1);
   }
   const BASE_URL = baseUrlForThisScript();
-  const loaded = new Set();
 
   function withVersion(url) {
     const u = new URL(url, window.location.href);
     u.searchParams.set("v", BUILD_VERSION);
     return u.toString();
   }
+
+  const loaded = new Set();
 
   function loadCssOnce(fileName) {
     return new Promise((resolve, reject) => {
@@ -161,9 +80,106 @@
     });
   }
 
+  // ====== ACCORDION CSS (Injected + enforced for ~2s to beat Blogger desktop theme) ======
+  function applyAccordionCss() {
+    const id = "pg-accordion-style";
+    const old = document.getElementById(id);
+    if (old) old.remove();
+
+    const style = document.createElement("style");
+    style.id = id;
+    style.textContent = `
+/* ===== Parasha Games – Accordion (CSS enforced) ===== */
+
+/* We scope everything to [data-parasha-games][data-pg-acc="1"] to win specificity */
+[data-parasha-games][data-pg-acc="1"]{
+  --pg-bg: #f6f7fb;
+  --pg-border: rgba(0,0,0,.10);
+  --pg-text: #1f2937;
+  --pg-shadow: 0 10px 25px rgba(0,0,0,.08);
+
+  font-family: system-ui, -apple-system, "Segoe UI", "Rubik", Arial, "Noto Sans Hebrew", "Heebo", sans-serif !important;
+  color: var(--pg-text) !important;
+  display:block !important;
+}
+
+/* Accordion item */
+[data-parasha-games][data-pg-acc="1"] .game{
+  border: 1px solid var(--pg-border) !important;
+  border-radius: 16px !important;
+  margin: 10px 0 !important;
+  overflow: hidden !important;
+  background: linear-gradient(180deg, var(--pg-bg), #fff) !important;
+  box-shadow: var(--pg-shadow) !important;
+}
+
+/* Title button – hard reset then rebuild */
+[data-parasha-games][data-pg-acc="1"] .game-toggle{
+  all: unset !important;
+
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:8px !important;
+
+  width:100% !important;
+  padding: 12px 14px !important;
+
+  font-weight: 900 !important;
+  font-size: 16px !important;
+  line-height: 1.25 !important;
+  color: var(--pg-text) !important;
+
+  cursor:pointer !important;
+  background: transparent !important;
+  user-select:none !important;
+}
+
+[data-parasha-games][data-pg-acc="1"] .game-toggle:hover{
+  background: rgba(0,0,0,.03) !important;
+}
+
+[data-parasha-games][data-pg-acc="1"] .game-toggle:focus-visible{
+  outline: 3px solid rgba(37,99,235,.22) !important;
+  outline-offset: 2px !important;
+}
+
+/* Body */
+[data-parasha-games][data-pg-acc="1"] .game-body{
+  padding: 12px !important;
+  background: rgba(255,255,255,.78) !important;
+  border-top: 1px solid rgba(0,0,0,.06) !important;
+}
+    `.trim();
+
+    document.head.appendChild(style);
+  }
+
+  function enforceAccordionCssForAWhile() {
+    // enforce for ~2 seconds (Blogger desktop often injects styles late)
+    applyAccordionCss();
+
+    const start = Date.now();
+    const interval = setInterval(() => {
+      applyAccordionCss();
+      if (Date.now() - start > 2200) clearInterval(interval);
+    }, 180);
+
+    // also after full load
+    window.addEventListener("load", () => applyAccordionCss(), { once: true });
+
+    // and if new <style>/<link> are appended later (rare, but happens on some themes)
+    try {
+      const obs = new MutationObserver(() => applyAccordionCss());
+      obs.observe(document.head, { childList: true });
+      setTimeout(() => obs.disconnect(), 2500);
+    } catch (_) {}
+  }
+
   // ====== DOM BUILD ======
   function buildGames(root, activeIds) {
     root.innerHTML = "";
+    root.setAttribute("data-pg-acc", "1"); // scope for CSS specificity
 
     GAMES_DEFINITION
       .filter(g => activeIds.includes(g.id))
@@ -206,7 +222,7 @@
 
   // ====== INIT ======
   async function init() {
-    forceAccordionCss();
+    enforceAccordionCssForAWhile();
 
     const root = document.querySelector("[data-parasha-games]");
     if (!root) return;
@@ -214,7 +230,6 @@
     const parashaLabel = extractParashaLabel();
     if (!parashaLabel) return;
 
-    // Control fetch
     const res = await fetch(`${CONTROL_API}?parasha=${encodeURIComponent(parashaLabel)}`);
     const data = await res.json();
     if (!data.row) return;
@@ -227,25 +242,25 @@
 
     buildGames(root, activeIds);
 
+    // re-apply after we built DOM (helps in some themes)
+    enforceAccordionCssForAWhile();
+
     const controllers = new Map();
 
     async function onOpenChange(bodyEl, isOpen) {
       const gameId = bodyEl.closest(".game")?.dataset?.game || "";
       if (!gameId) return;
 
-      // closing
       if (!isOpen) {
         const ctrl = controllers.get(gameId);
         if (ctrl && typeof ctrl.reset === "function") ctrl.reset();
         return;
       }
 
-      // already initialized
       if (controllers.has(gameId)) return;
 
       const def = GAMES_DEFINITION.find(g => g.id === gameId);
 
-      // module-backed games
       if (def && def.js && def.css) {
         bodyEl.innerHTML = "טוען...";
 
@@ -266,7 +281,6 @@
         return;
       }
 
-      // other placeholders
       bodyEl.innerHTML = `<div>(כאן ייבנה המשחק: ${gameId})</div>`;
       controllers.set(gameId, { reset: () => {} });
     }
