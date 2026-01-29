@@ -6,11 +6,11 @@
     "https://script.google.com/macros/s/AKfycbzoUoopq8rv8PdN2qe1DZXF73G5Mo8hBgdUqTef-v6z9ukSRua8HswwoyhHCm4fWktHdg/exec";
 
   const GAMES_DEFINITION = [
-    { id: "memory", title: "🧠 משחק זיכרון", script: "memory.js", style: "memory.css" },
-    { id: "puzzle", title: "🧩 פאזל", script: "", style: "" },
-    { id: "truefalse", title: "✅ נכון / ❌ לא נכון", script: "", style: "" },
-    { id: "dragmatch", title: "🔗 גרור והתאם", script: "", style: "" },
-    { id: "emoji", title: "😄 חידת אימוג'ים", script: "", style: "" },
+    { id: "memory", title: "🧠 משחק זיכרון", script: "memory.js" },
+    { id: "puzzle", title: "🧩 פאזל",       script: "puzzle.js" },
+    { id: "truefalse", title: "✅ נכון / ❌ לא נכון", script: "" },
+    { id: "dragmatch", title: "🔗 גרור והתאם",       script: "" },
+    { id: "emoji",     title: "😄 חידת אימוג'ים",    script: "" },
   ];
 
   // ====== PARASHA LABEL ======
@@ -26,17 +26,14 @@
   // ====== DOM BUILD ======
   function buildGames(root, activeIds) {
     root.innerHTML = "";
-
     GAMES_DEFINITION.filter((g) => activeIds.includes(g.id)).forEach((game) => {
       const el = document.createElement("div");
       el.className = "game";
       el.dataset.game = game.id;
-
       el.innerHTML = `
         <button class="game-toggle" type="button">${game.title}</button>
         <div class="game-body" style="display:none"></div>
       `;
-
       root.appendChild(el);
     });
   }
@@ -48,15 +45,12 @@
     return s.substring(0, s.lastIndexOf("/") + 1);
   }
 
-  // ====== LOADERS (once) ======
+  // ====== LOAD SCRIPT ONCE ======
   const loadedScripts = new Set();
-  const loadedStyles = new Set();
-
   function loadScriptOnce(fileName) {
     return new Promise((resolve, reject) => {
       if (!fileName) return resolve();
       const url = baseUrlForThisScript() + fileName;
-
       if (loadedScripts.has(url)) return resolve();
       loadedScripts.add(url);
 
@@ -69,24 +63,7 @@
     });
   }
 
-  function loadCssOnce(fileName) {
-    return new Promise((resolve, reject) => {
-      if (!fileName) return resolve();
-      const url = baseUrlForThisScript() + fileName;
-
-      if (loadedStyles.has(url)) return resolve();
-      loadedStyles.add(url);
-
-      const link = document.createElement("link");
-      link.rel = "stylesheet";
-      link.href = url;
-      link.onload = () => resolve();
-      link.onerror = () => reject(new Error("Failed to load: " + url));
-      document.head.appendChild(link);
-    });
-  }
-
-  // ====== ACCORDION (simple, no confirm) ======
+  // ====== ACCORDION ======
   function initAccordion(root, onOpenChange) {
     let openBody = null;
 
@@ -147,28 +124,26 @@
 
       const def = GAMES_DEFINITION.find((g) => g.id === gameId);
 
-      if (gameId === "memory") {
-        bodyEl.innerHTML = "טוען משחק זיכרון...";
-
-        // load CSS + JS for this game
-        await loadCssOnce(def.style);
+      // Module game (memory/puzzle)
+      if (def && def.script) {
+        bodyEl.innerHTML = "טוען משחק...";
         await loadScriptOnce(def.script);
 
         const reg = window.ParashaGames && window.ParashaGames._registry;
-        const factoryFn = reg && reg.get("memory");
+        const factoryFn = reg && reg.get(gameId);
         if (!factoryFn) {
-          bodyEl.innerHTML = "שגיאה בטעינת משחק הזיכרון.";
+          bodyEl.innerHTML = "שגיאה בטעינת המשחק.";
           controllers.set(gameId, { reset: () => {} });
           return;
         }
 
-        const gameApi = factoryFn({ CONTROL_API, parashaLabel });
-        const ctrl = await gameApi.init(bodyEl);
+        const api = factoryFn({ CONTROL_API, parashaLabel });
+        const ctrl = await api.init(bodyEl);
         controllers.set(gameId, ctrl || { reset: () => {} });
         return;
       }
 
-      // other games: placeholder
+      // placeholders
       bodyEl.innerHTML = `<div>(כאן ייבנה המשחק: ${gameId})</div>`;
       controllers.set(gameId, { reset: () => {} });
     }
