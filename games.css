@@ -1,4 +1,4 @@
-/* games.css – Core only (accordion/layout). Game-specific CSS lives in memory.css / puzzle.css */
+/* games.css – Core accordion "premium" UI (no memory/puzzle styles) */
 
 [data-parasha-games]{
   --pg-bg: #f6f7fb;
@@ -6,13 +6,20 @@
   --pg-border: rgba(0,0,0,.10);
   --pg-text: #1f2937;
   --pg-muted: #6b7280;
+  --pg-accent: #2563eb;
   --pg-shadow: 0 10px 25px rgba(0,0,0,.08);
+  --pg-shadow2: 0 14px 28px rgba(0,0,0,.10);
 
   font-family: system-ui, -apple-system, "Segoe UI", "Rubik", Arial, "Noto Sans Hebrew", "Heebo", sans-serif;
   color: var(--pg-text);
 }
 
-/* Accordion container */
+/* Outer wrapper – makes the whole area look like a component */
+[data-parasha-games]{
+  display: block;
+}
+
+/* Accordion item */
 [data-parasha-games] .game{
   border: 1px solid var(--pg-border);
   border-radius: 16px;
@@ -22,6 +29,7 @@
   box-shadow: var(--pg-shadow);
 }
 
+/* Title button */
 [data-parasha-games] .game-toggle{
   width: 100%;
   padding: 12px 14px;
@@ -30,13 +38,37 @@
   cursor: pointer;
   border: 0;
   background: transparent;
+  color: var(--pg-text);
+
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+
+  -webkit-appearance: none;
+  appearance: none;
+
+  transition: background .12s ease, box-shadow .12s ease;
 }
 
+[data-parasha-games] .game-toggle:hover{
+  background: rgba(0,0,0,.03);
+}
+
+/* When opened – subtle highlight (we’ll set aria-expanded in JS later if you want) */
+[data-parasha-games] .game-toggle:focus-visible{
+  outline: 3px solid rgba(37,99,235,.22);
+  outline-offset: 2px;
+}
+
+/* Body */
 [data-parasha-games] .game-body{
   padding: 12px;
   background: rgba(255,255,255,.78);
+  border-top: 1px solid rgba(0,0,0,.06);
+}
+
+/* Make placeholders look neat */
+[data-parasha-games] .game-body > div{
+  font-family: inherit;
 }
