@@ -5,8 +5,8 @@
   const CONTROL_API =
     "https://script.google.com/macros/s/AKfycbzoUoopq8rv8PdN2qe1DZXF73G5Mo8hBgdUqTef-v6z9ukSRua8HswwoyhHCm4fWktHdg/exec";
 
-  // 🔥 עדכן בכל שינוי כדי לשבור קאש
-  const BUILD_VERSION = "2026-01-29-core-02";
+  // חשוב: זה גם שובר קאש לקבצי המשחקים
+  const BUILD_VERSION = "2026-01-29-fix-01";
 
   const GAMES_DEFINITION = [
     { id: "memory", title: "🧠 משחק זיכרון", js: "memory.js", css: "memory.css" },
@@ -16,11 +16,20 @@
     { id: "emoji", title: "😄 חידת אימוג'ים" }
   ];
 
-  // ====== CSS (accordion only) injected last ======
-  function injectAccordionCssOnce() {
+  // ====== GLOBAL REGISTRY (no guessing, always exists) ======
+  window.ParashaGames = window.ParashaGames || {};
+  window.ParashaGames.registry = window.ParashaGames.registry || new Map();
+
+  // helper: games call this to register
+  window.ParashaGamesRegister = function (id, factory) {
+    window.ParashaGames.registry.set(id, factory);
+  };
+
+  // ====== ACCORDION CSS (Injected HARD, multiple times to beat Theme) ======
+  function applyAccordionCss() {
     const id = "pg-accordion-only-style";
     const old = document.getElementById(id);
-    if (old) old.remove(); // ensure latest always wins
+    if (old) old.remove();
 
     const style = document.createElement("style");
     style.id = id;
@@ -34,7 +43,7 @@
 
   font-family: system-ui, -apple-system, "Segoe UI", "Rubik", Arial, "Noto Sans Hebrew", "Heebo", sans-serif !important;
   color: var(--pg-text) !important;
-  display:block;
+  display:block !important;
 }
 
 /* Accordion item */
@@ -86,8 +95,15 @@
 }
     `.trim();
 
-    // append LAST so it wins cascade
     document.head.appendChild(style);
+  }
+
+  // inject now + after theme load tricks
+  function forceAccordionCss() {
+    applyAccordionCss();
+    setTimeout(applyAccordionCss, 0);
+    setTimeout(applyAccordionCss, 600);
+    window.addEventListener("load", applyAccordionCss, { once: true });
   }
 
   // ====== PARASHA LABEL ======
@@ -145,13 +161,6 @@
     });
   }
 
-  // ====== REGISTRY ======
-  function getRegistry() {
-    window.ParashaGames = window.ParashaGames || {};
-    window.ParashaGames.registry = window.ParashaGames.registry || new Map();
-    return window.ParashaGames.registry;
-  }
-
   // ====== DOM BUILD ======
   function buildGames(root, activeIds) {
     root.innerHTML = "";
@@ -197,11 +206,10 @@
 
   // ====== INIT ======
   async function init() {
+    forceAccordionCss();
+
     const root = document.querySelector("[data-parasha-games]");
     if (!root) return;
-
-    // Inject accordion CSS last (wins over theme)
-    injectAccordionCssOnce();
 
     const parashaLabel = extractParashaLabel();
     if (!parashaLabel) return;
@@ -220,7 +228,6 @@
     buildGames(root, activeIds);
 
     const controllers = new Map();
-    const registry = getRegistry();
 
     async function onOpenChange(bodyEl, isOpen) {
       const gameId = bodyEl.closest(".game")?.dataset?.game || "";
@@ -241,10 +248,13 @@
       // module-backed games
       if (def && def.js && def.css) {
         bodyEl.innerHTML = "טוען...";
+
         await loadCssOnce(def.css);
         await loadScriptOnce(def.js);
 
-        const factory = registry.get(gameId);
+        const reg = window.ParashaGames?.registry;
+        const factory = reg && reg.get(gameId);
+
         if (!factory) {
           bodyEl.innerHTML = "שגיאה בטעינת המשחק (registry חסר).";
           controllers.set(gameId, { reset: () => {} });
