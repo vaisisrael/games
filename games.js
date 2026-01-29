@@ -6,7 +6,7 @@
     "https://script.google.com/macros/s/AKfycbxrOWGzfee9nKtBJqZEHLEADrNeD-2b8sARUuSFiaJDBNVn_T7iVueuA8uPr1bbdpkJYw/exec";
 
   // version for cache busting (also used when loading game modules)
-  const BUILD_VERSION = "2026-01-29-fix-03";
+  const BUILD_VERSION = "2026-01-30-loader-fix-01";
 
   const GAMES_DEFINITION = [
     { id: "memory", title: "🧠 משחק זיכרון", js: "memory.js", css: "memory.css" },
@@ -20,8 +20,11 @@
   window.ParashaGames = window.ParashaGames || {};
   window.ParashaGames.registry = window.ParashaGames.registry || new Map();
 
-  window.ParashaGamesRegister = function (id, factory) {
-    window.ParashaGames.registry.set(id, factory);
+  // Accept either:
+  // 1) object: { init(rootEl, ctx) {...} }
+  // 2) function: (ctx) => ({ init(rootEl, ctx){...} })
+  window.ParashaGamesRegister = function (id, factoryOrModule) {
+    window.ParashaGames.registry.set(id, factoryOrModule);
   };
 
   // ====== PARASHA LABEL ======
@@ -90,7 +93,6 @@
       document.head.appendChild(style);
     }
 
-    // Update text only (no remove/append) — stable, no loops.
     style.textContent = `
 /* ===== Parasha Games – Accordion (stable inject) ===== */
 [data-parasha-games][data-pg-acc="1"]{
@@ -154,21 +156,19 @@
   function enforceAccordionCssForAWhile() {
     ensureAccordionStyleExists();
 
-    // enforce for ~1.8 seconds (enough for Blogger desktop late styles)
     const start = Date.now();
     const interval = setInterval(() => {
       ensureAccordionStyleExists();
       if (Date.now() - start > 1800) clearInterval(interval);
     }, 150);
 
-    // once after full load
     window.addEventListener("load", () => ensureAccordionStyleExists(), { once: true });
   }
 
   // ====== DOM BUILD ======
   function buildGames(root, activeIds) {
     root.innerHTML = "";
-    root.setAttribute("data-pg-acc", "1"); // scope for CSS specificity
+    root.setAttribute("data-pg-acc", "1");
 
     GAMES_DEFINITION
       .filter(g => activeIds.includes(g.id))
@@ -209,6 +209,16 @@
     });
   }
 
+  // ====== Resolve module from registry ======
+  function resolveModule(regValue, ctx) {
+    // if function: call with ctx
+    if (typeof regValue === "function") {
+      return regValue(ctx);
+    }
+    // if object: use as-is
+    return regValue;
+  }
+
   // ====== INIT ======
   async function init() {
     enforceAccordionCssForAWhile();
@@ -230,8 +240,6 @@
     if (activeIds.length === 0) return;
 
     buildGames(root, activeIds);
-
-    // enforce again right after DOM build (helps on some templates)
     enforceAccordionCssForAWhile();
 
     const controllers = new Map();
@@ -249,24 +257,38 @@
       if (controllers.has(gameId)) return;
 
       const def = GAMES_DEFINITION.find(g => g.id === gameId);
+      const ctx = { CONTROL_API, parashaLabel };
 
       if (def && def.js && def.css) {
         bodyEl.innerHTML = "טוען...";
 
-        await loadCssOnce(def.css);
-        await loadScriptOnce(def.js);
+        try {
+          await loadCssOnce(def.css);
+          await loadScriptOnce(def.js);
 
-        const reg = window.ParashaGames?.registry;
-        const factory = reg && reg.get(gameId);
+          const reg = window.ParashaGames?.registry;
+          const regValue = reg && reg.get(gameId);
 
-        if (!factory) {
-          bodyEl.innerHTML = "שגיאה בטעינת המשחק (registry חסר).";
+          if (!regValue) {
+            bodyEl.innerHTML = "שגיאה בטעינת המשחק (registry חסר).";
+            controllers.set(gameId, { reset: () => {} });
+            return;
+          }
+
+          const module = resolveModule(regValue, ctx);
+
+          if (!module || typeof module.init !== "function") {
+            bodyEl.innerHTML = "שגיאה בטעינת המשחק (module.init חסר).";
+            controllers.set(gameId, { reset: () => {} });
+            return;
+          }
+
+          const ctrl = await module.init(bodyEl, ctx);
+          controllers.set(gameId, ctrl || { reset: () => {} });
+        } catch (err) {
+          bodyEl.innerHTML = "שגיאה בטעינת המשחק.";
           controllers.set(gameId, { reset: () => {} });
-          return;
         }
-
-        const ctrl = await factory({ CONTROL_API, parashaLabel }).init(bodyEl);
-        controllers.set(gameId, ctrl || { reset: () => {} });
         return;
       }
 
