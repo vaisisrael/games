@@ -1,4 +1,5 @@
-/* games.css – Core accordion "premium" UI (no memory/puzzle styles) */
+/* games.css – Core accordion "premium" UI (no memory/puzzle styles)
+   Hardened for Blogger themes that override buttons/typography */
 
 [data-parasha-games]{
   --pg-bg: #f6f7fb;
@@ -10,65 +11,81 @@
   --pg-shadow: 0 10px 25px rgba(0,0,0,.08);
   --pg-shadow2: 0 14px 28px rgba(0,0,0,.10);
 
-  font-family: system-ui, -apple-system, "Segoe UI", "Rubik", Arial, "Noto Sans Hebrew", "Heebo", sans-serif;
-  color: var(--pg-text);
-}
-
-/* Outer wrapper – makes the whole area look like a component */
-[data-parasha-games]{
-  display: block;
+  display: block !important;
+  font-family: system-ui, -apple-system, "Segoe UI", "Rubik", Arial, "Noto Sans Hebrew", "Heebo", sans-serif !important;
+  color: var(--pg-text) !important;
 }
 
 /* Accordion item */
 [data-parasha-games] .game{
-  border: 1px solid var(--pg-border);
-  border-radius: 16px;
-  margin: 10px 0;
-  overflow: hidden;
-  background: linear-gradient(180deg, var(--pg-bg), #fff);
-  box-shadow: var(--pg-shadow);
+  border: 1px solid var(--pg-border) !important;
+  border-radius: 16px !important;
+  margin: 10px 0 !important;
+  overflow: hidden !important;
+  background: linear-gradient(180deg, var(--pg-bg), #fff) !important;
+  box-shadow: var(--pg-shadow) !important;
 }
 
-/* Title button */
+/* Title button – themes LOVE to override buttons, so we neutralize aggressively */
 [data-parasha-games] .game-toggle{
-  width: 100%;
-  padding: 12px 14px;
-  font-weight: 900;
-  font-size: 16px;
-  cursor: pointer;
-  border: 0;
-  background: transparent;
-  color: var(--pg-text);
+  width: 100% !important;
 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
+  /* typography */
+  font-family: inherit !important;
+  font-weight: 900 !important;
+  font-size: 16px !important;
+  line-height: 1.25 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
 
-  -webkit-appearance: none;
-  appearance: none;
+  /* layout */
+  padding: 12px 14px !important;
+  cursor: pointer !important;
 
-  transition: background .12s ease, box-shadow .12s ease;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
+
+  /* reset theme button styles */
+  border: 0 !important;
+  outline: none !important;
+  background: transparent !important;
+  color: var(--pg-text) !important;
+  box-shadow: none !important;
+
+  -webkit-appearance: none !important;
+  appearance: none !important;
+
+  transition: background .12s ease, box-shadow .12s ease, filter .12s ease !important;
 }
 
 [data-parasha-games] .game-toggle:hover{
-  background: rgba(0,0,0,.03);
+  background: rgba(0,0,0,.03) !important;
 }
 
-/* When opened – subtle highlight (we’ll set aria-expanded in JS later if you want) */
+[data-parasha-games] .game-toggle:active{
+  filter: brightness(.98) !important;
+}
+
+/* Focus ring */
 [data-parasha-games] .game-toggle:focus-visible{
-  outline: 3px solid rgba(37,99,235,.22);
-  outline-offset: 2px;
+  outline: 3px solid rgba(37,99,235,.22) !important;
+  outline-offset: 2px !important;
 }
 
 /* Body */
 [data-parasha-games] .game-body{
-  padding: 12px;
-  background: rgba(255,255,255,.78);
-  border-top: 1px solid rgba(0,0,0,.06);
+  padding: 12px !important;
+  background: rgba(255,255,255,.78) !important;
+  border-top: 1px solid rgba(0,0,0,.06) !important;
+
+  font-family: inherit !important;
+  color: inherit !important;
 }
 
 /* Make placeholders look neat */
 [data-parasha-games] .game-body > div{
-  font-family: inherit;
+  font-family: inherit !important;
+  color: inherit !important;
 }
