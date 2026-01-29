@@ -1,7 +1,7 @@
 (() => {
   "use strict";
 
-  // ====== SEEDED SHUFFLE ======
+  // ===== Seeded shuffle (deterministic per parasha + nonce) =====
   function hashStringToUint32(str) {
     let h = 2166136261;
     for (let i = 0; i < str.length; i++) {
@@ -12,7 +12,7 @@
   }
   function mulberry32(seed) {
     return function () {
-      let t = (seed += 0x6d2b79f5);
+      let t = (seed += 0x6D2B79F5);
       t = Math.imul(t ^ (t >>> 15), t | 1);
       t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
       return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
@@ -28,20 +28,20 @@
     return a;
   }
 
+  // ===== Helpers =====
   function parseCsvList(s) {
     return String(s || "")
       .split(",")
-      .map((x) => x.trim())
+      .map(x => x.trim())
       .filter(Boolean);
   }
-
   function clampEven(n) {
     n = Number(n || 0);
     if (!Number.isFinite(n) || n < 2) return 0;
     return n % 2 === 0 ? n : n - 1;
   }
-
   function bestCols(n) {
+    // try to be as square as possible
     const target = Math.sqrt(n);
     let best = 1;
     let bestScore = Infinity;
@@ -56,7 +56,6 @@
     }
     return best;
   }
-
   function formatTime(ms) {
     const totalSec = Math.floor(ms / 1000);
     const mm = String(Math.floor(totalSec / 60)).padStart(2, "0");
@@ -64,279 +63,287 @@
     return `${mm}:${ss}`;
   }
 
-  async function initMemoryGame({ CONTROL_API, parashaLabel }, bodyEl) {
-    const url = `${CONTROL_API}?mode=memory&parasha=${encodeURIComponent(parashaLabel)}`;
-    const res = await fetch(url);
-    const data = await res.json();
+  // ===== Register =====
+  window.ParashaGamesRegister("memory", {
+    init: async (rootEl, ctx) => {
+      const { CONTROL_API, parashaLabel } = ctx;
 
-    if (!data.row) {
-      bodyEl.innerHTML = `<div>לא נמצאו נתוני זיכרון לפרשה זו.</div>`;
-      return { reset: () => {} };
-    }
+      const url = `${CONTROL_API}?mode=memory&parasha=${encodeURIComponent(parashaLabel)}`;
+      const res = await fetch(url);
+      const data = await res.json();
 
-    const symbols = parseCsvList(data.row.symbols);
-    const alts = parseCsvList(data.row.alts);
+      if (!data || !data.ok || !data.row) {
+        rootEl.innerHTML = `<div>לא נמצאו נתוני זיכרון לפרשה זו.</div>`;
+        return { reset: () => {} };
+      }
 
-    const model = {
-      parashaLabel,
-      symbols,
-      alts,
-      level1: Number(data.row.level1 || 0),
-      level2: Number(data.row.level2 || 0),
-    };
+      const row = data.row;
+      const symbols = parseCsvList(row.symbols);
+      const alts = parseCsvList(row.alts);
 
-    const hasLevel1 = clampEven(model.level1) > 0;
-    const hasLevel2 = clampEven(model.level2) > 0;
-    const showLevelButtons = hasLevel1 && hasLevel2;
+      const level1 = Number(row.level1 || 0);
+      const level2 = Number(row.level2 || 0);
 
-    bodyEl.innerHTML = `
-      <div class="mem-topbar">
-        ${
-          showLevelButtons
-            ? `<button type="button" class="mem-level" data-level="1" aria-pressed="true">רמה 1</button>`
-            : ``
-        }
-        ${
-          showLevelButtons
-            ? `<button type="button" class="mem-level" data-level="2" aria-pressed="false">רמה 2</button>`
-            : ``
-        }
-        <button type="button" class="mem-reset">איפוס</button>
+      const hasL1 = clampEven(level1) > 0;
+      const hasL2 = clampEven(level2) > 0;
+      const showLevels = hasL1 && hasL2;
 
-        <div class="mem-stats" aria-live="polite">
-          <span class="mem-tries"></span>
-          <span class="mem-matches"></span>
-          <span class="mem-time"></span>
+      rootEl.innerHTML = `
+        <div class="mem-wrap">
+          <div class="mem-cardbox">
+
+            <div class="mem-topbar">
+              <div class="mem-stats" aria-live="polite">
+                <span class="mem-tries">ניסיונות: 0</span>
+                <span class="mem-matches">התאמות: 0/0</span>
+                <span class="mem-time">זמן: 00:00</span>
+              </div>
+
+              <div class="mem-actions">
+                ${
+                  showLevels
+                    ? `<button type="button" class="mem-btn mem-level" data-level="1" aria-pressed="true">רמה 1</button>
+                       <button type="button" class="mem-btn mem-level" data-level="2" aria-pressed="false">רמה 2</button>`
+                    : ``
+                }
+                <button type="button" class="mem-btn mem-reset">איפוס</button>
+              </div>
+            </div>
+
+            <div class="mem-banner" hidden></div>
+            <div class="mem-grid" role="grid"></div>
+
+          </div>
         </div>
-      </div>
+      `;
 
-      <div class="mem-banner" aria-live="polite"></div>
-      <div class="mem-grid" role="grid"></div>
-    `;
+      const grid = rootEl.querySelector(".mem-grid");
+      const banner = rootEl.querySelector(".mem-banner");
 
-    const grid = bodyEl.querySelector(".mem-grid");
-    const btnReset = bodyEl.querySelector(".mem-reset");
-    const btnL1 = bodyEl.querySelector('.mem-level[data-level="1"]');
-    const btnL2 = bodyEl.querySelector('.mem-level[data-level="2"]');
+      const elTries = rootEl.querySelector(".mem-tries");
+      const elMatches = rootEl.querySelector(".mem-matches");
+      const elTime = rootEl.querySelector(".mem-time");
 
-    const elTries = bodyEl.querySelector(".mem-tries");
-    const elMatches = bodyEl.querySelector(".mem-matches");
-    const elTime = bodyEl.querySelector(".mem-time");
-    const banner = bodyEl.querySelector(".mem-banner");
+      const btnReset = rootEl.querySelector(".mem-reset");
+      const btnL1 = rootEl.querySelector('.mem-level[data-level="1"]');
+      const btnL2 = rootEl.querySelector('.mem-level[data-level="2"]');
 
-    let state = null;
-    let shuffleNonce = 0;
+      let state = null;
 
-    let timerStartMs = 0;
-    let timerIntervalId = null;
+      // shuffle changes on every reset
+      let shuffleNonce = 0;
 
-    function stopTimer() {
-      if (timerIntervalId) clearInterval(timerIntervalId);
-      timerIntervalId = null;
-    }
-    function startTimer() {
-      stopTimer();
-      timerStartMs = Date.now();
-      timerIntervalId = setInterval(updateStats, 1000);
-    }
+      // timer
+      let timerStartMs = 0;
+      let timerIntervalId = null;
 
-    function setActiveLevel(levelNum) {
-      if (!showLevelButtons) return;
-      if (btnL1) btnL1.setAttribute("aria-pressed", levelNum === 1 ? "true" : "false");
-      if (btnL2) btnL2.setAttribute("aria-pressed", levelNum === 2 ? "true" : "false");
-    }
-
-    function showBanner(text) {
-      banner.textContent = text || "";
-    }
-
-    function buildDeck(cardCount) {
-      const maxPairs = Math.min(model.symbols.length, model.alts.length);
-      const pairsNeeded = Math.min(cardCount / 2, maxPairs);
-
-      const items = [];
-      for (let i = 0; i < pairsNeeded; i++) {
-        items.push({ key: String(i), symbol: model.symbols[i], alt: model.alts[i] });
+      function stopTimer() {
+        if (timerIntervalId) clearInterval(timerIntervalId);
+        timerIntervalId = null;
+      }
+      function startTimer() {
+        stopTimer();
+        timerStartMs = Date.now();
+        timerIntervalId = setInterval(updateStats, 1000);
       }
 
-      const deck = [];
-      items.forEach((it) => {
-        deck.push({ ...it, uid: it.key + "-a" });
-        deck.push({ ...it, uid: it.key + "-b" });
-      });
+      function showBanner(text) {
+        banner.textContent = text;
+        banner.hidden = false;
+        banner.classList.add("is-on");
 
-      const seed = `${model.parashaLabel}|${cardCount}|memory|${shuffleNonce}`;
-      return seededShuffle(deck, seed);
-    }
-
-    function updateStats() {
-      if (!state) return;
-      const elapsed = timerStartMs ? Date.now() - timerStartMs : 0;
-      elTries.textContent = `ניסיונות: ${state.tries}`;
-      elMatches.textContent = `התאמות: ${state.matchedPairs}/${state.totalPairs}`;
-      elTime.textContent = `זמן: ${formatTime(elapsed)}`;
-    }
-
-    function setCardFace(btn, faceUp) {
-      const card = state.byUid.get(btn.dataset.uid);
-      if (!card) return;
-
-      if (faceUp) {
-        btn.classList.remove("mem-face-down");
-        btn.textContent = card.symbol;
-        btn.setAttribute("aria-label", card.alt);
-        btn.setAttribute("aria-pressed", "true");
-      } else {
-        btn.classList.add("mem-face-down");
-        btn.textContent = "";
-        btn.setAttribute("aria-label", "קלף סגור");
-        btn.setAttribute("aria-pressed", "false");
+        // hide after a moment
+        setTimeout(() => {
+          banner.classList.remove("is-on");
+          setTimeout(() => (banner.hidden = true), 180);
+        }, 950);
       }
-    }
 
-    function lockCard(btn, locked) {
-      btn.setAttribute("aria-disabled", locked ? "true" : "false");
-      btn.disabled = !!locked;
-    }
+      function setActiveLevel(levelNum) {
+        if (!showLevels) return;
+        if (btnL1) btnL1.setAttribute("aria-pressed", levelNum === 1 ? "true" : "false");
+        if (btnL2) btnL2.setAttribute("aria-pressed", levelNum === 2 ? "true" : "false");
+      }
 
-    function markCompletedIfNeeded() {
-      if (!state) return;
-      if (state.matchedPairs >= state.totalPairs) {
+      function buildDeck(cardCount) {
+        const maxPairs = Math.min(symbols.length, alts.length);
+        const pairsNeeded = Math.min(cardCount / 2, maxPairs);
+
+        const items = [];
+        for (let i = 0; i < pairsNeeded; i++) {
+          items.push({ key: String(i), symbol: symbols[i], alt: alts[i] });
+        }
+
+        const deck = [];
+        items.forEach(it => {
+          deck.push({ ...it, uid: it.key + "-a" });
+          deck.push({ ...it, uid: it.key + "-b" });
+        });
+
+        const seed = `${parashaLabel}|${cardCount}|memory|${shuffleNonce}`;
+        return seededShuffle(deck, seed);
+      }
+
+      function updateStats() {
+        if (!state) return;
+        const elapsed = timerStartMs ? Date.now() - timerStartMs : 0;
+        elTries.textContent = `ניסיונות: ${state.tries}`;
+        elMatches.textContent = `התאמות: ${state.matchedPairs}/${state.totalPairs}`;
+        elTime.textContent = `זמן: ${formatTime(elapsed)}`;
+      }
+
+      function setCardFace(btn, faceUp) {
+        const card = state.byUid.get(btn.dataset.uid);
+        if (!card) return;
+
+        if (faceUp) {
+          btn.classList.remove("mem-face-down");
+          btn.textContent = card.symbol;
+          btn.setAttribute("aria-label", card.alt);
+          btn.setAttribute("aria-pressed", "true");
+        } else {
+          btn.classList.add("mem-face-down");
+          btn.textContent = "פרשת השבוע בניחותא";
+          btn.setAttribute("aria-label", "קלף סגור");
+          btn.setAttribute("aria-pressed", "false");
+        }
+      }
+
+      function lockCard(btn, locked) {
+        btn.setAttribute("aria-disabled", locked ? "true" : "false");
+        btn.disabled = !!locked;
+      }
+
+      function onCompleted() {
         stopTimer();
         updateStats();
         showBanner("🎉 כל הכבוד! סיימת את המשחק!");
       }
-    }
 
-    function reset(requestedLevel) {
-      const levelNum = showLevelButtons ? (requestedLevel === 2 ? 2 : 1) : 1;
-      const wanted = levelNum === 2 ? model.level2 : model.level1;
-      const cardCount = clampEven(wanted);
+      function reset(requestedLevel) {
+        const levelNum = showLevels ? (requestedLevel === 2 ? 2 : 1) : 1;
+        const wanted = levelNum === 2 ? level2 : level1;
+        const cardCount = clampEven(wanted);
 
-      if (!cardCount) {
-        state = null;
+        if (!cardCount) {
+          state = null;
+          grid.innerHTML = "";
+          elTries.textContent = "";
+          elMatches.textContent = "אין נתונים מספיקים.";
+          elTime.textContent = "";
+          stopTimer();
+          banner.hidden = true;
+          return;
+        }
+
+        shuffleNonce += 1;
+
+        const deck = buildDeck(cardCount);
+        const cols = bestCols(deck.length);
+
+        state = {
+          level: levelNum,
+          deck,
+          open: [],
+          lock: false,
+          tries: 0,
+          matchedPairs: 0,
+          totalPairs: deck.length / 2,
+          matchedUids: new Set(),
+          byUid: new Map(deck.map(c => [c.uid, c]))
+        };
+
+        grid.style.gridTemplateColumns = `repeat(${cols}, var(--cell))`;
         grid.innerHTML = "";
-        elTries.textContent = "";
-        elMatches.textContent = "אין נתונים מספיקים לרמת המשחק.";
-        elTime.textContent = "";
-        showBanner("");
-        stopTimer();
-        return;
+
+        deck.forEach(card => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "mem-card mem-face-down";
+          btn.dataset.uid = card.uid;
+          btn.setAttribute("role", "gridcell");
+          setCardFace(btn, false);
+          grid.appendChild(btn);
+        });
+
+        setActiveLevel(levelNum);
+        banner.hidden = true;
+        startTimer();
+        updateStats();
       }
 
-      shuffleNonce += 1;
+      function flip(btn) {
+        if (!state || state.lock) return;
+        if (btn.disabled) return;
 
-      const deck = buildDeck(cardCount);
-      const cols = bestCols(deck.length);
+        const uid = btn.dataset.uid;
+        if (state.matchedUids.has(uid)) return;
+        if (state.open.includes(uid)) return;
 
-      state = {
-        level: levelNum,
-        deck,
-        open: [],
-        lock: false,
-        tries: 0,
-        matchedPairs: 0,
-        totalPairs: deck.length / 2,
-        matchedUids: new Set(),
-        byUid: new Map(deck.map((c) => [c.uid, c])),
-      };
+        setCardFace(btn, true);
+        state.open.push(uid);
 
-      grid.style.setProperty("--card", cols >= 6 ? "62px" : cols === 5 ? "66px" : "74px");
-      grid.style.gridTemplateColumns = `repeat(${cols}, var(--card))`;
-      grid.style.gap = "10px";
-      grid.innerHTML = "";
-      showBanner("");
+        if (state.open.length < 2) return;
 
-      deck.forEach((card) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "mem-card mem-face-down";
-        btn.dataset.uid = card.uid;
-        btn.setAttribute("role", "gridcell");
-        setCardFace(btn, false);
-        grid.appendChild(btn);
+        const [u1, u2] = state.open;
+        const c1 = state.byUid.get(u1);
+        const c2 = state.byUid.get(u2);
+
+        state.tries += 1;
+
+        const buttons = Array.from(grid.querySelectorAll(".mem-card"));
+        const b1 = buttons.find(b => b.dataset.uid === u1);
+        const b2 = buttons.find(b => b.dataset.uid === u2);
+
+        if (c1 && c2 && c1.key === c2.key) {
+          // match
+          state.matchedUids.add(u1);
+          state.matchedUids.add(u2);
+          state.matchedPairs += 1;
+
+          if (b1) lockCard(b1, true);
+          if (b2) lockCard(b2, true);
+
+          state.open = [];
+          updateStats();
+
+          // ✅ match banner (alt labels)
+          showBanner(`✨ יפה! ${c1.alt} — ${c2.alt}`);
+
+          if (state.matchedPairs >= state.totalPairs) onCompleted();
+          return;
+        }
+
+        // no match
+        state.lock = true;
+        updateStats();
+
+        setTimeout(() => {
+          if (b1) setCardFace(b1, false);
+          if (b2) setCardFace(b2, false);
+          state.open = [];
+          state.lock = false;
+        }, 700);
+      }
+
+      // events
+      grid.addEventListener("click", (ev) => {
+        const btn = ev.target.closest(".mem-card");
+        if (!btn) return;
+        flip(btn);
       });
 
-      setActiveLevel(levelNum);
-      startTimer();
-      updateStats();
-    }
+      btnReset.addEventListener("click", () => reset(state?.level || 1));
 
-    function flip(btn) {
-      if (!state || state.lock) return;
-      if (btn.disabled) return;
-
-      const uid = btn.dataset.uid;
-      if (state.matchedUids.has(uid)) return;
-      if (state.open.includes(uid)) return;
-
-      setCardFace(btn, true);
-      state.open.push(uid);
-
-      if (state.open.length < 2) return;
-
-      const [u1, u2] = state.open;
-      const c1 = state.byUid.get(u1);
-      const c2 = state.byUid.get(u2);
-
-      state.tries += 1;
-
-      const buttons = Array.from(grid.querySelectorAll(".mem-card"));
-      const b1 = buttons.find((b) => b.dataset.uid === u1);
-      const b2 = buttons.find((b) => b.dataset.uid === u2);
-
-      if (c1 && c2 && c1.key === c2.key) {
-        state.matchedUids.add(u1);
-        state.matchedUids.add(u2);
-        state.matchedPairs += 1;
-        if (b1) lockCard(b1, true);
-        if (b2) lockCard(b2, true);
-        state.open = [];
-        updateStats();
-        showBanner(`✨ יפה! ${c1.symbol} — ${c1.alt}`);
-        markCompletedIfNeeded();
-        return;
+      if (showLevels) {
+        btnL1.addEventListener("click", () => reset(1));
+        btnL2.addEventListener("click", () => reset(2));
       }
 
-      state.lock = true;
-      updateStats();
+      // init
+      reset(1);
 
-      setTimeout(() => {
-        if (b1) setCardFace(b1, false);
-        if (b2) setCardFace(b2, false);
-        state.open = [];
-        state.lock = false;
-      }, 650);
+      return { reset: () => reset(1) };
     }
-
-    grid.addEventListener("click", (ev) => {
-      const btn = ev.target.closest(".mem-card");
-      if (!btn) return;
-      flip(btn);
-    });
-
-    btnReset.addEventListener("click", () => reset(state?.level || 1));
-    if (showLevelButtons) {
-      btnL1.addEventListener("click", () => reset(1));
-      btnL2.addEventListener("click", () => reset(2));
-    }
-
-    // init
-    reset(1);
-
-    return { reset: () => reset(1) };
-  }
-
-  // ====== REGISTER ======
-  // This guarantees registry exists even if games.js loaded before/after
-  window.ParashaGames = window.ParashaGames || {};
-  window.ParashaGames.registry = window.ParashaGames.registry || new Map();
-
-  const register = window.ParashaGamesRegister
-    ? window.ParashaGamesRegister
-    : (id, factory) => window.ParashaGames.registry.set(id, factory);
-
-  register("memory", ({ CONTROL_API, parashaLabel }) => ({
-    init: async (bodyEl) => initMemoryGame({ CONTROL_API, parashaLabel }, bodyEl),
-  }));
+  });
 })();
