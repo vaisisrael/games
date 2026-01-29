@@ -5,7 +5,8 @@
   const CONTROL_API =
     "https://script.google.com/macros/s/AKfycbzoUoopq8rv8PdN2qe1DZXF73G5Mo8hBgdUqTef-v6z9ukSRua8HswwoyhHCm4fWktHdg/exec";
 
-  const BUILD_VERSION = "2026-01-29-200";
+  // bump when you change files
+  const BUILD_VERSION = "2026-01-29-900";
 
   const GAMES_DEFINITION = [
     { id: "memory", title: "🧠 משחק זיכרון" },
@@ -25,21 +26,13 @@
     return texts.find(t => re.test(t)) || null;
   }
 
-  // ====== registry ======
-  function getRegistry() {
-    window.ParashaGames = window.ParashaGames || {};
-    window.ParashaGames._registry = window.ParashaGames._registry || new Map();
-    return window.ParashaGames._registry;
-  }
-
-  // ====== asset loading (with cache-bust) ======
+  // ====== ASSET LOADER ======
   function baseUrlForThisScript() {
     const s = document.currentScript && document.currentScript.src;
     if (!s) return "https://vaisisrael.github.io/games/";
     return s.substring(0, s.lastIndexOf("/") + 1);
   }
-
-  const loadedAssets = new Set();
+  const loaded = new Set();
 
   function withVersion(url) {
     const u = new URL(url, window.location.href);
@@ -50,8 +43,8 @@
   function loadCssOnce(fileName) {
     return new Promise((resolve, reject) => {
       const url = withVersion(baseUrlForThisScript() + fileName);
-      if (loadedAssets.has(url)) return resolve();
-      loadedAssets.add(url);
+      if (loaded.has(url)) return resolve();
+      loaded.add(url);
 
       const link = document.createElement("link");
       link.rel = "stylesheet";
@@ -65,8 +58,8 @@
   function loadScriptOnce(fileName) {
     return new Promise((resolve, reject) => {
       const url = withVersion(baseUrlForThisScript() + fileName);
-      if (loadedAssets.has(url)) return resolve();
-      loadedAssets.add(url);
+      if (loaded.has(url)) return resolve();
+      loaded.add(url);
 
       const script = document.createElement("script");
       script.src = url;
@@ -77,9 +70,17 @@
     });
   }
 
-  // ====== DOM BUILD ======
+  // ===== registry (for game modules) =====
+  function getRegistry() {
+    window.ParashaGames = window.ParashaGames || {};
+    window.ParashaGames._registry = window.ParashaGames._registry || new Map();
+    return window.ParashaGames._registry;
+  }
+
+  // ====== DOM BUILD (accordion) ======
   function buildGames(root, activeIds) {
     root.innerHTML = "";
+    root.classList.add("pg-accordion"); // ✅ anchor class for styling
 
     GAMES_DEFINITION
       .filter(g => activeIds.includes(g.id))
@@ -97,65 +98,7 @@
       });
   }
 
-  // ====== HARDENED ACCORDION STYLES (inline) ======
-  function applyAccordionInlineStyles(root) {
-    // These inline styles override aggressive Blogger theme CSS.
-    const container = root; // [data-parasha-games]
-
-    // set safe typography on container (inline)
-    container.style.fontFamily =
-      'system-ui, -apple-system, "Segoe UI", "Rubik", Arial, "Noto Sans Hebrew", "Heebo", sans-serif';
-    container.style.color = "#1f2937";
-    container.style.display = "block";
-
-    root.querySelectorAll(".game").forEach(game => {
-      game.style.border = "1px solid rgba(0,0,0,.10)";
-      game.style.borderRadius = "16px";
-      game.style.margin = "10px 0";
-      game.style.overflow = "hidden";
-      game.style.background = "linear-gradient(180deg, #f6f7fb, #fff)";
-      game.style.boxShadow = "0 10px 25px rgba(0,0,0,.08)";
-
-      const btn = game.querySelector(".game-toggle");
-      const body = game.querySelector(".game-body");
-
-      if (btn) {
-        btn.style.width = "100%";
-        btn.style.padding = "12px 14px";
-        btn.style.fontWeight = "900";
-        btn.style.fontSize = "16px";
-        btn.style.lineHeight = "1.25";
-        btn.style.border = "0";
-        btn.style.outline = "none";
-        btn.style.background = "transparent";
-        btn.style.color = "#1f2937";
-        btn.style.cursor = "pointer";
-
-        btn.style.display = "flex";
-        btn.style.alignItems = "center";
-        btn.style.justifyContent = "center";
-        btn.style.gap = "8px";
-      }
-
-      if (body) {
-        body.style.padding = "12px";
-        body.style.background = "rgba(255,255,255,.78)";
-        body.style.borderTop = "1px solid rgba(0,0,0,.06)";
-      }
-    });
-
-    // lightweight hover (no transform) – via events (since theme may override :hover)
-    root.querySelectorAll(".game-toggle").forEach(btn => {
-      btn.addEventListener("mouseenter", () => {
-        btn.style.background = "rgba(0,0,0,.03)";
-      });
-      btn.addEventListener("mouseleave", () => {
-        btn.style.background = "transparent";
-      });
-    });
-  }
-
-  // ====== ACCORDION ======
+  // ====== ACCORDION (single open) ======
   function initAccordion(root, onOpenChange) {
     let openBody = null;
 
@@ -164,6 +107,7 @@
       const body = game.querySelector(".game-body");
 
       btn.addEventListener("click", async () => {
+        // close previous
         if (openBody && openBody !== body) {
           openBody.style.display = "none";
           await onOpenChange(openBody, false);
@@ -173,7 +117,8 @@
         body.style.display = open ? "none" : "block";
         openBody = body.style.display === "block" ? body : null;
 
-        if (openBody) await onOpenChange(openBody, true);
+        if (open) await onOpenChange(body, false);
+        else await onOpenChange(body, true);
       });
     });
   }
@@ -183,10 +128,12 @@
     const root = document.querySelector("[data-parasha-games]");
     if (!root) return;
 
+    // make sure accordion css is present (cache-busted)
+    await loadCssOnce("games.css");
+
     const parashaLabel = extractParashaLabel();
     if (!parashaLabel) return;
 
-    // Control row
     const res = await fetch(`${CONTROL_API}?parasha=${encodeURIComponent(parashaLabel)}`);
     const data = await res.json();
     if (!data.row) return;
@@ -199,13 +146,20 @@
 
     buildGames(root, activeIds);
 
-    // ✅ force accordion premium look regardless of theme
-    applyAccordionInlineStyles(root);
-
-    const controllers = new Map(); // id -> controller
+    const controllers = new Map();
     const registry = getRegistry();
 
-    async function openGame(gameId, bodyEl) {
+    async function onOpenChange(bodyEl, isOpen) {
+      const gameId = bodyEl.closest(".game")?.dataset?.game || "";
+      if (!gameId) return;
+
+      if (!isOpen) {
+        const ctrl = controllers.get(gameId);
+        if (ctrl && typeof ctrl.reset === "function") ctrl.reset();
+        return;
+      }
+
+      // already initialized
       if (controllers.has(gameId)) return;
 
       if (gameId === "memory") {
@@ -240,20 +194,6 @@
 
       bodyEl.innerHTML = `<div>(כאן ייבנה המשחק: ${gameId})</div>`;
       controllers.set(gameId, { reset: () => {} });
-    }
-
-    async function onOpenChange(bodyEl, isOpen) {
-      const gameEl = bodyEl.closest(".game");
-      const gameId = gameEl?.dataset?.game || "";
-      if (!gameId) return;
-
-      if (!isOpen) {
-        const ctrl = controllers.get(gameId);
-        if (ctrl && typeof ctrl.reset === "function") ctrl.reset();
-        return;
-      }
-
-      await openGame(gameId, bodyEl);
     }
 
     initAccordion(root, onOpenChange);
