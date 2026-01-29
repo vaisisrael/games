@@ -20,19 +20,31 @@
   padding: 12px;
 }
 
+/* ===== Topbar layout (fixed sides, RTL-safe) ===== */
 [data-parasha-games] .mem-topbar{
   display:flex;
   align-items:center;
-  justify-content: space-between;
   gap:10px;
   flex-wrap: wrap;
   margin-bottom: 10px;
 }
 
+/* actions (buttons) – stay on the RIGHT in RTL pages */
 [data-parasha-games] .mem-actions{
   display:flex;
   align-items:center;
   gap:8px;
+}
+
+/* stats – pushed to the opposite edge (LEFT in RTL) */
+[data-parasha-games] .mem-stats{
+  margin-inline-start: auto;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight: 800;
+  color: var(--m-muted);
+  white-space: nowrap;
 }
 
 [data-parasha-games] .mem-actions .mem-btn{
@@ -55,13 +67,9 @@
   box-shadow: 0 6px 14px rgba(0,0,0,.06);
 }
 
-[data-parasha-games] .mem-stats{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-weight: 800;
-  color: var(--m-muted);
-  white-space: nowrap;
+[data-parasha-games] .mem-actions .mem-btn:disabled{
+  opacity: .55;
+  cursor: default;
 }
 
 [data-parasha-games] .mem-banner{
