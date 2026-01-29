@@ -1,80 +1,73 @@
-/* memory.css – styles for memory game only */
+/* memory.css – Memory game UI */
 
+[data-parasha-games]{
+  --pg-surface: #ffffff;
+  --pg-border: rgba(0,0,0,.10);
+  --pg-text: #1f2937;
+  --pg-muted: rgba(17,24,39,.58);
+  --pg-shadow: 0 10px 25px rgba(0,0,0,.08);
+  --pg-shadow2: 0 14px 28px rgba(0,0,0,.10);
+}
+
+/* Top bar */
 [data-parasha-games] .mem-topbar{
   display: flex;
   align-items: center;
-  justify-content: flex-start;
-  flex-wrap: wrap;
   gap: 6px;
+  flex-wrap: wrap;
   margin-bottom: 10px;
-  font-family: inherit;
 }
 
 [data-parasha-games] .mem-topbar button{
   font-family: inherit;
   cursor: pointer;
-
   border: 1px solid var(--pg-border);
   background: linear-gradient(90deg, rgba(37,99,235,.10), rgba(124,58,237,.08));
   border-radius: 12px;
-
   padding: 7px 10px;
-  font-weight: 800;
+  font-weight: 900;
   font-size: 14px;
-  color: var(--pg-text);
-
+  color: rgba(17,24,39,.92);
   box-shadow: 0 6px 14px rgba(0,0,0,.06);
-  transition: box-shadow .12s ease, border-color .12s ease, filter .12s ease;
+  transition: box-shadow .12s ease, border-color .12s ease;
 }
 
 [data-parasha-games] .mem-topbar button:hover{
   box-shadow: 0 10px 22px rgba(0,0,0,.08);
-  border-color: rgba(37,99,235,.30);
+  border-color: rgba(37,99,235,.35);
 }
 
 [data-parasha-games] .mem-level[aria-pressed="true"]{
   border-color: rgba(37,99,235,.55);
   box-shadow: 0 10px 22px rgba(37,99,235,.12);
-  filter: saturate(1.08);
 }
 
+/* Stats (tries + time + matched) */
 [data-parasha-games] .mem-stats{
   margin-inline-start: auto;
+  color: var(--pg-muted);
+  font-weight: 900;
+  font-size: 14px;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+  font-feature-settings: "tnum" 1;
   display: inline-flex;
   align-items: center;
   gap: 10px;
-
-  font-size: 14px;
-  font-weight: 700;
-  color: var(--pg-muted);
-
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum" 1;
-  white-space: nowrap;
 }
 
-/* order: ניסיונות, זמן, התאמות */
-[data-parasha-games] .mem-tries{ order: 1; }
-[data-parasha-games] .mem-time{  order: 2; }
-[data-parasha-games] .mem-matches{order: 3; }
-
-/* Banner for match messages */
+/* Match banner */
 [data-parasha-games] .mem-banner{
-  min-height: 30px;
-  margin: 6px 0 12px 0;
+  min-height: 28px;
+  margin: 0 0 10px 0;
   padding: 6px 10px;
-
   border-radius: 12px;
   border: 1px solid rgba(0,0,0,.06);
-  background: rgba(255,255,255,.72);
-
-  color: rgba(17,24,39,.80);
-  font-weight: 700;
-  font-size: 13px;
-
+  background: rgba(255,255,255,.76);
   box-shadow: 0 8px 18px rgba(0,0,0,.05);
-  backdrop-filter: blur(6px);
-
+  color: rgba(17,24,39,.82);
+  font-weight: 900;
+  font-size: 13px;
   opacity: 0;
   transform: translateY(2px);
   transition: opacity .18s ease, transform .18s ease;
@@ -85,93 +78,62 @@
   transform: translateY(0);
 }
 
-/* Memory grid */
+/* Grid */
 [data-parasha-games] .mem-grid{
-  --card: clamp(64px, 9vw, 92px);
-
   display: grid;
-  gap: 12px;
-
-  width: fit-content;
-  margin-inline: auto;
-
-  grid-template-columns: repeat(4, var(--card)); /* JS קובע בפועל */
+  gap: 10px; /* same for rows/cols */
 }
 
+/* Cards */
 [data-parasha-games] .mem-card{
-  width: var(--card);
   aspect-ratio: 1 / 1;
-
-  border-radius: 14px;
+  width: 100%;
+  border-radius: 16px;
   border: 1px solid var(--pg-border);
-  background: #fff;
+  background:
+    radial-gradient(120% 120% at 12% 12%, rgba(37,99,235,.12), transparent 60%),
+    radial-gradient(120% 120% at 90% 90%, rgba(124,58,237,.10), transparent 55%),
+    var(--pg-surface);
   box-shadow: 0 8px 18px rgba(0,0,0,.07);
-
   cursor: pointer;
-  user-select: none;
-
   display: grid;
   place-items: center;
-
-  font-weight: 800;
-  font-size: clamp(18px, 3.2vw, 28px);
+  user-select: none;
+  font-weight: 900;
+  font-size: clamp(18px, 3.2vw, 30px);
   color: var(--pg-text);
-
-  position: relative;
-  overflow: hidden;
-
-  transform-style: preserve-3d;
-  transition: transform .35s ease, box-shadow .12s ease, border-color .12s ease;
-  will-change: transform;
+  transition: box-shadow .12s ease, border-color .12s ease; /* no transform */
 }
 
-/* hover קוסמטי בלבד */
 [data-parasha-games] .mem-card:hover{
   box-shadow: var(--pg-shadow2);
   border-color: rgba(37,99,235,.35);
 }
 
 [data-parasha-games] .mem-card[aria-disabled="true"]{
-  opacity: .55;
+  opacity: 0.55;
   cursor: default;
 }
 
-/* back text */
 [data-parasha-games] .mem-card.mem-face-down{
-  font-size: 0;
+  position: relative;
+  overflow: hidden;
 }
 
-[data-parasha-games] .mem-card::after{
+[data-parasha-games] .mem-card.mem-face-down::before{
   content: "פרשת השבוע בניחותא";
   position: absolute;
   inset: 0;
-
   display: grid;
   place-items: center;
-
-  font-weight: 700;
-  font-size: 12px;
-  color: rgba(17, 24, 39, .35);
+  transform: rotate(-18deg);
+  color: rgba(17,24,39,.20);
+  font-weight: 900;
   letter-spacing: .2px;
-  transform: rotate(-12deg);
-
+  font-size: 13px;
   pointer-events: none;
-  backface-visibility: hidden;
-}
-
-[data-parasha-games] .mem-card:not(.mem-face-down)::after{
-  opacity: 0;
-}
-
-/* flip */
-[data-parasha-games] .mem-card:not(.mem-face-down){
-  transform: rotateY(180deg);
 }
 
 @media (prefers-reduced-motion: reduce){
-  [data-parasha-games] .mem-card,
-  [data-parasha-games] .mem-topbar button,
-  [data-parasha-games] .mem-banner{
-    transition: none;
-  }
+  [data-parasha-games] .mem-banner{ transition:none; }
 }
