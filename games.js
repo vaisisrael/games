@@ -5,16 +5,90 @@
   const CONTROL_API =
     "https://script.google.com/macros/s/AKfycbzoUoopq8rv8PdN2qe1DZXF73G5Mo8hBgdUqTef-v6z9ukSRua8HswwoyhHCm4fWktHdg/exec";
 
-  // ⬅️ כל שינוי בקבצי CSS/JS: הגדל מספר
-  const BUILD_VERSION = "2026-01-29-1100";
+  // 🔥 עדכן בכל שינוי כדי לשבור קאש
+  const BUILD_VERSION = "2026-01-29-core-02";
 
   const GAMES_DEFINITION = [
-    { id: "memory", title: "🧠 משחק זיכרון" },
-    { id: "puzzle", title: "🧩 פאזל" },
+    { id: "memory", title: "🧠 משחק זיכרון", js: "memory.js", css: "memory.css" },
+    { id: "puzzle", title: "🧩 פאזל", js: "puzzle.js", css: "puzzle.css" },
     { id: "truefalse", title: "✅ נכון / ❌ לא נכון" },
     { id: "dragmatch", title: "🔗 גרור והתאם" },
     { id: "emoji", title: "😄 חידת אימוג'ים" }
   ];
+
+  // ====== CSS (accordion only) injected last ======
+  function injectAccordionCssOnce() {
+    const id = "pg-accordion-only-style";
+    const old = document.getElementById(id);
+    if (old) old.remove(); // ensure latest always wins
+
+    const style = document.createElement("style");
+    style.id = id;
+    style.textContent = `
+/* ===== Parasha Games – Accordion (unified in games.js) ===== */
+[data-parasha-games]{
+  --pg-bg: #f6f7fb;
+  --pg-border: rgba(0,0,0,.10);
+  --pg-text: #1f2937;
+  --pg-shadow: 0 10px 25px rgba(0,0,0,.08);
+
+  font-family: system-ui, -apple-system, "Segoe UI", "Rubik", Arial, "Noto Sans Hebrew", "Heebo", sans-serif !important;
+  color: var(--pg-text) !important;
+  display:block;
+}
+
+/* Accordion item */
+[data-parasha-games][data-parasha-games] .game{
+  border: 1px solid var(--pg-border) !important;
+  border-radius: 16px !important;
+  margin: 10px 0 !important;
+  overflow: hidden !important;
+  background: linear-gradient(180deg, var(--pg-bg), #fff) !important;
+  box-shadow: var(--pg-shadow) !important;
+}
+
+/* Title button – hard reset then rebuild */
+[data-parasha-games][data-parasha-games] .game-toggle{
+  all: unset !important;
+
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:8px !important;
+
+  width:100% !important;
+  padding: 12px 14px !important;
+
+  font-weight: 900 !important;
+  font-size: 16px !important;
+  line-height: 1.25 !important;
+  color: var(--pg-text) !important;
+
+  cursor:pointer !important;
+  background: transparent !important;
+  user-select:none !important;
+}
+
+[data-parasha-games][data-parasha-games] .game-toggle:hover{
+  background: rgba(0,0,0,.03) !important;
+}
+
+[data-parasha-games][data-parasha-games] .game-toggle:focus-visible{
+  outline: 3px solid rgba(37,99,235,.22) !important;
+  outline-offset: 2px !important;
+}
+
+/* Body */
+[data-parasha-games][data-parasha-games] .game-body{
+  padding: 12px !important;
+  background: rgba(255,255,255,.78) !important;
+  border-top: 1px solid rgba(0,0,0,.06) !important;
+}
+    `.trim();
+
+    // append LAST so it wins cascade
+    document.head.appendChild(style);
+  }
 
   // ====== PARASHA LABEL ======
   function extractParashaLabel() {
@@ -32,6 +106,7 @@
     if (!s) return "https://vaisisrael.github.io/games/";
     return s.substring(0, s.lastIndexOf("/") + 1);
   }
+  const BASE_URL = baseUrlForThisScript();
   const loaded = new Set();
 
   function withVersion(url) {
@@ -42,7 +117,7 @@
 
   function loadCssOnce(fileName) {
     return new Promise((resolve, reject) => {
-      const url = withVersion(baseUrlForThisScript() + fileName);
+      const url = withVersion(BASE_URL + fileName);
       if (loaded.has(url)) return resolve();
       loaded.add(url);
 
@@ -57,7 +132,7 @@
 
   function loadScriptOnce(fileName) {
     return new Promise((resolve, reject) => {
-      const url = withVersion(baseUrlForThisScript() + fileName);
+      const url = withVersion(BASE_URL + fileName);
       if (loaded.has(url)) return resolve();
       loaded.add(url);
 
@@ -70,88 +145,11 @@
     });
   }
 
-  // ===== registry (for game modules) =====
+  // ====== REGISTRY ======
   function getRegistry() {
     window.ParashaGames = window.ParashaGames || {};
-    window.ParashaGames._registry = window.ParashaGames._registry || new Map();
-    return window.ParashaGames._registry;
-  }
-
-  // ====== CRITICAL: Inject accordion style LAST to beat Blogger theme ======
-  function injectAccordionStyleLast() {
-    const id = "pg-accordion-style";
-    const existing = document.getElementById(id);
-    if (existing) existing.remove(); // always replace with latest
-
-    const style = document.createElement("style");
-    style.id = id;
-
-    // ✅ "האקורדיון הנהדר" – אבל עם !important + ספציפיות גבוהה + נטען אחרון
-    // note: we anchor under [data-parasha-games] to avoid harming the blog.
-    style.textContent = `
-/* injected by games.js – beats Blogger theme (loaded last) */
-[data-parasha-games][data-parasha-games]{
-  --pg-bg:#f6f7fb;
-  --pg-border:rgba(0,0,0,.10);
-  --pg-text:#1f2937;
-  --pg-shadow:0 10px 25px rgba(0,0,0,.08);
-  font-family:system-ui,-apple-system,"Segoe UI","Rubik",Arial,"Noto Sans Hebrew","Heebo",sans-serif !important;
-  color:var(--pg-text) !important;
-  display:block !important;
-}
-
-[data-parasha-games][data-parasha-games] .game{
-  border:1px solid var(--pg-border) !important;
-  border-radius:16px !important;
-  margin:10px 0 !important;
-  overflow:hidden !important;
-  background:linear-gradient(180deg,var(--pg-bg),#fff) !important;
-  box-shadow:var(--pg-shadow) !important;
-}
-
-[data-parasha-games][data-parasha-games] .game-toggle{
-  /* hard reset of theme button rules */
-  all:unset !important;
-
-  /* rebuild */
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  gap:8px !important;
-
-  width:100% !important;
-  padding:12px 14px !important;
-
-  font-family:inherit !important;
-  font-weight:900 !important;
-  font-size:16px !important;
-  line-height:1.25 !important;
-  color:var(--pg-text) !important;
-
-  cursor:pointer !important;
-  background:transparent !important;
-  user-select:none !important;
-}
-
-[data-parasha-games][data-parasha-games] .game-toggle:hover{
-  background:rgba(0,0,0,.03) !important;
-}
-
-[data-parasha-games][data-parasha-games] .game-toggle:focus-visible{
-  outline:3px solid rgba(37,99,235,.22) !important;
-  outline-offset:2px !important;
-}
-
-[data-parasha-games][data-parasha-games] .game-body{
-  padding:12px !important;
-  background:rgba(255,255,255,.78) !important;
-  border-top:1px solid rgba(0,0,0,.06) !important;
-  display:block !important;
-}
-    `.trim();
-
-    // append LAST in head = wins in cascade
-    document.head.appendChild(style);
+    window.ParashaGames.registry = window.ParashaGames.registry || new Map();
+    return window.ParashaGames.registry;
   }
 
   // ====== DOM BUILD ======
@@ -192,8 +190,7 @@
         body.style.display = open ? "none" : "block";
         openBody = body.style.display === "block" ? body : null;
 
-        if (open) await onOpenChange(body, false);
-        else await onOpenChange(body, true);
+        await onOpenChange(body, !open);
       });
     });
   }
@@ -203,15 +200,13 @@
     const root = document.querySelector("[data-parasha-games]");
     if (!root) return;
 
-    // 1) load base css
-    await loadCssOnce("games.css");
-
-    // 2) NOW inject the final accordion style last (beats theme)
-    injectAccordionStyleLast();
+    // Inject accordion CSS last (wins over theme)
+    injectAccordionCssOnce();
 
     const parashaLabel = extractParashaLabel();
     if (!parashaLabel) return;
 
+    // Control fetch
     const res = await fetch(`${CONTROL_API}?parasha=${encodeURIComponent(parashaLabel)}`);
     const data = await res.json();
     if (!data.row) return;
@@ -231,44 +226,37 @@
       const gameId = bodyEl.closest(".game")?.dataset?.game || "";
       if (!gameId) return;
 
+      // closing
       if (!isOpen) {
         const ctrl = controllers.get(gameId);
         if (ctrl && typeof ctrl.reset === "function") ctrl.reset();
         return;
       }
 
+      // already initialized
       if (controllers.has(gameId)) return;
 
-      if (gameId === "memory") {
-        bodyEl.innerHTML = "טוען משחק זיכרון...";
-        await loadCssOnce("memory.css");
-        await loadScriptOnce("memory.js");
-        const factory = registry.get("memory");
+      const def = GAMES_DEFINITION.find(g => g.id === gameId);
+
+      // module-backed games
+      if (def && def.js && def.css) {
+        bodyEl.innerHTML = "טוען...";
+        await loadCssOnce(def.css);
+        await loadScriptOnce(def.js);
+
+        const factory = registry.get(gameId);
         if (!factory) {
-          bodyEl.innerHTML = "שגיאה בטעינת משחק הזיכרון.";
+          bodyEl.innerHTML = "שגיאה בטעינת המשחק (registry חסר).";
           controllers.set(gameId, { reset: () => {} });
           return;
         }
+
         const ctrl = await factory({ CONTROL_API, parashaLabel }).init(bodyEl);
         controllers.set(gameId, ctrl || { reset: () => {} });
         return;
       }
 
-      if (gameId === "puzzle") {
-        bodyEl.innerHTML = "טוען פאזל...";
-        await loadCssOnce("puzzle.css");
-        await loadScriptOnce("puzzle.js");
-        const factory = registry.get("puzzle");
-        if (!factory) {
-          bodyEl.innerHTML = "שגיאה בטעינת הפאזל.";
-          controllers.set(gameId, { reset: () => {} });
-          return;
-        }
-        const ctrl = await factory({ CONTROL_API, parashaLabel }).init(bodyEl);
-        controllers.set(gameId, ctrl || { reset: () => {} });
-        return;
-      }
-
+      // other placeholders
       bodyEl.innerHTML = `<div>(כאן ייבנה המשחק: ${gameId})</div>`;
       controllers.set(gameId, { reset: () => {} });
     }
