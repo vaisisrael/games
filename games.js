@@ -1,12 +1,10 @@
 (() => {
   "use strict";
 
-  // ====== CONFIG ======
   const CONTROL_API =
     "https://script.google.com/macros/s/AKfycbzoUoopq8rv8PdN2qe1DZXF73G5Mo8hBgdUqTef-v6z9ukSRua8HswwoyhHCm4fWktHdg/exec";
 
-  // שנה את הערך הזה רק כשאתה רוצה "לכפות" טעינת קבצים חדשה (למנוע Cache בעייתי)
-  const BUILD_VERSION = "2026-01-29-1";
+  const BUILD_VERSION = "2026-01-29-2";
 
   const GAMES_DEFINITION = [
     { id: "memory", title: "🧠 משחק זיכרון" },
@@ -16,7 +14,6 @@
     { id: "emoji", title: "😄 חידת אימוג'ים" }
   ];
 
-  // ====== PARASHA LABEL ======
   function extractParashaLabel() {
     const links = Array.from(
       document.querySelectorAll('a[rel="tag"], a[href*="/search/label/"]')
@@ -26,7 +23,6 @@
     return texts.find(t => re.test(t)) || null;
   }
 
-  // ====== DOM BUILD ======
   function buildGames(root, activeIds) {
     root.innerHTML = "";
     GAMES_DEFINITION
@@ -43,14 +39,14 @@
       });
   }
 
-  // ====== module registry ======
+  // ===== registry =====
   function getRegistry() {
     window.ParashaGames = window.ParashaGames || {};
     window.ParashaGames._registry = window.ParashaGames._registry || new Map();
     return window.ParashaGames._registry;
   }
 
-  // ====== asset loading (with cache-bust) ======
+  // ===== asset loading (with cache-bust) =====
   function baseUrlForThisScript() {
     const s = document.currentScript && document.currentScript.src;
     if (!s) return "https://vaisisrael.github.io/games/";
@@ -95,7 +91,23 @@
     });
   }
 
-  // ====== ACCORDION ======
+  // ✅ NEW: disable the non-versioned games.css (the one from the post) and load versioned one
+  async function ensureCoreCssFresh() {
+    const hrefEndsWith = "/games/games.css";
+    const links = Array.from(document.querySelectorAll('link[rel="stylesheet"]'));
+
+    // disable the old one if exists (keep it in DOM but not applied)
+    links.forEach(l => {
+      const href = l.getAttribute("href") || "";
+      if (href.includes(hrefEndsWith) && !href.includes("v=")) {
+        l.disabled = true;
+      }
+    });
+
+    // load the fresh one
+    await loadCssOnce("games.css");
+  }
+
   function initAccordion(root, onOpenChange) {
     let openBody = null;
 
@@ -118,15 +130,16 @@
     });
   }
 
-  // ====== INIT ======
   async function init() {
     const root = document.querySelector("[data-parasha-games]");
     if (!root) return;
 
+    // ✅ make accordion CSS fresh before building DOM
+    await ensureCoreCssFresh();
+
     const parashaLabel = extractParashaLabel();
     if (!parashaLabel) return;
 
-    // Control row
     const res = await fetch(`${CONTROL_API}?parasha=${encodeURIComponent(parashaLabel)}`);
     const data = await res.json();
     if (!data.row) return;
@@ -139,11 +152,10 @@
 
     buildGames(root, activeIds);
 
-    const controllers = new Map(); // id -> controller
+    const controllers = new Map();
     const registry = getRegistry();
 
     async function openGame(gameId, bodyEl) {
-      // already loaded
       if (controllers.has(gameId)) return;
 
       if (gameId === "memory") {
@@ -176,7 +188,6 @@
         return;
       }
 
-      // other games placeholders
       bodyEl.innerHTML = `<div>(כאן ייבנה המשחק: ${gameId})</div>`;
       controllers.set(gameId, { reset: () => {} });
     }
