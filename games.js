@@ -5,8 +5,8 @@
   const CONTROL_API =
     "https://script.google.com/macros/s/AKfycbzoUoopq8rv8PdN2qe1DZXF73G5Mo8hBgdUqTef-v6z9ukSRua8HswwoyhHCm4fWktHdg/exec";
 
-  // bump when you change files
-  const BUILD_VERSION = "2026-01-29-900";
+  // ⬅️ כל שינוי בקבצי CSS/JS: הגדל מספר
+  const BUILD_VERSION = "2026-01-29-1100";
 
   const GAMES_DEFINITION = [
     { id: "memory", title: "🧠 משחק זיכרון" },
@@ -77,10 +77,86 @@
     return window.ParashaGames._registry;
   }
 
-  // ====== DOM BUILD (accordion) ======
+  // ====== CRITICAL: Inject accordion style LAST to beat Blogger theme ======
+  function injectAccordionStyleLast() {
+    const id = "pg-accordion-style";
+    const existing = document.getElementById(id);
+    if (existing) existing.remove(); // always replace with latest
+
+    const style = document.createElement("style");
+    style.id = id;
+
+    // ✅ "האקורדיון הנהדר" – אבל עם !important + ספציפיות גבוהה + נטען אחרון
+    // note: we anchor under [data-parasha-games] to avoid harming the blog.
+    style.textContent = `
+/* injected by games.js – beats Blogger theme (loaded last) */
+[data-parasha-games][data-parasha-games]{
+  --pg-bg:#f6f7fb;
+  --pg-border:rgba(0,0,0,.10);
+  --pg-text:#1f2937;
+  --pg-shadow:0 10px 25px rgba(0,0,0,.08);
+  font-family:system-ui,-apple-system,"Segoe UI","Rubik",Arial,"Noto Sans Hebrew","Heebo",sans-serif !important;
+  color:var(--pg-text) !important;
+  display:block !important;
+}
+
+[data-parasha-games][data-parasha-games] .game{
+  border:1px solid var(--pg-border) !important;
+  border-radius:16px !important;
+  margin:10px 0 !important;
+  overflow:hidden !important;
+  background:linear-gradient(180deg,var(--pg-bg),#fff) !important;
+  box-shadow:var(--pg-shadow) !important;
+}
+
+[data-parasha-games][data-parasha-games] .game-toggle{
+  /* hard reset of theme button rules */
+  all:unset !important;
+
+  /* rebuild */
+  display:flex !important;
+  align-items:center !important;
+  justify-content:center !important;
+  gap:8px !important;
+
+  width:100% !important;
+  padding:12px 14px !important;
+
+  font-family:inherit !important;
+  font-weight:900 !important;
+  font-size:16px !important;
+  line-height:1.25 !important;
+  color:var(--pg-text) !important;
+
+  cursor:pointer !important;
+  background:transparent !important;
+  user-select:none !important;
+}
+
+[data-parasha-games][data-parasha-games] .game-toggle:hover{
+  background:rgba(0,0,0,.03) !important;
+}
+
+[data-parasha-games][data-parasha-games] .game-toggle:focus-visible{
+  outline:3px solid rgba(37,99,235,.22) !important;
+  outline-offset:2px !important;
+}
+
+[data-parasha-games][data-parasha-games] .game-body{
+  padding:12px !important;
+  background:rgba(255,255,255,.78) !important;
+  border-top:1px solid rgba(0,0,0,.06) !important;
+  display:block !important;
+}
+    `.trim();
+
+    // append LAST in head = wins in cascade
+    document.head.appendChild(style);
+  }
+
+  // ====== DOM BUILD ======
   function buildGames(root, activeIds) {
     root.innerHTML = "";
-    root.classList.add("pg-accordion"); // ✅ anchor class for styling
 
     GAMES_DEFINITION
       .filter(g => activeIds.includes(g.id))
@@ -107,7 +183,6 @@
       const body = game.querySelector(".game-body");
 
       btn.addEventListener("click", async () => {
-        // close previous
         if (openBody && openBody !== body) {
           openBody.style.display = "none";
           await onOpenChange(openBody, false);
@@ -128,8 +203,11 @@
     const root = document.querySelector("[data-parasha-games]");
     if (!root) return;
 
-    // make sure accordion css is present (cache-busted)
+    // 1) load base css
     await loadCssOnce("games.css");
+
+    // 2) NOW inject the final accordion style last (beats theme)
+    injectAccordionStyleLast();
 
     const parashaLabel = extractParashaLabel();
     if (!parashaLabel) return;
@@ -159,7 +237,6 @@
         return;
       }
 
-      // already initialized
       if (controllers.has(gameId)) return;
 
       if (gameId === "memory") {
