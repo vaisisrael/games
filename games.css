@@ -1,64 +1,68 @@
-/* games.css – Core accordion "premium" UI (no memory/puzzle styles)
-   Strong against Blogger theme overrides */
+/* games.css – Accordion UI only
+   IMPORTANT: all rules are anchored under [data-parasha-games].pg-accordion
+   so we don't fight generic Blogger theme selectors. */
 
-[data-parasha-games]{
+[data-parasha-games].pg-accordion{
   --pg-bg: #f6f7fb;
   --pg-border: rgba(0,0,0,.10);
   --pg-text: #1f2937;
   --pg-shadow: 0 10px 25px rgba(0,0,0,.08);
 
-  display: block;
   font-family: system-ui, -apple-system, "Segoe UI", "Rubik", Arial, "Noto Sans Hebrew", "Heebo", sans-serif;
   color: var(--pg-text);
+  display: block;
 }
 
 /* Accordion item */
-[data-parasha-games][data-parasha-games] .game{
-  border: 1px solid var(--pg-border) !important;
-  border-radius: 16px !important;
-  margin: 10px 0 !important;
-  overflow: hidden !important;
-  background: linear-gradient(180deg, var(--pg-bg), #fff) !important;
-  box-shadow: var(--pg-shadow) !important;
+[data-parasha-games].pg-accordion .game{
+  border: 1px solid var(--pg-border);
+  border-radius: 16px;
+  margin: 10px 0;
+  overflow: hidden;
+  background: linear-gradient(180deg, var(--pg-bg), #fff);
+  box-shadow: var(--pg-shadow);
 }
 
-/* Title "button" – hard reset then restyle */
-[data-parasha-games][data-parasha-games] .game-toggle{
-  all: unset !important;              /* 🔥 resets aggressive theme button rules */
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  gap: 8px !important;
+/* Title button */
+[data-parasha-games].pg-accordion .game-toggle{
+  width: 100%;
+  padding: 12px 14px;
+  font-weight: 900;
+  font-size: 16px;
+  line-height: 1.25;
 
-  width: 100% !important;
-  padding: 12px 14px !important;
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+  color: var(--pg-text);
 
-  font-family: inherit !important;
-  font-weight: 900 !important;
-  font-size: 16px !important;
-  line-height: 1.25 !important;
-  color: var(--pg-text) !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 
-  cursor: pointer !important;
-  background: transparent !important;
-  user-select: none !important;
+  -webkit-appearance: none;
+  appearance: none;
+
+  transition: background .12s ease, filter .12s ease;
 }
 
-[data-parasha-games][data-parasha-games] .game-toggle:hover{
-  background: rgba(0,0,0,.03) !important;
+[data-parasha-games].pg-accordion .game-toggle:hover{
+  background: rgba(0,0,0,.03);
 }
 
-[data-parasha-games][data-parasha-games] .game-toggle:focus-visible{
-  outline: 3px solid rgba(37,99,235,.22) !important;
-  outline-offset: 2px !important;
+[data-parasha-games].pg-accordion .game-toggle:active{
+  filter: brightness(.98);
+}
+
+[data-parasha-games].pg-accordion .game-toggle:focus-visible{
+  outline: 3px solid rgba(37,99,235,.22);
+  outline-offset: 2px;
 }
 
 /* Body */
-[data-parasha-games][data-parasha-games] .game-body{
-  padding: 12px !important;
-  background: rgba(255,255,255,.78) !important;
-  border-top: 1px solid rgba(0,0,0,.06) !important;
-
-  font-family: inherit !important;
-  color: inherit !important;
+[data-parasha-games].pg-accordion .game-body{
+  padding: 12px;
+  background: rgba(255,255,255,.78);
+  border-top: 1px solid rgba(0,0,0,.06);
 }
