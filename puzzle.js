@@ -1,10 +1,9 @@
 // puzzle.js – Parasha Games: Puzzle (drag on mobile via Pointer Events)
-// CSS is injected from this file (so we keep 2 GitHub files total as requested).
 
 (() => {
   "use strict";
 
-  // --- register infrastructure (same pattern as memory.js) ---
+  // --- registry ---
   window.ParashaGames = window.ParashaGames || {};
   window.ParashaGames._registry = window.ParashaGames._registry || new Map();
   window.ParashaGames.register =
@@ -13,266 +12,6 @@
       window.ParashaGames._registry.set(id, factoryFn);
     };
 
-  // --- CSS injection once ---
-  const STYLE_ID = "pg-puzzle-style";
-  function ensureStyle() {
-    if (document.getElementById(STYLE_ID)) return;
-
-    const css = `
-[data-parasha-games]{
-  --pz-border: rgba(0,0,0,.10);
-  --pz-shadow: 0 10px 25px rgba(0,0,0,.08);
-  --pz-shadow2: 0 14px 28px rgba(0,0,0,.10);
-  --pz-muted: rgba(17,24,39,.60);
-  --pz-accent: rgba(37,99,235,.35);
-  font-family: inherit;
-}
-
-[data-parasha-games] .pz-wrap{
-  border: 1px solid var(--pz-border);
-  border-radius: 14px;
-  box-shadow: var(--pz-shadow);
-  background: linear-gradient(180deg, rgba(246,247,251,1), #fff);
-  padding: 12px;
-}
-
-[data-parasha-games] .pz-caption{
-  font-weight: 800;
-  font-size: 14px;
-  color: rgba(17,24,39,.85);
-  margin-bottom: 10px;
-}
-
-[data-parasha-games] .pz-topbar{
-  display:flex;
-  align-items:center;
-  justify-content:flex-start;
-  flex-wrap:wrap;
-  gap: 6px;
-  margin-bottom: 10px;
-}
-
-[data-parasha-games] .pz-topbar button{
-  font-family: inherit;
-  cursor:pointer;
-  border: 1px solid var(--pz-border);
-  background: linear-gradient(90deg, rgba(37,99,235,.10), rgba(124,58,237,.08));
-  border-radius: 12px;
-  padding: 7px 10px;
-  font-weight: 800;
-  font-size: 14px;
-  color: rgba(17,24,39,.92);
-  box-shadow: 0 6px 14px rgba(0,0,0,.06);
-  transition: box-shadow .12s ease, border-color .12s ease;
-}
-
-[data-parasha-games] .pz-topbar button:hover{
-  box-shadow: 0 10px 22px rgba(0,0,0,.08);
-  border-color: var(--pz-accent);
-}
-
-[data-parasha-games] .pz-level[aria-pressed="true"]{
-  border-color: rgba(37,99,235,.55);
-  box-shadow: 0 10px 22px rgba(37,99,235,.12);
-}
-
-[data-parasha-games] .pz-stats{
-  margin-inline-start:auto;
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-  color: var(--pz-muted);
-  font-weight: 800;
-  font-size: 14px;
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum" 1;
-}
-
-[data-parasha-games] .pz-area{
-  display:grid;
-  gap: 12px;
-  justify-items:center;
-}
-
-[data-parasha-games] .pz-board{
-  position: relative;
-  width: min(92vw, 420px);
-  aspect-ratio: 1 / 1;
-  border-radius: 14px;
-  overflow: hidden;
-  border: 1px solid rgba(0,0,0,.08);
-  box-shadow: 0 10px 25px rgba(0,0,0,.06);
-  background: #fff;
-  touch-action: none; /* important: prevent scroll while dragging on board */
-}
-
-[data-parasha-games] .pz-board.pz-helping{
-  pointer-events: none;
-}
-
-[data-parasha-games] .pz-img{
-  position:absolute;
-  inset:0;
-  background-repeat:no-repeat;
-  background-size: cover;
-  background-position:center;
-  transition: opacity .18s ease, filter .18s ease;
-}
-
-[data-parasha-games] .pz-img.pz-faded{
-  opacity: .16;
-  filter: blur(1.5px) saturate(.9);
-}
-
-[data-parasha-games] .pz-grid{
-  position:absolute;
-  inset:0;
-  display:grid;
-  gap: 0;
-}
-
-[data-parasha-games] .pz-cell{
-  border: 1px solid rgba(0,0,0,.08);
-  background: transparent;
-  position: relative;
-}
-
-[data-parasha-games] .pz-cell.pz-hover{
-  outline: 3px solid rgba(37,99,235,.22);
-  outline-offset: -3px;
-}
-
-[data-parasha-games] .pz-piece-in-cell{
-  position:absolute;
-  inset:0;
-  background-repeat:no-repeat;
-  border-radius: 8px;
-}
-
-[data-parasha-games] .pz-pre{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  gap: 10px;
-  width: 100%;
-}
-
-[data-parasha-games] .pz-pre .pz-board{
-  width: min(92vw, 420px);
-}
-
-[data-parasha-games] .pz-banner{
-  min-height: 30px;
-  padding: 6px 10px;
-  border-radius: 12px;
-  border: 1px solid rgba(0,0,0,.06);
-  background: rgba(255,255,255,.74);
-  box-shadow: 0 8px 18px rgba(0,0,0,.05);
-  color: rgba(17,24,39,.85);
-  font-weight: 800;
-  font-size: 13px;
-  opacity: 0;
-  transform: translateY(2px);
-  transition: opacity .18s ease, transform .18s ease;
-}
-
-[data-parasha-games] .pz-banner.pz-banner--show{
-  opacity: 1;
-  transform: translateY(0);
-}
-
-[data-parasha-games] .pz-film{
-  width: min(92vw, 520px);
-  position: relative;
-}
-
-[data-parasha-games] .pz-film-viewport{
-  overflow-x:auto;
-  overflow-y:hidden;
-  scroll-behavior:smooth;
-  border-radius: 14px;
-  border: 1px solid rgba(0,0,0,.08);
-  background: rgba(255,255,255,.65);
-  box-shadow: 0 8px 18px rgba(0,0,0,.05);
-  padding: 10px;
-  -webkit-overflow-scrolling: touch;
-}
-
-[data-parasha-games] .pz-film-row{
-  display:flex;
-  gap: 10px;
-  align-items:center;
-}
-
-[data-parasha-games] .pz-arrow{
-  position:absolute;
-  top:50%;
-  transform: translateY(-50%);
-  width: 34px;
-  height: 34px;
-  border-radius: 999px;
-  border: 1px solid rgba(0,0,0,.10);
-  background: rgba(255,255,255,.85);
-  box-shadow: 0 8px 18px rgba(0,0,0,.06);
-  cursor:pointer;
-  display:grid;
-  place-items:center;
-  font-weight: 900;
-  color: rgba(17,24,39,.70);
-}
-
-[data-parasha-games] .pz-arrow[disabled]{
-  opacity: .35;
-  cursor: default;
-}
-
-[data-parasha-games] .pz-arrow.left{ left: -8px; }
-[data-parasha-games] .pz-arrow.right{ right: -8px; }
-
-[data-parasha-games] .pz-tile{
-  flex: 0 0 auto;
-  width: 78px;
-  aspect-ratio: 1 / 1;
-  border-radius: 14px;
-  border: 1px solid rgba(0,0,0,.10);
-  box-shadow: 0 8px 18px rgba(0,0,0,.07);
-  background-repeat:no-repeat;
-  background-size: 100% 100%;
-  background-position:center;
-  position: relative;
-  touch-action: none; /* important: prevent scroll while dragging on tile */
-}
-
-[data-parasha-games] .pz-tile.pz-drag-dim{
-  opacity: .35;
-}
-
-[data-parasha-games] .pz-drag-ghost{
-  position: fixed;
-  width: 88px;
-  aspect-ratio: 1 / 1;
-  border-radius: 14px;
-  border: 1px solid rgba(0,0,0,.10);
-  box-shadow: var(--pz-shadow2);
-  background-repeat:no-repeat;
-  z-index: 999999;
-  pointer-events: none;
-  transform: translate(-50%, -50%) scale(1.10);
-}
-
-@media (prefers-reduced-motion: reduce){
-  [data-parasha-games] .pz-img{ transition:none; }
-  [data-parasha-games] .pz-banner{ transition:none; }
-}
-`;
-    const style = document.createElement("style");
-    style.id = STYLE_ID;
-    style.textContent = css;
-    document.head.appendChild(style);
-  }
-
-  // --- helpers ---
   function showBanner(el, text) {
     el.textContent = text || "";
     el.classList.remove("pz-banner--show");
@@ -318,16 +57,12 @@
     return Number.isFinite(x) && x > 0 ? x : 0;
   }
 
-  function sqrtInt(n) {
-    const r = Math.sqrt(n);
-    const i = Math.round(r);
-    return i * i === n ? i : i; // user asked: no invalid-message; we assume correct input
+  function sqrtIntAssumeValid(n) {
+    // user requested: no invalid-message; assume the sheet is correct.
+    return Math.round(Math.sqrt(n));
   }
 
-  // --- puzzle factory ---
   function factory({ CONTROL_API, parashaLabel }) {
-    ensureStyle();
-
     async function init(gameBody) {
       const url = `${CONTROL_API}?mode=puzzle&parasha=${encodeURIComponent(parashaLabel)}`;
       const res = await fetch(url);
@@ -408,7 +143,6 @@
       const preWrap = body.querySelector(".pz-pre");
       const playWrap = body.querySelector(".pz-play");
 
-      const preBoard = preWrap.querySelector(".pz-board");
       const preImg = preWrap.querySelector(".pz-img");
       const preGrid = preWrap.querySelector(".pz-grid");
       const btnStart = preWrap.querySelector(".pz-start");
@@ -436,7 +170,7 @@
       let state = {
         level: 1,
         parts: model.level1,
-        n: sqrtInt(model.level1),
+        n: sqrtIntAssumeValid(model.level1),
         started: false,
         moves: 0,
         placed: 0,
@@ -499,19 +233,30 @@
       }
 
       function buildPreview() {
-        const parts = state.parts;
-        state.n = sqrtInt(parts);
-
+        state.n = sqrtIntAssumeValid(state.parts);
         setImg(preImg, model.imageUrl);
         preImg.classList.remove("pz-faded");
-
         buildGrid(preGrid, state.n);
       }
 
-      function buildPlay() {
-        const parts = state.parts;
-        state.n = sqrtInt(parts);
+      function updateArrows() {
+        const maxScroll = filmViewport.scrollWidth - filmViewport.clientWidth;
+        const x = filmViewport.scrollLeft;
+        arrowL.disabled = x <= 0;
+        arrowR.disabled = x >= maxScroll - 1;
+      }
 
+      function scrollFilm(dir) {
+        const step = 3 * 88; // ~3 tiles
+        filmViewport.scrollBy({ left: dir * step, behavior: "smooth" });
+      }
+
+      filmViewport.addEventListener("scroll", () => updateArrows());
+      arrowL.addEventListener("click", () => scrollFilm(-1));
+      arrowR.addEventListener("click", () => scrollFilm(1));
+
+      function buildPlay() {
+        state.n = sqrtIntAssumeValid(state.parts);
         state.started = true;
         state.moves = 0;
         state.placed = 0;
@@ -520,13 +265,12 @@
         // board
         setImg(playImg, model.imageUrl);
         playImg.classList.add("pz-faded");
-
         buildGrid(playGrid, state.n);
 
         // film pieces
         filmRow.innerHTML = "";
-
         const indices = Array.from({ length: state.total }, (_, i) => i);
+
         state.shuffleNonce += 1;
         const shuffled = seededShuffle(
           indices,
@@ -546,13 +290,11 @@
         updateStats();
         showBanner(bannerEl, "");
 
-        // UI switch
         preWrap.style.display = "none";
         playWrap.style.display = "block";
       }
 
       function reset(levelReq) {
-        // reset always returns to preview (not auto-start), so child can see the grid meaning.
         stopTimer();
         state.started = false;
         state.helping = false;
@@ -564,14 +306,11 @@
 
         setActiveLevel(levelNum);
 
-        // show preview again
         playWrap.style.display = "none";
         preWrap.style.display = "flex";
 
-        // rebuild preview grid
         buildPreview();
 
-        // reset stats
         state.moves = 0;
         state.placed = 0;
         state.total = state.n * state.n;
@@ -586,33 +325,17 @@
         showBanner(bannerEl, "🎉 כל הכבוד! סיימת!");
       }
 
-      function updateArrows() {
-        const maxScroll = filmViewport.scrollWidth - filmViewport.clientWidth;
-        const x = filmViewport.scrollLeft;
-
-        arrowL.disabled = x <= 0;
-        arrowR.disabled = x >= maxScroll - 1;
-      }
-
-      function scrollFilm(dir) {
-        const step = 3 * 88; // ~3 tiles
-        filmViewport.scrollBy({ left: dir * step, behavior: "smooth" });
-      }
-
-      filmViewport.addEventListener("scroll", () => updateArrows());
-      arrowL.addEventListener("click", () => scrollFilm(-1));
-      arrowR.addEventListener("click", () => scrollFilm(1));
-
-      // --- drag logic (Pointer Events) ---
+      // --- drag logic ---
       function clearCellHover() {
-        playGrid.querySelectorAll(".pz-cell.pz-hover").forEach((c) => c.classList.remove("pz-hover"));
+        playGrid
+          .querySelectorAll(".pz-cell.pz-hover")
+          .forEach((c) => c.classList.remove("pz-hover"));
       }
 
       function cellFromPoint(x, y) {
         const el = document.elementFromPoint(x, y);
         if (!el) return null;
-        const cell = el.closest && el.closest(".pz-cell");
-        return cell || null;
+        return (el.closest && el.closest(".pz-cell")) || null;
       }
 
       function createGhostFromTile(tile, x, y) {
@@ -621,7 +344,6 @@
         ghost.style.left = x + "px";
         ghost.style.top = y + "px";
 
-        // copy bg
         ghost.style.backgroundImage = tile.style.backgroundImage;
         ghost.style.backgroundSize = tile.style.backgroundSize;
         ghost.style.backgroundPosition = tile.style.backgroundPosition;
@@ -647,10 +369,7 @@
           pointerId: ev.pointerId,
         };
 
-        // prevent film scroll while dragging
         filmViewport.style.overflowX = "hidden";
-        playBoard.style.touchAction = "none";
-
         tile.setPointerCapture(ev.pointerId);
       }
 
@@ -672,29 +391,24 @@
 
         const { idx, tileEl, ghostEl } = state.dragging;
 
-        // restore film scroll
         filmViewport.style.overflowX = "auto";
-
         clearCellHover();
 
         const cell = cellFromPoint(ev.clientX, ev.clientY);
         const insideBoard = cell && playBoard.contains(cell);
 
         if (insideBoard) {
-          // count a move only if dropped inside board
           state.moves += 1;
 
           const targetIdx = Number(cell.dataset.idx);
           const alreadyHas = cell.querySelector(".pz-piece-in-cell");
 
           if (!alreadyHas && targetIdx === idx) {
-            // place piece
             const piece = document.createElement("div");
             piece.className = "pz-piece-in-cell";
             applyPieceBackground(piece, state.n, idx, model.imageUrl);
             cell.appendChild(piece);
 
-            // remove from film
             tileEl.remove();
             state.placed += 1;
 
@@ -703,12 +417,10 @@
 
             if (state.placed >= state.total) finish();
           } else {
-            // wrong place -> return (just undim)
             tileEl.classList.remove("pz-drag-dim");
             updateStats();
           }
         } else {
-          // dropped outside board -> no move count
           tileEl.classList.remove("pz-drag-dim");
         }
 
@@ -719,23 +431,26 @@
       filmRow.addEventListener("pointerdown", (ev) => {
         const tile = ev.target.closest(".pz-tile");
         if (!tile) return;
-        // prevent page scroll on mobile while dragging
         ev.preventDefault();
         startDrag(tile, ev);
       });
 
-      document.addEventListener("pointermove", (ev) => {
-        if (!state.dragging) return;
-        ev.preventDefault();
-        moveDrag(ev);
-      }, { passive: false });
+      document.addEventListener(
+        "pointermove",
+        (ev) => {
+          if (!state.dragging) return;
+          ev.preventDefault();
+          moveDrag(ev);
+        },
+        { passive: false }
+      );
 
       document.addEventListener("pointerup", (ev) => {
         if (!state.dragging) return;
         endDrag(ev);
       });
 
-      // --- help logic: show full image for 3 seconds ---
+      // --- help: full image for 3 seconds ---
       let helpTimeout = null;
       function runHelp() {
         if (!state.started) return;
@@ -745,10 +460,8 @@
         state.helping = true;
         playBoard.classList.add("pz-helping");
 
-        // full image
         playImg.classList.remove("pz-faded");
 
-        // disable dragging by pointer-events (board) + ignore startDrag via state.helping
         if (helpTimeout) clearTimeout(helpTimeout);
         helpTimeout = setTimeout(() => {
           playImg.classList.add("pz-faded");
@@ -757,40 +470,25 @@
         }, 3000);
       }
 
-      // --- events buttons ---
-      btnStart.addEventListener("click", () => {
-        buildPlay();
-      });
-
-      btnHelp.addEventListener("click", () => {
-        runHelp();
-      });
-
-      btnReset.addEventListener("click", () => {
-        // reset to preview of current level
-        reset(state.level);
-      });
+      // --- buttons ---
+      btnStart.addEventListener("click", () => buildPlay());
+      btnHelp.addEventListener("click", () => runHelp());
+      btnReset.addEventListener("click", () => reset(state.level));
 
       if (showLevels) {
-        btnL1.addEventListener("click", () => {
-          // if playing: go to preview (reset) for clarity
-          reset(1);
-        });
-        btnL2.addEventListener("click", () => {
-          reset(2);
-        });
+        btnL1.addEventListener("click", () => reset(1));
+        btnL2.addEventListener("click", () => reset(2));
       }
 
-      // initial preview (default level 1)
+      // init
       state.level = 1;
       state.parts = model.level1;
       setActiveLevel(1);
       buildPreview();
+      state.total = state.n * state.n;
       updateStats();
 
-      return {
-        reset: () => reset(1),
-      };
+      return { reset: () => reset(1) };
     }
 
     return { init };
