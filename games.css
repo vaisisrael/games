@@ -1,4 +1,4 @@
-/* games.css – base + memory styles */
+/* games.css – Core only (accordion/layout). Game-specific CSS lives in memory.css / puzzle.css */
 
 [data-parasha-games]{
   --pg-bg: #f6f7fb;
@@ -6,21 +6,20 @@
   --pg-border: rgba(0,0,0,.10);
   --pg-text: #1f2937;
   --pg-muted: #6b7280;
-  --pg-accent: #2563eb;
   --pg-shadow: 0 10px 25px rgba(0,0,0,.08);
 
-  font-family: system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans Hebrew", "Heebo", sans-serif;
+  font-family: system-ui, -apple-system, "Segoe UI", "Rubik", Arial, "Noto Sans Hebrew", "Heebo", sans-serif;
   color: var(--pg-text);
 }
 
-/* Accordion layout */
+/* Accordion container */
 [data-parasha-games] .game{
   border: 1px solid var(--pg-border);
-  border-radius: 14px;
+  border-radius: 16px;
   margin: 10px 0;
   overflow: hidden;
-  box-shadow: var(--pg-shadow);
   background: linear-gradient(180deg, var(--pg-bg), #fff);
+  box-shadow: var(--pg-shadow);
 }
 
 [data-parasha-games] .game-toggle{
@@ -39,111 +38,5 @@
 
 [data-parasha-games] .game-body{
   padding: 12px;
-  background: rgba(255,255,255,.75);
-}
-
-/* ===== Memory ===== */
-
-[data-parasha-games] .mem-topbar{
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-  margin-bottom: 10px;
-}
-
-[data-parasha-games] .mem-topbar button{
-  font-family: inherit;
-  cursor: pointer;
-  border: 1px solid var(--pg-border);
-  background: linear-gradient(90deg, rgba(37,99,235,.10), rgba(124,58,237,.08));
-  border-radius: 12px;
-  padding: 7px 10px;
-  font-weight: 900;
-  font-size: 14px;
-  color: rgba(17,24,39,.92);
-  box-shadow: 0 6px 14px rgba(0,0,0,.06);
-  transition: box-shadow .12s ease, border-color .12s ease;
-}
-
-[data-parasha-games] .mem-topbar button:hover{
-  box-shadow: 0 10px 22px rgba(0,0,0,.08);
-  border-color: rgba(37,99,235,.35);
-}
-
-/* active level */
-[data-parasha-games] .mem-level[aria-pressed="true"]{
-  border-color: rgba(37,99,235,.55);
-  box-shadow: 0 10px 22px rgba(37,99,235,.12);
-}
-
-[data-parasha-games] .mem-stats{
-  margin-inline-start: auto;
-  color: var(--pg-muted);
-  font-weight: 900;
-  font-size: 14px;
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-  font-feature-settings: "tnum" 1;
-  display: inline-flex;
-  gap: 10px;
-  align-items: center;
-}
-
-/* grid + square cards */
-[data-parasha-games] .mem-grid{
-  display: grid;
-  gap: 10px;
-}
-
-[data-parasha-games] .mem-card{
-  aspect-ratio: 1 / 1;
-  width: 100%;
-  border-radius: 14px;
-  border: 1px solid var(--pg-border);
-  background: var(--pg-surface);
-  box-shadow: 0 8px 18px rgba(0,0,0,.07);
-  cursor: pointer;
-  display: grid;
-  place-items: center;
-  user-select: none;
-
-  font-weight: 900;
-  font-size: clamp(18px, 3.2vw, 28px);
-  color: var(--pg-text);
-
-  transition: box-shadow .12s ease, border-color .12s ease;
-}
-
-/* hover cosmetic only (no transform) */
-[data-parasha-games] .mem-card:hover{
-  box-shadow: 0 14px 28px rgba(0,0,0,.10);
-  border-color: rgba(37,99,235,.35);
-}
-
-[data-parasha-games] .mem-card[aria-disabled="true"]{
-  opacity: 0.55;
-  cursor: default;
-}
-
-[data-parasha-games] .mem-card.mem-face-down{
-  font-size: 13px;
-  font-weight: 800;
-  color: rgba(17,24,39,.55);
-  position: relative;
-  overflow: hidden;
-}
-
-[data-parasha-games] .mem-card.mem-face-down::before{
-  content: "פרשת השבוע בניחותא";
-  position: absolute;
-  inset: 0;
-  display: grid;
-  place-items: center;
-  transform: rotate(-18deg);
-  color: rgba(17,24,39,.22);
-  font-weight: 900;
-  letter-spacing: .2px;
-  font-size: 13px;
-  pointer-events: none;
+  background: rgba(255,255,255,.78);
 }
