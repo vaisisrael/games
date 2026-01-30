@@ -10,6 +10,9 @@
 
   font-family: system-ui, -apple-system, "Segoe UI", "Rubik", Arial, "Noto Sans Hebrew", "Heebo", sans-serif;
   color: var(--puz-text);
+
+  /* ✅ כדי שה”ימין/שמאל” יתנהגו כמו במשחק זיכרון */
+  direction: rtl;
 }
 
 [data-parasha-games] .puz-card{
@@ -20,6 +23,7 @@
   padding: 12px;
 }
 
+/* ✅ TOPBAR: שני מקטעים – פעולות מימין, מדדים משמאל */
 [data-parasha-games] .puz-topbar{
   display: flex;
   align-items: center;
@@ -28,8 +32,17 @@
   flex-wrap: wrap;
   margin-bottom: 10px;
 
-  /* ✅ תיקון: חלוקה כמו בזיכרון (RTL) */
+  /* מוודא שגם כאן RTL */
   direction: rtl;
+}
+
+[data-parasha-games] .puz-actions{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+
+  /* פעולות מימין */
+  order: 0;
 }
 
 [data-parasha-games] .puz-stats{
@@ -40,19 +53,8 @@
   color: var(--puz-muted);
   white-space: nowrap;
 
-  /* ✅ תיקון: סטטיסטיקות בצד שמאל */
-  margin-inline-start: auto;
-  direction: rtl;
-}
-
-[data-parasha-games] .puz-actions{
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-
-  /* ✅ תיקון: כפתורים בצד ימין */
-  margin-inline-end: auto;
-  direction: rtl;
+  /* מדדים משמאל */
+  order: 1;
 }
 
 [data-parasha-games] .puz-btn{
@@ -65,7 +67,7 @@
   font-size: 14px;
   user-select: none;
 
-  /* ✅ תיקון: גם הכפתורים עצמם יקבלו Rubik */
+  /* ✅ אכיפה של Rubik גם על כפתורים (במחשב Blogger לפעמים עוקף inherit) */
   font-family: inherit;
 }
 [data-parasha-games] .puz-btn[aria-pressed="true"]{
