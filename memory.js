@@ -183,20 +183,33 @@
       banner.textContent = "";
     }
 
-    function showBanner(text) {
-      if (!banner) return;
+    // ✅ FIX: longer banner + allow awaiting completion flow
+    function showBanner(text, durationMs = 1600) {
+      if (!banner) return Promise.resolve();
+
+      // cancel any previous hide timers by bumping token
+      showBanner._token = (showBanner._token || 0) + 1;
+      const token = showBanner._token;
+
       banner.textContent = text;
       banner.hidden = false;
+
       // trigger animation
       requestAnimationFrame(() => banner.classList.add("is-on"));
-      // auto hide
-      setTimeout(() => {
-        banner.classList.remove("is-on");
+
+      return new Promise((resolve) => {
         setTimeout(() => {
-          if (banner.classList.contains("is-on")) return;
-          banner.hidden = true;
-        }, 140);
-      }, 900);
+          if (showBanner._token !== token) return resolve(); // superseded
+          banner.classList.remove("is-on");
+
+          setTimeout(() => {
+            if (showBanner._token !== token) return resolve(); // superseded
+            if (banner.classList.contains("is-on")) return resolve();
+            banner.hidden = true;
+            resolve();
+          }, 140);
+        }, durationMs);
+      });
     }
 
     function buildDeck(cardCount, levelNum) {
@@ -254,12 +267,14 @@
       btn.disabled = !!locked;
     }
 
-    function markCompletedIfNeeded() {
+    // ✅ FIX: completion banner must not swallow last match banner
+    async function markCompletedIfNeeded() {
       if (!state) return;
       if (state.matchedPairs >= state.totalPairs) {
         stopTimer();
         updateStats();
-        showBanner("👏 כל הכבוד! סיימת את המשחק");
+        // show completion AFTER a short pause so last-match banner is visible
+        await showBanner("👏 כל הכבוד! סיימת את המשחק", 2000);
       }
     }
 
@@ -323,7 +338,7 @@
       updateStats();
     }
 
-    function flip(btn) {
+    async function flip(btn) {
       if (!state || state.lock) return;
       if (btn.disabled) return;
 
@@ -361,12 +376,13 @@
         // per-match banner
         const hint = (c1.hint || "").trim();
         if (hint) {
-          showBanner(`✨ יפה! ${hint}`);
+          await showBanner(`✨ יפה! ${hint}`, 1600);
         } else {
-          showBanner("✨ יפה! התאמה נכונה");
+          await showBanner("✨ יפה! התאמה נכונה", 1600);
         }
 
-        markCompletedIfNeeded();
+        // ✅ after match banner has been shown, then possibly completion banner
+        await markCompletedIfNeeded();
         return;
       }
 
@@ -386,6 +402,7 @@
     grid.addEventListener("click", (ev) => {
       const btn = ev.target.closest(".mem-card");
       if (!btn) return;
+      // fire and forget (async)
       flip(btn);
     });
 
