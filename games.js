@@ -16,6 +16,20 @@
     { id: "emoji", title: "😄 חידת אימוג'ים" }
   ];
 
+  // ====== LOAD RUBIK FONT (no Blogger theme changes) ======
+  function ensureRubikFontLoaded() {
+    const id = "pg-rubik-font";
+    if (document.getElementById(id)) return;
+
+    const link = document.createElement("link");
+    link.id = id;
+    link.rel = "stylesheet";
+    link.href =
+      "https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&display=swap&subset=hebrew";
+
+    document.head.appendChild(link);
+  }
+
   // ====== GLOBAL REGISTRY (always exists) ======
   window.ParashaGames = window.ParashaGames || {};
   window.ParashaGames.registry = window.ParashaGames.registry || new Map();
@@ -221,6 +235,9 @@
 
   // ====== INIT ======
   async function init() {
+    // ✅ Added: load Rubik without touching Blogger theme
+    ensureRubikFontLoaded();
+
     enforceAccordionCssForAWhile();
 
     const root = document.querySelector("[data-parasha-games]");
