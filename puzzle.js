@@ -148,6 +148,12 @@
 
         board.style.setProperty("--puz-n", cols);
 
+        // ✅ תיקון RTL: אם הגריד RTL, הופכים את ציר X בחישוב התמונה
+        const isRTL =
+          (getComputedStyle(grid).direction === "rtl") ||
+          (document.documentElement && document.documentElement.dir === "rtl") ||
+          (document.body && document.body.dir === "rtl");
+
         const pieces = [];
 
         for (let i = 0; i < piecesCount; i++) {
@@ -157,7 +163,7 @@
           const cell = document.createElement("div");
           cell.className = "puz-cell";
           cell.dataset.index = i;
-          cell.dataset.filled = "0"; // ✅ לא לאפשר הנחה כפולה
+          cell.dataset.filled = "0";
           grid.appendChild(cell);
 
           pieces.push({ index: i, r, c });
@@ -181,17 +187,17 @@
           piece.dataset.index = p.index;
 
           piece.style.backgroundImage = `url("${imageUrl}")`;
-
-          // ✅ חשוב: לגריד-פאזל צריך background-size כדי לחתוך נכון
           piece.style.backgroundSize = `${cols * 100}% ${rows * 100}%`;
 
-          // ✅ הימנעות מחלוקה ב-0
           const denomX = (cols - 1) || 1;
           const denomY = (rows - 1) || 1;
-          piece.style.backgroundPosition =
-            `${(p.c / denomX) * 100}% ${(p.r / denomY) * 100}%`;
 
-          // ✅ מובייל: למנוע גלילה/בחירה בזמן גרירה
+          // ✅ כאן התיקון: ב-RTL להפוך עמודה
+          const cEff = isRTL ? (cols - 1 - p.c) : p.c;
+
+          piece.style.backgroundPosition =
+            `${(cEff / denomX) * 100}% ${(p.r / denomY) * 100}%`;
+
           piece.style.touchAction = "none";
           piece.style.userSelect = "none";
 
@@ -203,19 +209,17 @@
         startTimer();
       }
 
-      // ✅ תיקון "רק החתיכה הראשונה" + גרירה יציבה
       function enableDrag(piece) {
         piece.addEventListener("pointerdown", (e) => {
           if (e.button !== undefined && e.button !== 0) return;
           e.preventDefault();
           if (!piece.isConnected) return;
 
-          // ghost
           const ghost = piece.cloneNode(true);
           ghost.classList.add("puz-drag");
           ghost.style.position = "fixed";
           ghost.style.zIndex = "999999";
-          ghost.style.pointerEvents = "none"; // ⭐ קריטי: שלא יגנוב elementFromPoint
+          ghost.style.pointerEvents = "none";
           ghost.style.touchAction = "none";
 
           const rect = piece.getBoundingClientRect();
@@ -250,7 +254,6 @@
             const cell = el && el.closest ? el.closest(".puz-cell") : null;
             if (!cell) return;
 
-            // לא מניחים בתא מלא
             if (cell.dataset.filled === "1") return;
 
             if (Number(cell.dataset.index) === Number(piece.dataset.index)) {
