@@ -23,11 +23,13 @@
 [data-parasha-games] .puz-topbar{
   display: flex;
   align-items: center;
-  /* FIX 1: no space-between (it may swap sides depending on DOM/RTL) */
-  justify-content: flex-start;
+  justify-content: space-between;
   gap: 10px;
   flex-wrap: wrap;
   margin-bottom: 10px;
+
+  /* ✅ תיקון: חלוקה כמו בזיכרון (RTL) */
+  direction: rtl;
 }
 
 [data-parasha-games] .puz-stats{
@@ -38,15 +40,19 @@
   color: var(--puz-muted);
   white-space: nowrap;
 
-  /* FIX 1: push stats to the far left (like memory) */
+  /* ✅ תיקון: סטטיסטיקות בצד שמאל */
   margin-inline-start: auto;
-  font-variant-numeric: tabular-nums;
+  direction: rtl;
 }
 
 [data-parasha-games] .puz-actions{
   display: inline-flex;
   align-items: center;
   gap: 8px;
+
+  /* ✅ תיקון: כפתורים בצד ימין */
+  margin-inline-end: auto;
+  direction: rtl;
 }
 
 [data-parasha-games] .puz-btn{
@@ -59,10 +65,8 @@
   font-size: 14px;
   user-select: none;
 
-  /* FIX 2: enforce Rubik on buttons (desktop) */
+  /* ✅ תיקון: גם הכפתורים עצמם יקבלו Rubik */
   font-family: inherit;
-  -webkit-appearance: none;
-  appearance: none;
 }
 [data-parasha-games] .puz-btn[aria-pressed="true"]{
   background: #dbeafe;
