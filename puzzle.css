@@ -23,7 +23,8 @@
 [data-parasha-games] .puz-topbar{
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  /* FIX 1: no space-between (it may swap sides depending on DOM/RTL) */
+  justify-content: flex-start;
   gap: 10px;
   flex-wrap: wrap;
   margin-bottom: 10px;
@@ -36,6 +37,10 @@
   font-weight: 700;
   color: var(--puz-muted);
   white-space: nowrap;
+
+  /* FIX 1: push stats to the far left (like memory) */
+  margin-inline-start: auto;
+  font-variant-numeric: tabular-nums;
 }
 
 [data-parasha-games] .puz-actions{
@@ -53,6 +58,11 @@
   font-weight: 900;
   font-size: 14px;
   user-select: none;
+
+  /* FIX 2: enforce Rubik on buttons (desktop) */
+  font-family: inherit;
+  -webkit-appearance: none;
+  appearance: none;
 }
 [data-parasha-games] .puz-btn[aria-pressed="true"]{
   background: #dbeafe;
