@@ -1,4 +1,4 @@
-/* memory.css – Memory game UI (topbar groups + banner + square cards) */
+/* memory.css – Memory game UI (Rubik enforced inside memory area) */
 
 [data-parasha-games] .mem-wrap{
   --m-bg: #f6f7fb;
@@ -8,10 +8,18 @@
   --m-muted: #6b7280;
   --m-shadow: 0 10px 25px rgba(0,0,0,.08);
 
-  font-family: system-ui, -apple-system, "Segoe UI", "Rubik", Arial, "Noto Sans Hebrew", "Heebo", sans-serif;
+  /* ✅ Force Rubik across the memory game (desktop + mobile) */
+  font-family: "Rubik", system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans Hebrew", "Heebo", sans-serif !important;
   color: var(--m-text);
 }
 
+/* ✅ Ensure all descendants (including buttons) inherit Rubik */
+[data-parasha-games] .mem-wrap,
+[data-parasha-games] .mem-wrap *{
+  font-family: inherit !important;
+}
+
+/* Card container */
 [data-parasha-games] .mem-cardbox{
   background: linear-gradient(180deg, var(--m-bg), #fff);
   border: 1px solid var(--m-border);
@@ -55,6 +63,10 @@
   font-weight: 900;
   font-size: 14px;
   user-select:none;
+
+  /* ✅ prevent browser default button font */
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 [data-parasha-games] .mem-actions .mem-btn[aria-pressed="true"]{
@@ -122,6 +134,10 @@
   font-weight: 900;
   font-size: 28px;
   line-height: 1;
+
+  /* ✅ prevent browser default button font */
+  -webkit-appearance: none;
+  appearance: none;
 }
 
 [data-parasha-games] .mem-card.mem-face-down{
