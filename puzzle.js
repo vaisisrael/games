@@ -13,8 +13,7 @@
       const data = await res.json();
 
       if (!data || !data.ok || !data.row) {
-        rootEl.innerHTML =
-          `<div>לא נמצאו נתוני פאזל לפרשה זו.</div>`;
+        rootEl.innerHTML = `<div>לא נמצאו נתוני פאזל לפרשה זו.</div>`;
         return { reset: () => {} };
       }
 
@@ -101,8 +100,7 @@
         clearInterval(timerId);
         startTime = Date.now();
         timerId = setInterval(() => {
-          timeEl.textContent =
-            "זמן: " + formatTime(Date.now() - startTime);
+          timeEl.textContent = "זמן: " + formatTime(Date.now() - startTime);
         }, 1000);
       }
 
@@ -159,6 +157,7 @@
           const cell = document.createElement("div");
           cell.className = "puz-cell";
           cell.dataset.index = i;
+          cell.dataset.filled = "0"; // ✅ לא לאפשר הנחה כפולה
           grid.appendChild(cell);
 
           pieces.push({ index: i, r, c });
@@ -176,14 +175,25 @@
 
         const shuffled = shuffle(pieces);
 
-        shuffled.forEach(p => {
+        shuffled.forEach((p) => {
           const piece = document.createElement("div");
           piece.className = "puz-piece";
           piece.dataset.index = p.index;
 
           piece.style.backgroundImage = `url("${imageUrl}")`;
+
+          // ✅ חשוב: לגריד-פאזל צריך background-size כדי לחתוך נכון
+          piece.style.backgroundSize = `${cols * 100}% ${rows * 100}%`;
+
+          // ✅ הימנעות מחלוקה ב-0
+          const denomX = (cols - 1) || 1;
+          const denomY = (rows - 1) || 1;
           piece.style.backgroundPosition =
-            `${(p.c / (cols - 1)) * 100}% ${(p.r / (rows - 1)) * 100}%`;
+            `${(p.c / denomX) * 100}% ${(p.r / denomY) * 100}%`;
+
+          // ✅ מובייל: למנוע גלילה/בחירה בזמן גרירה
+          piece.style.touchAction = "none";
+          piece.style.userSelect = "none";
 
           enableDrag(piece);
 
@@ -193,53 +203,69 @@
         startTimer();
       }
 
+      // ✅ תיקון "רק החתיכה הראשונה" + גרירה יציבה
       function enableDrag(piece) {
-        piece.addEventListener("pointerdown", e => {
+        piece.addEventListener("pointerdown", (e) => {
+          if (e.button !== undefined && e.button !== 0) return;
           e.preventDefault();
+          if (!piece.isConnected) return;
 
+          // ghost
           const ghost = piece.cloneNode(true);
           ghost.classList.add("puz-drag");
+          ghost.style.position = "fixed";
+          ghost.style.zIndex = "999999";
+          ghost.style.pointerEvents = "none"; // ⭐ קריטי: שלא יגנוב elementFromPoint
+          ghost.style.touchAction = "none";
+
+          const rect = piece.getBoundingClientRect();
+          const gw = Math.max(40, rect.width || 80);
+          const gh = Math.max(40, rect.height || 80);
+          ghost.style.width = gw + "px";
+          ghost.style.height = gh + "px";
+
           document.body.appendChild(ghost);
 
-          moveGhost(e);
+          const oldOpacity = piece.style.opacity;
+          piece.style.opacity = "0.35";
 
           function moveGhost(ev) {
-            ghost.style.left = ev.clientX - 40 + "px";
-            ghost.style.top = ev.clientY - 40 + "px";
+            ghost.style.left = (ev.clientX - gw / 2) + "px";
+            ghost.style.top = (ev.clientY - gh / 2) + "px";
+          }
+
+          function cleanup() {
+            document.removeEventListener("pointermove", moveGhost);
+            document.removeEventListener("pointerup", up);
+            document.removeEventListener("pointercancel", up);
+            if (ghost && ghost.isConnected) ghost.remove();
+            if (piece && piece.isConnected) piece.style.opacity = oldOpacity;
           }
 
           function up(ev) {
-            document.removeEventListener("pointermove", moveGhost);
-            document.removeEventListener("pointerup", up);
+            ev.preventDefault();
+            cleanup();
 
-            ghost.remove();
-
-            const el = document.elementFromPoint(
-              ev.clientX,
-              ev.clientY
-            );
-
-            const cell = el && el.closest(".puz-cell");
+            const el = document.elementFromPoint(ev.clientX, ev.clientY);
+            const cell = el && el.closest ? el.closest(".puz-cell") : null;
             if (!cell) return;
 
-            if (
-              Number(cell.dataset.index) ===
-              Number(piece.dataset.index)
-            ) {
-              cell.style.backgroundImage =
-                piece.style.backgroundImage;
-              cell.style.backgroundSize =
-                piece.style.backgroundSize;
-              cell.style.backgroundPosition =
-                piece.style.backgroundPosition;
+            // לא מניחים בתא מלא
+            if (cell.dataset.filled === "1") return;
+
+            if (Number(cell.dataset.index) === Number(piece.dataset.index)) {
+              cell.style.backgroundImage = piece.style.backgroundImage;
+              cell.style.backgroundSize = piece.style.backgroundSize;
+              cell.style.backgroundPosition = piece.style.backgroundPosition;
+              cell.style.backgroundRepeat = "no-repeat";
+              cell.dataset.filled = "1";
 
               piece.remove();
 
               state.placed++;
               state.moves++;
 
-              movesEl.textContent =
-                "מהלכים: " + state.moves;
+              movesEl.textContent = "מהלכים: " + state.moves;
 
               if (state.placed >= state.total) {
                 stopTimer();
@@ -248,8 +274,10 @@
             }
           }
 
-          document.addEventListener("pointermove", moveGhost);
-          document.addEventListener("pointerup", up);
+          moveGhost(e);
+          document.addEventListener("pointermove", moveGhost, { passive: false });
+          document.addEventListener("pointerup", up, { passive: false });
+          document.addEventListener("pointercancel", up, { passive: false });
         });
       }
 
@@ -262,11 +290,11 @@
 
       resetBtn.addEventListener("click", () => build(1));
 
-      rootEl.querySelectorAll("[data-level]").forEach(btn => {
+      rootEl.querySelectorAll("[data-level]").forEach((btn) => {
         btn.addEventListener("click", () => {
           rootEl
             .querySelectorAll("[data-level]")
-            .forEach(b => b.setAttribute("aria-pressed", "false"));
+            .forEach((b) => b.setAttribute("aria-pressed", "false"));
 
           btn.setAttribute("aria-pressed", "true");
 
@@ -277,8 +305,8 @@
       build(1);
 
       return {
-        reset: () => build(1)
+        reset: () => build(1),
       };
-    }
+    },
   });
 })();
