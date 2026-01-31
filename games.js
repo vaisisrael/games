@@ -6,7 +6,7 @@
     "https://script.google.com/macros/s/AKfycbxrOWGzfee9nKtBJqZEHLEADrNeD-2b8sARUuSFiaJDBNVn_T7iVueuA8uPr1bbdpkJYw/exec";
 
   // version for cache busting (also used when loading game modules)
-  const BUILD_VERSION = "2026-01-30-rubik-mem-14";
+  const BUILD_VERSION = "2026-01-30-rubik-mem-15";
 
   const GAMES_DEFINITION = [
     { id: "memory", title: "🧠 משחק זיכרון", js: "memory.js", css: "memory.css" },
