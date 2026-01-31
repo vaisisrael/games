@@ -60,7 +60,23 @@
 
             <div class="puz-tray">
               <div class="puz-tray-title">חתיכות</div>
-              <div class="puz-strip"></div>
+
+              <!-- ✅ חיצי הזזה -->
+              <div class="puz-strip-wrap" style="position:relative;">
+                <button class="puz-tray-arrow" data-tray="prev"
+                  type="button" aria-label="הזזת מגש"
+                  style="position:absolute; inset-block:0; left:0; z-index:2; width:34px; border:0; background:rgba(255,255,255,.75); border-radius:10px; cursor:pointer;">
+                  ◀
+                </button>
+
+                <div class="puz-strip" style="scroll-behavior:smooth;"></div>
+
+                <button class="puz-tray-arrow" data-tray="next"
+                  type="button" aria-label="הזזת מגש"
+                  style="position:absolute; inset-block:0; right:0; z-index:2; width:34px; border:0; background:rgba(255,255,255,.75); border-radius:10px; cursor:pointer;">
+                  ▶
+                </button>
+              </div>
             </div>
 
             <div class="puz-banner" hidden>
@@ -82,6 +98,32 @@
 
       const resetBtn = rootEl.querySelector(".puz-reset");
       const helpBtn = rootEl.querySelector(".puz-help");
+
+      // ✅ חיצי מגש
+      const trayPrevBtn = rootEl.querySelector('[data-tray="prev"]');
+      const trayNextBtn = rootEl.querySelector('[data-tray="next"]');
+
+      // חשוב: לא "לדרוס" את CSS שלך, רק להרחיק מעט את התוכן מהחיצים
+      // כדי שהחתיכות לא יסתתרו מאחוריהם.
+      strip.style.paddingLeft = "38px";
+      strip.style.paddingRight = "38px";
+
+      function scrollTray(dir) {
+        // dir: -1 / +1
+        const delta = Math.max(160, Math.floor(strip.clientWidth * 0.7));
+        const isRTL =
+          (getComputedStyle(strip).direction === "rtl") ||
+          (document.documentElement && document.documentElement.dir === "rtl") ||
+          (document.body && document.body.dir === "rtl");
+
+        // ב-RTL כיוון ה-scrollLeft משתנה בין דפדפנים, לכן נשתמש ב-scrollBy עם סימן מותאם
+        const signed = isRTL ? -dir * delta : dir * delta;
+
+        strip.scrollBy({ left: signed, behavior: "smooth" });
+      }
+
+      trayPrevBtn.addEventListener("click", () => scrollTray(-1));
+      trayNextBtn.addEventListener("click", () => scrollTray(+1));
 
       guide.style.backgroundImage = `url("${imageUrl}")`;
 
@@ -148,7 +190,6 @@
 
         board.style.setProperty("--puz-n", cols);
 
-        // ✅ תיקון RTL: אם הגריד RTL, הופכים את ציר X בחישוב התמונה
         const isRTL =
           (getComputedStyle(grid).direction === "rtl") ||
           (document.documentElement && document.documentElement.dir === "rtl") ||
@@ -192,7 +233,6 @@
           const denomX = (cols - 1) || 1;
           const denomY = (rows - 1) || 1;
 
-          // ✅ כאן התיקון: ב-RTL להפוך עמודה
           const cEff = isRTL ? (cols - 1 - p.c) : p.c;
 
           piece.style.backgroundPosition =
@@ -205,6 +245,9 @@
 
           strip.appendChild(piece);
         });
+
+        // אם המגש גלול משבוע קודם/רמה אחרת — נחזיר להתחלה כדי שהחצים יתנהגו טבעי
+        strip.scrollLeft = 0;
 
         startTimer();
       }
@@ -313,4 +356,3 @@
     },
   });
 })();
-
