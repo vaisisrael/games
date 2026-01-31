@@ -229,3 +229,9 @@
 [data-parasha-games] .puz-banner[hidden]{
   display: none !important;
 }
+
+/* hide puzzle help button */
+[data-parasha-games] .puz-help {
+  display: none !important;
+}
+
