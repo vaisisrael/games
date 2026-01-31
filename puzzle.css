@@ -10,8 +10,6 @@
 
   font-family: system-ui, -apple-system, "Segoe UI", "Rubik", Arial, "Noto Sans Hebrew", "Heebo", sans-serif;
   color: var(--puz-text);
-
-  /* ✅ כדי שה”ימין/שמאל” יתנהגו כמו במשחק זיכרון */
   direction: rtl;
 }
 
@@ -23,7 +21,7 @@
   padding: 12px;
 }
 
-/* ✅ TOPBAR: שני מקטעים – פעולות מימין, מדדים משמאל */
+/* Topbar */
 [data-parasha-games] .puz-topbar{
   display: flex;
   align-items: center;
@@ -31,8 +29,6 @@
   gap: 10px;
   flex-wrap: wrap;
   margin-bottom: 10px;
-
-  /* מוודא שגם כאן RTL */
   direction: rtl;
 }
 
@@ -40,8 +36,6 @@
   display: inline-flex;
   align-items: center;
   gap: 8px;
-
-  /* פעולות מימין */
   order: 0;
 }
 
@@ -52,8 +46,6 @@
   font-weight: 700;
   color: var(--puz-muted);
   white-space: nowrap;
-
-  /* מדדים משמאל */
   order: 1;
 }
 
@@ -66,8 +58,6 @@
   font-weight: 900;
   font-size: 14px;
   user-select: none;
-
-  /* ✅ אכיפה של Rubik גם על כפתורים (במחשב Blogger לפעמים עוקף inherit) */
   font-family: inherit;
 }
 [data-parasha-games] .puz-btn[aria-pressed="true"]{
@@ -77,10 +67,6 @@
 [data-parasha-games] .puz-btn:hover{
   box-shadow: 0 6px 14px rgba(0,0,0,.06);
 }
-[data-parasha-games] .puz-btn:disabled{
-  opacity: .55;
-  cursor: default;
-}
 
 [data-parasha-games] .puz-caption{
   font-weight: 900;
@@ -88,7 +74,7 @@
   text-align: center;
 }
 
-/* Board (square) */
+/* Board */
 [data-parasha-games] .puz-board{
   position: relative;
   width: min(560px, 100%);
@@ -100,31 +86,30 @@
   background: #fff;
 }
 
-/* Faded guide image */
+/* Guide */
 [data-parasha-games] .puz-guide{
   position: absolute;
   inset: 0;
   background-size: cover;
   background-position: center;
-  opacity: .18; /* דהוי כברירת מחדל */
+  opacity: .18;
   transition: opacity .18s ease;
   pointer-events: none;
 }
 [data-parasha-games] .puz-board[data-help="1"] .puz-guide{
-  opacity: .55; /* עזרה: נדלק ל-3 שניות */
+  opacity: .55;
 }
 
-/* Grid overlay */
+/* Grid */
 [data-parasha-games] .puz-grid{
   position: absolute;
   inset: 0;
   display: grid;
   gap: 6px;
   padding: 10px;
-  pointer-events: none; /* תאים עצמם יקבלו pointer */
+  pointer-events: none;
 }
 
-/* Drop cells */
 [data-parasha-games] .puz-cell{
   border-radius: 14px;
   border: 1px dashed rgba(0,0,0,.14);
@@ -138,7 +123,7 @@
   border-radius: 16px;
   background: rgba(255,255,255,.70);
   padding: 10px;
-  overflow: hidden;
+  overflow: hidden; /* ✅ אין גלילה כלל */
 }
 
 [data-parasha-games] .puz-tray-title{
@@ -148,67 +133,65 @@
   text-align: center;
 }
 
-/* ✅ UPDATED: show ALL pieces (no slider) */
+/* Pieces container – NO arrows, NO scroll */
 [data-parasha-games] .puz-strip{
   display: flex;
-  flex-wrap: wrap;          /* במקום row-scroll */
+  flex-wrap: wrap;
   gap: 10px;
   justify-content: center;
   align-items: flex-start;
-  overflow: visible;        /* בלי גלילה */
-  padding: 2px 0 0;
-  scroll-snap-type: none;
-  -webkit-overflow-scrolling: auto;
+  overflow: hidden;     /* ✅ מבטל חיצים */
+  scrollbar-width: none;
 }
 [data-parasha-games] .puz-strip::-webkit-scrollbar{
-  height: 0;
+  display: none;
+}
+[data-parasha-games] .puz-strip::-webkit-scrollbar-button{
+  display: none;        /* ✅ זה החיצים */
 }
 
-/* ✅ Updated piece size (smaller) */
+/* Pieces */
 [data-parasha-games] .puz-piece{
-  width: 64px;              /* היה 86px */
+  width: 64px;
   aspect-ratio: 1/1;
   border-radius: 16px;
   border: 1px solid var(--puz-border);
   background-color: #fff;
   box-shadow: 0 8px 18px rgba(0,0,0,.07);
   cursor: grab;
-  touch-action: none; /* חשוב ל-drag במובייל */
-  opacity: .75; /* דהוי במגש */
+  touch-action: none;
+  opacity: .75;
   transition: opacity .12s ease, box-shadow .12s ease;
   background-size: calc(100% * var(--puz-n)) calc(100% * var(--puz-n));
   user-select: none;
-}
-[data-parasha-games] .puz-piece:active{
-  cursor: grabbing;
 }
 [data-parasha-games] .puz-piece:hover{
   opacity: .88;
   box-shadow: 0 12px 24px rgba(0,0,0,.10);
 }
 
-/* Dragging “ghost” */
+/* Drag ghost */
 [data-parasha-games] .puz-drag{
   position: fixed;
   z-index: 999999;
-  width: 64px;              /* היה 86px */
+  width: 64px;
   aspect-ratio: 1/1;
   border-radius: 16px;
   border: 1px solid rgba(37,99,235,.25);
   box-shadow: 0 18px 38px rgba(0,0,0,.16);
   pointer-events: none;
-  opacity: .92; /* בזמן גרירה פחות דהוי */
+  opacity: .92;
   background-size: calc(100% * var(--puz-n)) calc(100% * var(--puz-n));
   background-color: #fff;
 }
 
-/* ✅ Mobile: קצת יותר קטן כדי לא לנפח */
+/* Mobile */
 @media (max-width: 420px){
   [data-parasha-games] .puz-piece{ width: 56px; }
   [data-parasha-games] .puz-drag{ width: 56px; }
 }
 
-/* Completed banner */
+/* Banner */
 [data-parasha-games] .puz-banner{
   margin: 8px auto 0;
   width: min(560px, 100%);
