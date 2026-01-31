@@ -148,26 +148,25 @@
   text-align: center;
 }
 
-/* One-row horizontal scroll */
+/* ✅ UPDATED: show ALL pieces (no slider) */
 [data-parasha-games] .puz-strip{
-  display: grid;
-  grid-auto-flow: column;
-  grid-auto-columns: 86px;
+  display: flex;
+  flex-wrap: wrap;          /* במקום row-scroll */
   gap: 10px;
-  overflow-x: auto;
-  padding-bottom: 8px;
-  scroll-snap-type: x mandatory;
-  -webkit-overflow-scrolling: touch;
+  justify-content: center;
+  align-items: flex-start;
+  overflow: visible;        /* בלי גלילה */
+  padding: 2px 0 0;
+  scroll-snap-type: none;
+  -webkit-overflow-scrolling: auto;
 }
 [data-parasha-games] .puz-strip::-webkit-scrollbar{
-  height: 10px;
-}
-[data-parasha-games] .puz-strip > .puz-piece{
-  scroll-snap-align: start;
+  height: 0;
 }
 
+/* ✅ Updated piece size (smaller) */
 [data-parasha-games] .puz-piece{
-  width: 86px;
+  width: 64px;              /* היה 86px */
   aspect-ratio: 1/1;
   border-radius: 16px;
   border: 1px solid var(--puz-border);
@@ -192,7 +191,7 @@
 [data-parasha-games] .puz-drag{
   position: fixed;
   z-index: 999999;
-  width: 86px;
+  width: 64px;              /* היה 86px */
   aspect-ratio: 1/1;
   border-radius: 16px;
   border: 1px solid rgba(37,99,235,.25);
@@ -201,6 +200,12 @@
   opacity: .92; /* בזמן גרירה פחות דהוי */
   background-size: calc(100% * var(--puz-n)) calc(100% * var(--puz-n));
   background-color: #fff;
+}
+
+/* ✅ Mobile: קצת יותר קטן כדי לא לנפח */
+@media (max-width: 420px){
+  [data-parasha-games] .puz-piece{ width: 56px; }
+  [data-parasha-games] .puz-drag{ width: 56px; }
 }
 
 /* Completed banner */
@@ -217,4 +222,3 @@
 [data-parasha-games] .puz-banner[hidden]{
   display: none !important;
 }
- 
