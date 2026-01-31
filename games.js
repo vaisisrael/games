@@ -6,7 +6,7 @@
     "https://script.google.com/macros/s/AKfycbxrOWGzfee9nKtBJqZEHLEADrNeD-2b8sARUuSFiaJDBNVn_T7iVueuA8uPr1bbdpkJYw/exec";
 
   // version for cache busting (also used when loading game modules)
-  const BUILD_VERSION = "2026-01-30-rubik-mem-18";
+  const BUILD_VERSION = "2026-01-30-rubik-mem-19";
 
   const GAMES_DEFINITION = [
     { id: "memory", title: "🧠 משחק זיכרון", js: "memory.js", css: "memory.css" },
@@ -135,27 +135,31 @@
   display: flex !important;
   gap: 6px !important;
   align-items: center !important;
-  justify-content: space-between !important;
+  justify-content: flex-start !important; /* RTL: start = right */
 }
 
 [data-parasha-games][data-pg-tabs="1"] .pg-tab{
   all: unset !important;
 
-  flex: 1 1 auto !important;
-  display: flex !important;
+  flex: 0 0 auto !important;      /* no stretch */
+  width: auto !important;
+
+  display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  gap: 8px !important;
+  gap: 6px !important;
 
-  padding: 10px 10px !important;
+  padding: 7px 10px !important;   /* smaller */
   border-radius: 12px !important;
 
   font-weight: 900 !important;
-  font-size: 15px !important;
+  font-size: 14px !important;     /* smaller */
   line-height: 1.2 !important;
 
   cursor: pointer !important;
   user-select: none !important;
+  border: 1px solid rgba(0,0,0,.08) !important; /* visible even when not active */
+  background: transparent !important;
 }
 
 [data-parasha-games][data-pg-tabs="1"] .pg-tab:hover{
@@ -163,9 +167,9 @@
 }
 
 [data-parasha-games][data-pg-tabs="1"] .pg-tab[aria-selected="true"]{
-  background: linear-gradient(180deg, var(--pg-bg), #fff) !important;
-  border: 1px solid rgba(0,0,0,.08) !important;
-  box-shadow: 0 6px 16px rgba(0,0,0,.06) !important;
+  background: rgba(0,0,0,.06) !important;
+  border: 2px solid rgba(0,0,0,.22) !important;
+  box-shadow: 0 6px 16px rgba(0,0,0,.10) !important;
 }
 
 [data-parasha-games][data-pg-tabs="1"] .pg-tab:focus-visible{
@@ -285,9 +289,7 @@
       });
     });
 
-    if (tabs.length > 0) {
-      activateTab(tabs[0]);
-    }
+    // No auto-selection on first entry (user chooses)
   }
 
   // ====== Resolve module from registry ======
