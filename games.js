@@ -97,9 +97,9 @@
     });
   }
 
-  // ====== ACCORDION CSS (Injected + enforced briefly) ======
-  function ensureAccordionStyleExists() {
-    const id = "pg-accordion-style";
+  // ====== TABS CSS (Injected + enforced briefly) ======
+  function ensureTabsStyleExists() {
+    const id = "pg-tabs-style";
     let style = document.getElementById(id);
     if (!style) {
       style = document.createElement("style");
@@ -108,8 +108,8 @@
     }
 
     style.textContent = `
-/* ===== Parasha Games – Accordion (stable inject) ===== */
-[data-parasha-games][data-pg-acc="1"]{
+/* ===== Parasha Games – Tabs (stable inject) ===== */
+[data-parasha-games][data-pg-tabs="1"]{
   --pg-bg: #f6f7fb;
   --pg-border: rgba(0,0,0,.10);
   --pg-text: #1f2937;
@@ -118,109 +118,176 @@
   font-family: system-ui, -apple-system, "Segoe UI", "Rubik", Arial, "Noto Sans Hebrew", "Heebo", sans-serif !important;
   color: var(--pg-text) !important;
   display:block !important;
+  direction: rtl !important;
 }
 
-[data-parasha-games][data-pg-acc="1"] .game{
+[data-parasha-games][data-pg-tabs="1"] .pg-tabbar{
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 20 !important;
+  background: #fff !important;
   border: 1px solid var(--pg-border) !important;
   border-radius: 16px !important;
-  margin: 10px 0 !important;
-  overflow: hidden !important;
-  background: linear-gradient(180deg, var(--pg-bg), #fff) !important;
   box-shadow: var(--pg-shadow) !important;
+  padding: 6px !important;
+  margin: 10px 0 !important;
+
+  display: flex !important;
+  gap: 6px !important;
+  align-items: center !important;
+  justify-content: space-between !important;
 }
 
-[data-parasha-games][data-pg-acc="1"] .game-toggle{
+[data-parasha-games][data-pg-tabs="1"] .pg-tab{
   all: unset !important;
 
-  display:flex !important;
-  align-items:center !important;
-  justify-content:center !important;
-  gap:8px !important;
+  flex: 1 1 auto !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 8px !important;
 
-  width:100% !important;
-  padding: 12px 14px !important;
+  padding: 10px 10px !important;
+  border-radius: 12px !important;
 
   font-weight: 900 !important;
-  font-size: 16px !important;
-  line-height: 1.25 !important;
-  color: var(--pg-text) !important;
+  font-size: 15px !important;
+  line-height: 1.2 !important;
 
-  cursor:pointer !important;
-  background: transparent !important;
-  user-select:none !important;
+  cursor: pointer !important;
+  user-select: none !important;
 }
 
-[data-parasha-games][data-pg-acc="1"] .game-toggle:hover{
+[data-parasha-games][data-pg-tabs="1"] .pg-tab:hover{
   background: rgba(0,0,0,.03) !important;
 }
 
-[data-parasha-games][data-pg-acc="1"] .game-toggle:focus-visible{
+[data-parasha-games][data-pg-tabs="1"] .pg-tab[aria-selected="true"]{
+  background: linear-gradient(180deg, var(--pg-bg), #fff) !important;
+  border: 1px solid rgba(0,0,0,.08) !important;
+  box-shadow: 0 6px 16px rgba(0,0,0,.06) !important;
+}
+
+[data-parasha-games][data-pg-tabs="1"] .pg-tab:focus-visible{
   outline: 3px solid rgba(37,99,235,.22) !important;
   outline-offset: 2px !important;
 }
 
-[data-parasha-games][data-pg-acc="1"] .game-body{
-  padding: 12px !important;
+[data-parasha-games][data-pg-tabs="1"] .game{
+  border: 1px solid var(--pg-border) !important;
+  border-radius: 16px !important;
+  overflow: hidden !important;
   background: rgba(255,255,255,.78) !important;
-  border-top: 1px solid rgba(0,0,0,.06) !important;
+  box-shadow: var(--pg-shadow) !important;
+  margin: 10px 0 !important;
+}
+
+[data-parasha-games][data-pg-tabs="1"] .game-body{
+  padding: 12px !important;
 }
     `.trim();
   }
 
-  function enforceAccordionCssForAWhile() {
-    ensureAccordionStyleExists();
+  function enforceTabsCssForAWhile() {
+    ensureTabsStyleExists();
 
     const start = Date.now();
     const interval = setInterval(() => {
-      ensureAccordionStyleExists();
+      ensureTabsStyleExists();
       if (Date.now() - start > 1800) clearInterval(interval);
     }, 150);
 
-    window.addEventListener("load", () => ensureAccordionStyleExists(), { once: true });
+    window.addEventListener("load", () => ensureTabsStyleExists(), { once: true });
   }
 
   // ====== DOM BUILD ======
   function buildGames(root, activeIds) {
     root.innerHTML = "";
-    root.setAttribute("data-pg-acc", "1");
+    root.setAttribute("data-pg-tabs", "1");
+
+    const tabbar = document.createElement("div");
+    tabbar.className = "pg-tabbar";
+    tabbar.setAttribute("role", "tablist");
+
+    const panelsWrap = document.createElement("div");
+    panelsWrap.className = "pg-panels";
 
     GAMES_DEFINITION
       .filter(g => activeIds.includes(g.id))
       .forEach(game => {
-        const el = document.createElement("div");
-        el.className = "game";
-        el.dataset.game = game.id;
+        const tab = document.createElement("button");
+        tab.className = "pg-tab";
+        tab.type = "button";
+        tab.dataset.game = game.id;
+        tab.setAttribute("role", "tab");
+        tab.setAttribute("aria-selected", "false");
+        tab.textContent = game.title;
 
-        el.innerHTML = `
-          <button class="game-toggle" type="button">${game.title}</button>
-          <div class="game-body" style="display:none"></div>
-        `;
+        const panel = document.createElement("div");
+        panel.className = "game";
+        panel.dataset.game = game.id;
 
-        root.appendChild(el);
+        const body = document.createElement("div");
+        body.className = "game-body";
+        body.style.display = "none";
+
+        panel.appendChild(body);
+
+        tabbar.appendChild(tab);
+        panelsWrap.appendChild(panel);
       });
+
+    root.appendChild(tabbar);
+    root.appendChild(panelsWrap);
   }
 
-  // ====== ACCORDION (single open) ======
-  function initAccordion(root, onOpenChange) {
-    let openBody = null;
+  // ====== TABS (single active) ======
+  function initTabs(root, onOpenChange) {
+    const tabs = Array.from(root.querySelectorAll(".pg-tab"));
+    const bodies = Array.from(root.querySelectorAll(".game .game-body"));
 
-    root.querySelectorAll(".game").forEach(game => {
-      const btn = game.querySelector(".game-toggle");
-      const body = game.querySelector(".game-body");
+    let activeBody = null;
+    let activeTab = null;
 
-      btn.addEventListener("click", async () => {
-        if (openBody && openBody !== body) {
-          openBody.style.display = "none";
-          await onOpenChange(openBody, false);
-        }
+    function findBodyByGameId(gameId) {
+      const gameEl = root.querySelector(`.game[data-game="${CSS.escape(gameId)}"]`);
+      return gameEl ? gameEl.querySelector(".game-body") : null;
+    }
 
-        const open = body.style.display === "block";
-        body.style.display = open ? "none" : "block";
-        openBody = body.style.display === "block" ? body : null;
+    async function activateTab(tabEl) {
+      const gameId = tabEl?.dataset?.game || "";
+      if (!gameId) return;
 
-        await onOpenChange(body, !open);
+      const body = findBodyByGameId(gameId);
+      if (!body) return;
+
+      if (activeBody && activeBody !== body) {
+        activeBody.style.display = "none";
+        await onOpenChange(activeBody, false);
+      }
+
+      tabs.forEach(t => t.setAttribute("aria-selected", "false"));
+      tabEl.setAttribute("aria-selected", "true");
+
+      bodies.forEach(b => (b.style.display = "none"));
+      body.style.display = "block";
+
+      activeBody = body;
+      activeTab = tabEl;
+
+      await onOpenChange(body, true);
+    }
+
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        if (activeTab === tab) return;
+        activateTab(tab);
       });
     });
+
+    if (tabs.length > 0) {
+      activateTab(tabs[0]);
+    }
   }
 
   // ====== Resolve module from registry ======
@@ -238,7 +305,7 @@
     // ✅ Added: load Rubik without touching Blogger theme
     ensureRubikFontLoaded();
 
-    enforceAccordionCssForAWhile();
+    enforceTabsCssForAWhile();
 
     const root = document.querySelector("[data-parasha-games]");
     if (!root) return;
@@ -257,7 +324,7 @@
     if (activeIds.length === 0) return;
 
     buildGames(root, activeIds);
-    enforceAccordionCssForAWhile();
+    enforceTabsCssForAWhile();
 
     const controllers = new Map();
 
@@ -313,7 +380,7 @@
       controllers.set(gameId, { reset: () => {} });
     }
 
-    initAccordion(root, onOpenChange);
+    initTabs(root, onOpenChange);
   }
 
   if (document.readyState === "loading") {
