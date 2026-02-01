@@ -170,15 +170,16 @@
       const style = document.createElement("style");
       style.id = "ws-wordstack-anim-style";
       style.textContent = `
-        [data-parasha-games] .ws-word .ws-anim-letter{
-          display:inline-block;
+        [data-parasha-games] .ws-word .ws-cell.ws-anim-cell{
+          display:inline-flex;
           transform-origin: 50% 80%;
-          animation: wsWordstackBounce .55s ease-out;
+          animation: wsWordstackBounce 1.05s ease-out;
         }
         @keyframes wsWordstackBounce{
           0%   { transform: translateY(0) scale(1); }
-          35%  { transform: translateY(-7px) scale(1.18); }
-          70%  { transform: translateY(0) scale(1.03); }
+          30%  { transform: translateY(-9px) scale(1.18); }
+          55%  { transform: translateY(0) scale(1.05); }
+          72%  { transform: translateY(-4px) scale(1.10); }
           100% { transform: translateY(0) scale(1); }
         }
       `.trim();
@@ -302,67 +303,52 @@
       });
     }
 
-    function setWordHTML_(word, animSide, animLetter) {
-      const w = String(word || "");
-      if (!animSide || !animLetter || !w) {
-        elWord.textContent = w;
-        return;
-      }
-
-      const first = w.slice(0, 1);
-      const restFrom1 = w.slice(1);
-      const last = w.slice(-1);
-      const restToLast = w.slice(0, -1);
-
-      if (animSide === "start" && first === animLetter) {
-        elWord.innerHTML =
-          `<span class="ws-anim-letter">${first}</span>${restFrom1}`;
-        return;
-      }
-
-      if (animSide === "end" && last === animLetter) {
-        elWord.innerHTML =
-          `${restToLast}<span class="ws-anim-letter">${last}</span>`;
-        return;
-      }
-
-      // fallback: no span if mismatch
-      elWord.textContent = w;
-    }
-
     function renderWord_() {
       elWord.classList.toggle("is-empty", !state.word);
 
-      // keep attrs (CSS highlight badge removed in your CSS)
+      // keep attrs (even if unused)
       elWord.classList.toggle("has-highlight", !!state.highlight);
       elWord.dataset.hl = state.highlight ? state.highlight.letter : "";
       elWord.dataset.hlby = state.highlight ? state.highlight.by : "";
 
-      // computer animation (bounce the newly added letter)
+      // render as tiles
+      elWord.innerHTML = "";
+
+      const w = String(state.word || "");
+      const chars = Array.from(w);
+
+      // determine which index to animate for computer turn
+      let animIndex = -1;
       if (state.computerAnim && state.computerAnim.word === state.word) {
         ensureAnimStyle_();
-        setWordHTML_(state.word, state.computerAnim.side, state.computerAnim.letter);
+        animIndex = (state.computerAnim.side === "start") ? 0 : (chars.length - 1);
+      }
 
-        const animEl = elWord.querySelector(".ws-anim-letter");
+      chars.forEach((ch, idx) => {
+        const cell = document.createElement("span");
+        cell.className = "ws-cell";
+        cell.textContent = ch;
+        if (idx === animIndex) cell.classList.add("ws-anim-cell");
+        elWord.appendChild(cell);
+      });
+
+      // clear animation flag after the animation ends
+      if (animIndex >= 0) {
+        const animEl = elWord.querySelector(".ws-anim-cell");
         if (animEl) {
           animEl.addEventListener(
             "animationend",
             () => {
-              // clear anim flag + normalize to plain text
               state.computerAnim = null;
-              elWord.textContent = state.word || "";
+              // remove class without changing anything else
+              animEl.classList.remove("ws-anim-cell");
             },
             { once: true }
           );
         } else {
-          // if span not created, just clear flag
           state.computerAnim = null;
-          elWord.textContent = state.word || "";
         }
-        return;
       }
-
-      elWord.textContent = state.word || "";
     }
 
     function showConfirmBar_(show) {
