@@ -307,13 +307,6 @@
         const span = document.createElement("span");
         span.className = "ws-ch";
         span.textContent = w[i];
-
-        // highlight only if state.lastAddedIndex is set
-        if (state.lastAddedIndex === i) {
-          span.style.color = "#000";       // green
-          span.style.fontWeight = "400";
-        }
-
         elWord.appendChild(span);
       }
     }
@@ -406,8 +399,7 @@
 
       state.word = draft;
 
-      // highlight last added letter in green (child move)
-      state.lastAddedIndex = (state.placedSide === "start") ? 0 : Math.max(0, draft.length - 1);
+      state.lastAddedIndex = null;
 
       state.scoreChild += basePts + bonusPts;
 
@@ -482,8 +474,7 @@
 
       state.word = chosen.draft;
 
-      // highlight last added letter in green (computer move)
-      state.lastAddedIndex = (chosen.side === "start") ? 0 : Math.max(0, chosen.draft.length - 1);
+      state.lastAddedIndex = Null;
 
       const pts = pointsForCategory_(chosen.cat);
       state.scoreComputer += pts;
