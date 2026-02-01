@@ -163,7 +163,7 @@
     let state = null;
 
     const CHILD_HINT_TEXT =
-      "גוררים אות צהובה, מניחים ליד המילה הירוקה ולוחצים סיימתי";
+      "כדי לבנות מילה – גוררים אות מהמקלדת ומניחים מימין או משמאל למילה";
 
     function ensureAnimStyle_() {
       if (document.getElementById("ws-wordstack-anim-style")) return;
