@@ -30,7 +30,8 @@
     { id: "puzzle", title: "🧩 פאזל", js: "puzzle.js", css: "puzzle.css" },
     { id: "truefalse", title: "✅ נכון / ❌ לא נכון" },
     { id: "dragmatch", title: "🔗 גרור והתאם" },
-    { id: "emoji", title: "😄 חידת אימוג'ים" }
+    { id: "emoji", title: "😄 חידת אימוג'ים" },
+    { id: "wordstack", title: "🔤 תיבה ואות", js: "wordstack.js", css: "wordstack.css" }
   ];
 
   // ====== LOAD RUBIK FONT (no Blogger theme changes) ======
