@@ -81,7 +81,7 @@
   border: 1px solid rgba(0,0,0,.08);
   background: rgba(250,204,21,.14);
   padding: 8px 10px;
-  font-weight: 900;
+  : 900;
   text-align: center;
 
   min-height: 28px;
@@ -238,7 +238,7 @@
   align-items:center;
   justify-content:center;
 
-  font-weight: 900;
+  font-weight: 500;
   font-size: 18px;
   cursor: grab;
   user-select:none;
