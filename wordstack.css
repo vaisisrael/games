@@ -239,6 +239,7 @@
   justify-content:center;
 
   font-weight: 500;
+  background: #ff0;
   font-size: 18px;
   cursor: grab;
   user-select:none;
