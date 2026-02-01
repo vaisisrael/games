@@ -159,6 +159,6 @@
 }
 
 [data-parasha-games] .mem-card[aria-disabled="true"]{
-  opacity: .55;
+  opacity: .80;
   cursor: default;
 }
