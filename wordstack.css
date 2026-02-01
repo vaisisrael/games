@@ -123,10 +123,14 @@
   justify-content: center;
 }
 
+/* ===== Word as tiles (requested) ===== */
 [data-parasha-games] .ws-word{
-  min-width: 160px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+
   text-align: center;
-  padding: 10px 12px;
   border-radius: 14px;
   border: 1px solid rgba(0,0,0,.08);
   background:
@@ -138,14 +142,30 @@
   font-size: 22px;
   letter-spacing: .5px;
 
-  /* 🔹 שינוי מבוקש */
   color: #166534; /* ירוק כהה, קריא וקבוע */
 
   position: relative;
+  padding: 8px; /* מסגרת סביב המשבצות */
 }
 
 [data-parasha-games] .ws-word.is-empty{
   color: #166534; /* גם אות פתיחה בירוק */
+}
+
+/* single letter tile */
+[data-parasha-games] .ws-cell{
+  width: 44px;
+  height: 46px;
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,.12);
+  background: rgba(255,255,255,.92);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight: 400;
+  font-size: 22px;
+  line-height: 1;
+  user-select: none;
 }
 
 [data-parasha-games] .ws-drop{
@@ -242,8 +262,9 @@
   [data-parasha-games] .ws-tray{
     grid-template-columns: repeat(7, minmax(0, 1fr));
   }
-  [data-parasha-games] .ws-word{
-    min-width: 130px;
+  [data-parasha-games] .ws-cell{
+    width: 38px;
+    height: 42px;
     font-size: 20px;
   }
 }
