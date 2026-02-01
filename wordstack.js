@@ -170,16 +170,15 @@
       const style = document.createElement("style");
       style.id = "ws-wordstack-anim-style";
       style.textContent = `
-        [data-parasha-games] .ws-word .ws-cell.ws-anim-cell{
+        [data-parasha-games] .ws-word .ws-anim-cell{
           display:inline-flex;
           transform-origin: 50% 80%;
-          animation: wsWordstackBounce 1.05s ease-out;
+          animation: wsWordstackBounce .55s ease-out;
         }
         @keyframes wsWordstackBounce{
           0%   { transform: translateY(0) scale(1); }
-          30%  { transform: translateY(-9px) scale(1.18); }
-          55%  { transform: translateY(0) scale(1.05); }
-          72%  { transform: translateY(-4px) scale(1.10); }
+          35%  { transform: translateY(-7px) scale(1.18); }
+          70%  { transform: translateY(0) scale(1.03); }
           100% { transform: translateY(0) scale(1); }
         }
       `.trim();
@@ -303,23 +302,23 @@
       });
     }
 
+    // ===== שינוי מבוקש: המילה כרצף משבצות =====
     function renderWord_() {
       elWord.classList.toggle("is-empty", !state.word);
 
-      // keep attrs (even if unused)
+      // keep attrs (CSS highlight badge removed in your CSS)
       elWord.classList.toggle("has-highlight", !!state.highlight);
       elWord.dataset.hl = state.highlight ? state.highlight.letter : "";
       elWord.dataset.hlby = state.highlight ? state.highlight.by : "";
 
-      // render as tiles
-      elWord.innerHTML = "";
-
       const w = String(state.word || "");
       const chars = Array.from(w);
 
-      // determine which index to animate for computer turn
+      elWord.innerHTML = "";
+
+      // computer animation: animate the newly added letter cell (start/end)
       let animIndex = -1;
-      if (state.computerAnim && state.computerAnim.word === state.word) {
+      if (state.computerAnim && state.computerAnim.word === state.word && chars.length) {
         ensureAnimStyle_();
         animIndex = (state.computerAnim.side === "start") ? 0 : (chars.length - 1);
       }
@@ -327,12 +326,11 @@
       chars.forEach((ch, idx) => {
         const cell = document.createElement("span");
         cell.className = "ws-cell";
-        cell.textContent = ch;
         if (idx === animIndex) cell.classList.add("ws-anim-cell");
+        cell.textContent = ch;
         elWord.appendChild(cell);
       });
 
-      // clear animation flag after the animation ends
       if (animIndex >= 0) {
         const animEl = elWord.querySelector(".ws-anim-cell");
         if (animEl) {
@@ -340,8 +338,6 @@
             "animationend",
             () => {
               state.computerAnim = null;
-              // remove class without changing anything else
-              animEl.classList.remove("ws-anim-cell");
             },
             { once: true }
           );
