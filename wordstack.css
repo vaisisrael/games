@@ -123,14 +123,11 @@
   justify-content: center;
 }
 
-/* ===== Word as tiles (requested) ===== */
+/* 🔧 שינוי מבוקש: צבע + בולד כמו המשבצות */
 [data-parasha-games] .ws-word{
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-
+  min-width: 160px;
   text-align: center;
+  padding: 10px 12px;
   border-radius: 14px;
   border: 1px solid rgba(0,0,0,.08);
   background:
@@ -138,34 +135,16 @@
     radial-gradient(120% 120% at 90% 90%, rgba(22,163,74,.12), transparent 55%),
     #fff;
 
-  font-weight: 400;
+  font-weight: 900;
   font-size: 22px;
   letter-spacing: .5px;
-
-  color: #166534; /* ירוק כהה, קריא וקבוע */
+  color: rgba(0,0,0,.55);
 
   position: relative;
-  padding: 8px; /* מסגרת סביב המשבצות */
 }
 
 [data-parasha-games] .ws-word.is-empty{
-  color: #166534; /* גם אות פתיחה בירוק */
-}
-
-/* single letter tile */
-[data-parasha-games] .ws-cell{
-  width: 44px;
-  height: 46px;
-  border-radius: 12px;
-  border: 1px solid rgba(0,0,0,.12);
-  background: rgba(255,255,255,.92);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-weight: 400;
-  font-size: 22px;
-  line-height: 1;
-  user-select: none;
+  color: rgba(0,0,0,.55);
 }
 
 [data-parasha-games] .ws-drop{
@@ -234,7 +213,6 @@
   justify-content:center;
 
   font-weight: 500;
-  background: #fff;
   font-size: 18px;
   cursor: grab;
   user-select:none;
@@ -262,9 +240,8 @@
   [data-parasha-games] .ws-tray{
     grid-template-columns: repeat(7, minmax(0, 1fr));
   }
-  [data-parasha-games] .ws-cell{
-    width: 38px;
-    height: 42px;
+  [data-parasha-games] .ws-word{
+    min-width: 130px;
     font-size: 20px;
   }
 }
