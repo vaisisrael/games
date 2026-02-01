@@ -92,6 +92,13 @@
   padding: 8px 10px;
   font-weight: 900;
   text-align: center;
+
+  /* ✅ FIX: reserve space so the board won't be pushed down */
+  min-height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   opacity: 0;
   transform: translateY(-2px);
   transition: opacity .14s ease, transform .14s ease;
@@ -101,7 +108,8 @@
   transform: translateY(0);
 }
 [data-parasha-games] .mem-banner[hidden]{
-  display:none !important;
+  display:flex !important;   /* keep layout height */
+  visibility:hidden !important;
 }
 
 /* ===== Grid & cards ===== */
