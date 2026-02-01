@@ -140,7 +140,7 @@
 
           <div class="ws-body">
             <div class="ws-title">
-              <div class="ws-sub">בכל תור מוסיפים אות לתיבה ויוצרים מילה חדשה.</div>
+              <div class="ws-sub">בכל תור גוררים אות למשבצת הימנית או השמאלית, ויוצרים מילה חדשה.</div>
             </div>
 
             <div class="ws-wordcard">
@@ -235,7 +235,7 @@
         return;
       }
       if (turn === "computer") {
-        elTurn.textContent = "הבינה חושבת…";
+        elTurn.textContent = "המחשב חושב…";
         return;
       }
       if (turn === "child") {
@@ -246,7 +246,7 @@
     }
 
     function updateStats_() {
-      elScore.textContent = `ניקוד: 👦 אתה ${state.scoreChild} | 😈 בינה ${state.scoreComputer}`;
+      elScore.textContent = `ניקוד: 👦 אתה ${state.scoreChild} | 😈 מחשב ${state.scoreComputer}`;
     }
 
     function buildLetters_() {
@@ -491,7 +491,7 @@
       renderWord_();
       updateStats_();
 
-      await showBanner(`😈 הבינה הוסיפה: ${chosen.usedLetter} (${chosen.cat}) +${pts}`, 1500);
+      await showBanner(`😈 המחשב הוסיף: ${chosen.usedLetter} (${chosen.cat}) +${pts}`, 1500);
 
       setTurnUI_("child");
     }
