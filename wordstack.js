@@ -1,3 +1,4 @@
+```js
 /* wordstack.js – Parasha Wordstack game (module)
    Expects Apps Script:
    ?mode=wordstack&parasha=...
@@ -140,7 +141,7 @@
 
           <div class="ws-body">
             <div class="ws-title">
-              <div class="ws-sub">בכל תור גוררים אות למשבצת הימנית או השמאלית, ויוצרים מילה חדשה.</div>
+              <div class="ws-sub">בתור שלך, צריך לגרור אות לתיבה כדי ליצור מילה חדשה.</div>
             </div>
 
             <div class="ws-wordcard">
@@ -307,6 +308,13 @@
         const span = document.createElement("span");
         span.className = "ws-ch";
         span.textContent = w[i];
+
+        // highlight only if state.lastAddedIndex is set
+        if (state.lastAddedIndex === i) {
+          span.style.color = "#15803d";       // green
+          span.style.fontWeight = "800";
+        }
+
         elWord.appendChild(span);
       }
     }
@@ -399,7 +407,8 @@
 
       state.word = draft;
 
-      state.lastAddedIndex = null;
+      // highlight last added letter in green (child move)
+      state.lastAddedIndex = (state.placedSide === "start") ? 0 : Math.max(0, draft.length - 1);
 
       state.scoreChild += basePts + bonusPts;
 
@@ -467,14 +476,15 @@
       }
 
       if (!chosen) {
-        await showBanner("🎉 ניצחת! לבינה אין מהלך טוב", 2200);
+        await showBanner("🎉 ניצחת! למחשב אין מהלך טוב", 2200);
         setTurnUI_("child");
         return;
       }
 
       state.word = chosen.draft;
 
-      state.lastAddedIndex = Null;
+      // highlight last added letter in green (computer move)
+      state.lastAddedIndex = (chosen.side === "start") ? 0 : Math.max(0, chosen.draft.length - 1);
 
       const pts = pointsForCategory_(chosen.cat);
       state.scoreComputer += pts;
@@ -616,3 +626,4 @@
     init: async (rootEl, ctx) => initWordstack(rootEl, ctx)
   });
 })();
+```
