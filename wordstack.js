@@ -51,28 +51,18 @@
   }
 
   // Basic local judge (placeholder).
-  // Returns: "שגויה" | "מאולצת" | "נכונה"
+  // Returns: "תקין" | "לא תקין"
   function judgeWord_(word) {
     const w = normalizeWord_(word);
 
     // must be Hebrew letters only
-    if (!w) return "שגויה";
-    if (!/^[\u0590-\u05FF]+$/.test(w)) return "שגויה";
+    if (!w) return "לא תקין";
+    if (!/^[\u0590-\u05FF]+$/.test(w)) return "לא תקין";
 
-    // very short words are allowed, but treat single letter as forced
-    if (w.length === 1) return "מאולצת";
+    // require at least 2 letters (no "מאולץ" category anymore)
+    if (w.length < 2) return "לא תקין";
 
-    // lightweight heuristic:
-    // - if ends with final letter but length==1 already handled
-    // - treat 2 letters as forced, 3+ as "נכונה"
-    if (w.length === 2) return "מאולצת";
-    return "נכונה";
-  }
-
-  function pointsForCategory_(cat) {
-    if (cat === "מאולצת") return 1;
-    if (cat === "נכונה") return 2;
-    return 0;
+    return "תקין";
   }
 
   // seeded random (stable-ish)
@@ -269,7 +259,7 @@
       return letters;
     }
 
-    // NEW: pick a random starting letter (regular letters only, no finals)
+    // pick a random starting letter (regular letters only, no finals)
     function randomStartLetter_() {
       const baseLetters = buildLetters_().slice(0, 22); // א..ת
       const n = baseLetters.length;
@@ -303,12 +293,8 @@
       elWord.textContent = state.word || "";
       elWord.classList.toggle("is-empty", !state.word);
 
-      // highlight last added letters (persist through next player's full turn)
-      // state.highlight: { letter, by:"child"|"computer" } or null
+      // highlight data attrs (CSS highlight badge was removed in your CSS)
       elWord.classList.toggle("has-highlight", !!state.highlight);
-
-      // Represent highlight visually via a small badge next to word
-      // (No extra DOM nodes; CSS uses data attrs)
       elWord.dataset.hl = state.highlight ? state.highlight.letter : "";
       elWord.dataset.hlby = state.highlight ? state.highlight.by : "";
     }
@@ -393,32 +379,35 @@
 
       setTurnUI_("checking");
 
-      // category (AI placeholder)
-      const cat = judgeWord_(draft);
-      const basePts = pointsForCategory_(cat);
+      const verdict = judgeWord_(draft);
+      const isValid = verdict === "תקין";
 
-      // bonus only for child + only if word is NOT "שגויה"
-      const isBonus = (cat !== "שגויה") && model.bonusList.includes(draft);
-      const bonusPts = isBonus ? 5 : 0;
+      // bonus only for child + only if word is valid
+      const isBonus = isValid && model.bonusList.includes(draft);
+
+      const basePts = isValid ? 1 : 0;
+
+      // IMPORTANT: "bonus becomes 2 points total" => add +1 extra (so total = 2)
+      const bonusPts = isBonus ? 1 : 0;
 
       state.word = draft;
-      state.highlight = { letter: state.placed, by: "child" }; // keep highlighted through next player turn
+      state.highlight = { letter: state.placed, by: "child" };
 
       state.scoreChild += basePts + bonusPts;
 
       renderWord_();
       updateStats_();
 
-      // banner text (includes diagnosis)
-      if (cat === "שגויה") {
-        await showBanner("🙂 מילה שגויה — ממשיכים לשחק", 1500);
+      // Banner rules:
+      // - if child is wrong -> show error
+      // - if bonus -> show compliment for 3-4 seconds
+      // - otherwise -> show nothing
+      if (!isValid) {
+        await showBanner("🙂 מילה לא תקינה — ממשיכים לשחק", 1500);
       } else if (isBonus) {
-        await showBanner(`🌟 מילה מהפרשה! (${cat}) +${basePts}+5`, 1700);
-      } else {
-        await showBanner(`👍 ${cat} +${basePts}`, 1500);
+        await showBanner("🌟 יפה! זו מילה מהפרשה! +2", 3600);
       }
 
-      // clear placement + go to computer
       clearPlaced_();
 
       await computerTurn_();
@@ -427,10 +416,6 @@
     async function computerTurn_() {
       setTurnUI_("computer");
       await wait(400);
-
-      // clear previous highlight only AFTER computer finishes full turn
-      // (child highlight persists until now)
-      state.highlight = state.highlight && state.highlight.by === "child" ? state.highlight : state.highlight;
 
       const letters = buildLetters_();
 
@@ -444,49 +429,27 @@
       function tryBuild(side, ltr) {
         const { word } = computeDraftWord_(ltr, side);
         const draft = normalizeWord_(word);
-        const cat = judgeWord_(draft);
-        return { draft, cat, usedLetter: applyFinalIfEnd_(ltr, side === "end") };
+        const verdict = judgeWord_(draft);
+        const isValid = verdict === "תקין";
+        return { draft, isValid, usedLetter: applyFinalIfEnd_(ltr, side === "end") };
       }
 
       let chosen = null;
 
-      // balancing: if computer leads by >=5, allow pick "מאולצת" sometimes even if "נכונה" exists
-      const lead = state.scoreComputer - state.scoreChild;
-      const allowForcedOverCorrect = lead >= 5;
-
-      // scan sides in order; within side scan all letters
+      // scan sides in order; within side scan all letters, take first valid
       for (const side of sides) {
-        const candidates = [];
         for (const ltr of letters) {
           const r = tryBuild(side, ltr);
-          if (r.cat === "שגויה") continue;
-          candidates.push({ side, ...r });
+          if (!r.isValid) continue;
+          chosen = { side, ...r };
+          break;
         }
-
-        if (candidates.length === 0) continue;
-
-        // pick first found fast, but with optional "softening"
-        // If allowed and there exists both correct and forced, sometimes choose forced
-        if (allowForcedOverCorrect) {
-          const forced = candidates.find(c => c.cat === "מאולצת");
-          const correct = candidates.find(c => c.cat === "נכונה");
-          if (forced && correct) {
-            // "לפעמים" choose forced (about 50%)
-            chosen = (rand() < 0.5) ? forced : correct;
-          } else {
-            chosen = candidates[0];
-          }
-        } else {
-          chosen = candidates[0];
-        }
-        break;
+        if (chosen) break;
       }
 
       if (!chosen) {
-        // computer concedes
         await showBanner("🎉 ניצחת! למחשב אין מהלך טוב", 2200);
 
-        // clear any highlights now that computer turn ended
         state.highlight = null;
         renderWord_();
 
@@ -494,20 +457,15 @@
         return;
       }
 
-      // commit computer move
+      // commit computer move (no analysis text shown)
       state.word = chosen.draft;
       state.highlight = { letter: chosen.usedLetter, by: "computer" };
 
-      const pts = pointsForCategory_(chosen.cat);
-      state.scoreComputer += pts;
+      state.scoreComputer += 1;
 
       renderWord_();
       updateStats_();
 
-      // brief banner for computer (no bonus concept)
-      await showBanner(`🤖 המחשב הוסיף: ${chosen.usedLetter} (${chosen.cat}) +${pts}`, 1500);
-
-      // Now that computer finished, keep its highlight through child's full next turn.
       setTurnUI_("child");
     }
 
@@ -515,7 +473,6 @@
       hideBanner();
 
       state = {
-        // start with a random opening letter
         word: randomStartLetter_(),
         placed: null,
         placedSide: null,
@@ -605,7 +562,6 @@
     });
 
     btnConfirm.addEventListener("click", () => {
-      // fire and forget async
       commitChildMove_();
     });
 
