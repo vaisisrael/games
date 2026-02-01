@@ -149,7 +149,7 @@
               </div>
 
               <div class="ws-confirmbar" hidden>
-                <button type="button" class="ws-btn ws-confirm">✔ אישור</button>
+                <button type="button" class="ws-btn ws-confirm">✔ סיימתי</button>
                 <button type="button" class="ws-btn ws-cancel">↩ ביטול</button>
               </div>
             </div>
