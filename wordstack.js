@@ -62,9 +62,7 @@
     // very short words are allowed, but treat single letter as forced
     if (w.length === 1) return "מאולצת";
 
-    // lightweight heuristic:
-    // - if ends with final letter but length==1 already handled
-    // - treat 2 letters as forced, 3+ as "נכונה"
+    // treat 2 letters as forced, 3+ as "נכונה"
     if (w.length === 2) return "מאולצת";
     return "נכונה";
   }
@@ -142,8 +140,7 @@
 
           <div class="ws-body">
             <div class="ws-title">
-              <div class="ws-name">תיבה ואות</div>
-              <div class="ws-sub">בכל תור מוסיפים אות לתיבה — בתחילתה או בסופה. אחר כך מאשרים ורואים איך יצא.</div>
+              <div class="ws-sub">בכל תור מוסיפים אות לתיבה ויוצרים מילה חדשה.</div>
             </div>
 
             <div class="ws-wordcard">
@@ -154,8 +151,8 @@
               </div>
 
               <div class="ws-confirmbar" hidden>
-                <button type="button" class="ws-btn ws-confirm">✔ אישור</button>
-                <button type="button" class="ws-btn ws-cancel">↩ ביטול</button>
+                <button type="button" class="ws-btn ws-confirm">סיימתי</button>
+                <button type="button" class="ws-btn ws-cancel">תיקון</button>
               </div>
             </div>
 
@@ -238,7 +235,7 @@
         return;
       }
       if (turn === "computer") {
-        elTurn.textContent = "המחשב בוחר אות פתיחה… 🤖";
+        elTurn.textContent = "הבינה חושבת…";
         return;
       }
       if (turn === "child") {
@@ -249,7 +246,7 @@
     }
 
     function updateStats_() {
-      elScore.textContent = `ניקוד: אתה ${state.scoreChild} | מחשב ${state.scoreComputer}`;
+      elScore.textContent = `ניקוד: 👦 אתה ${state.scoreChild} | 😈 בינה ${state.scoreComputer}`;
     }
 
     function buildLetters_() {
@@ -261,7 +258,7 @@
       return letters;
     }
 
-    // NEW: pick opening letter randomly (regular letters only, no finals)
+    // computer picks opening letter randomly (regular letters only, no finals)
     function randomOpeningLetter_() {
       const baseLetters = buildLetters_().slice(0, 22); // א..ת
       const n = baseLetters.length;
@@ -290,18 +287,35 @@
       });
     }
 
+    // Green highlight for last-added letter (NOT for opening letter)
     function renderWord_() {
-      elWord.textContent = state.word || "";
-      elWord.classList.toggle("is-empty", !state.word);
+      const w = state.word || "";
+      elWord.classList.toggle("is-empty", !w);
 
-      // highlight last added letters (persist through next player's full turn)
-      // state.highlight: { letter, by:"child"|"computer" } or null
-      elWord.classList.toggle("has-highlight", !!state.highlight);
+      // start small like "one-letter box", then expand as needed
+      if (w.length <= 1) {
+        elWord.style.width = "3.1em";
+        elWord.style.minWidth = "3.1em";
+      } else {
+        elWord.style.width = "auto";
+        elWord.style.minWidth = "0";
+      }
 
-      // Represent highlight visually via a small badge next to word
-      // (No extra DOM nodes; CSS uses data attrs)
-      elWord.dataset.hl = state.highlight ? state.highlight.letter : "";
-      elWord.dataset.hlby = state.highlight ? state.highlight.by : "";
+      elWord.innerHTML = "";
+
+      for (let i = 0; i < w.length; i++) {
+        const span = document.createElement("span");
+        span.className = "ws-ch";
+        span.textContent = w[i];
+
+        // highlight only if state.lastAddedIndex is set
+        if (state.lastAddedIndex === i) {
+          span.style.color = "#15803d";       // green
+          span.style.fontWeight = "800";
+        }
+
+        elWord.appendChild(span);
+      }
     }
 
     function showConfirmBar_(show) {
@@ -384,44 +398,37 @@
 
       setTurnUI_("checking");
 
-      // category (AI placeholder)
       const cat = judgeWord_(draft);
       const basePts = pointsForCategory_(cat);
 
-      // bonus only for child + only if word is NOT "שגויה"
       const isBonus = (cat !== "שגויה") && model.bonusList.includes(draft);
       const bonusPts = isBonus ? 5 : 0;
 
       state.word = draft;
-      state.highlight = { letter: state.placed, by: "child" }; // keep highlighted through next player turn
+
+      // highlight last added letter in green (child move)
+      state.lastAddedIndex = (state.placedSide === "start") ? 0 : Math.max(0, draft.length - 1);
 
       state.scoreChild += basePts + bonusPts;
 
       renderWord_();
       updateStats_();
 
-      // banner text (includes diagnosis)
       if (cat === "שגויה") {
-        await showBanner("🙂 מילה שגויה — ממשיכים לשחק", 1500);
+        await showBanner("🙂 מילה שגויה — ממשיכים", 1400);
       } else if (isBonus) {
         await showBanner(`🌟 מילה מהפרשה! (${cat}) +${basePts}+5`, 1700);
       } else {
-        await showBanner(`👍 ${cat} +${basePts}`, 1500);
+        await showBanner(`👍 ${cat} +${basePts}`, 1400);
       }
 
-      // clear placement + go to computer
       clearPlaced_();
-
       await computerTurn_();
     }
 
     async function computerTurn_() {
       setTurnUI_("computer");
       await wait(400);
-
-      // clear previous highlight only AFTER computer finishes full turn
-      // (child highlight persists until now)
-      state.highlight = state.highlight && state.highlight.by === "child" ? state.highlight : state.highlight;
 
       const letters = buildLetters_();
 
@@ -441,11 +448,9 @@
 
       let chosen = null;
 
-      // balancing: if computer leads by >=5, allow pick "מאולצת" sometimes even if "נכונה" exists
       const lead = state.scoreComputer - state.scoreChild;
       const allowForcedOverCorrect = lead >= 5;
 
-      // scan sides in order; within side scan all letters
       for (const side of sides) {
         const candidates = [];
         for (const ltr of letters) {
@@ -453,16 +458,12 @@
           if (r.cat === "שגויה") continue;
           candidates.push({ side, ...r });
         }
-
         if (candidates.length === 0) continue;
 
-        // pick first found fast, but with optional "softening"
-        // If allowed and there exists both correct and forced, sometimes choose forced
         if (allowForcedOverCorrect) {
           const forced = candidates.find(c => c.cat === "מאולצת");
           const correct = candidates.find(c => c.cat === "נכונה");
           if (forced && correct) {
-            // "לפעמים" choose forced (about 50%)
             chosen = (rand() < 0.5) ? forced : correct;
           } else {
             chosen = candidates[0];
@@ -474,20 +475,15 @@
       }
 
       if (!chosen) {
-        // computer concedes
-        await showBanner("🎉 ניצחת! למחשב אין מהלך טוב", 2200);
-
-        // clear any highlights now that computer turn ended
-        state.highlight = null;
-        renderWord_();
-
+        await showBanner("🎉 ניצחת! לבינה אין מהלך טוב", 2200);
         setTurnUI_("child");
         return;
       }
 
-      // commit computer move
       state.word = chosen.draft;
-      state.highlight = { letter: chosen.usedLetter, by: "computer" };
+
+      // highlight last added letter in green (computer move)
+      state.lastAddedIndex = (chosen.side === "start") ? 0 : Math.max(0, chosen.draft.length - 1);
 
       const pts = pointsForCategory_(chosen.cat);
       state.scoreComputer += pts;
@@ -495,26 +491,21 @@
       renderWord_();
       updateStats_();
 
-      // brief banner for computer (no bonus concept)
-      await showBanner(`🤖 המחשב הוסיף: ${chosen.usedLetter} (${chosen.cat}) +${pts}`, 1500);
+      await showBanner(`😈 הבינה הוסיפה: ${chosen.usedLetter} (${chosen.cat}) +${pts}`, 1500);
 
-      // Now that computer finished, keep its highlight through child's full next turn.
       setTurnUI_("child");
     }
 
     async function computerOpening_() {
-      // computer chooses the opening letter randomly (no scoring)
+      // computer chooses the opening letter randomly (no scoring, no green highlight)
       setTurnUI_("computer");
-      await wait(250);
+      await wait(120);
 
-      const opening = randomOpeningLetter_();
-      state.word = opening;
-      state.highlight = { letter: opening, by: "computer" };
+      state.word = randomOpeningLetter_();
+      state.lastAddedIndex = null; // IMPORTANT: no green on opening
 
       renderWord_();
       updateStats_();
-
-      await showBanner(`🤖 המחשב בחר אות פתיחה: ${opening}`, 1400);
 
       setTurnUI_("child");
     }
@@ -523,14 +514,14 @@
       hideBanner();
 
       state = {
-        word: "", // NEW: start empty, computer will choose opening letter
+        word: "",
         placed: null,
         placedSide: null,
         placedNormalizedWord: null,
         scoreChild: 0,
         scoreComputer: 0,
         turn: "computer",
-        highlight: null
+        lastAddedIndex: null
       };
 
       renderTray_();
@@ -538,13 +529,15 @@
       renderWord_();
       updateStats_();
 
-      // NEW: computer picks opening letter randomly, then gives turn to child
+      // no "computer chose opening" message
       computerOpening_();
+
+      // gentle hint (no mention of computer choosing)
+      showBanner("בחר/י אות והנח/י בתחילת המילה או בסופה", 1500);
     }
 
     // ---------- drag/drop ----------
     function wireDnD_() {
-      // Drag start on letter buttons
       tray.addEventListener("dragstart", (ev) => {
         const btn = ev.target.closest(".ws-letter");
         if (!btn) return;
@@ -581,7 +574,7 @@
       dropStart.addEventListener("drop", onDrop);
       dropEnd.addEventListener("drop", onDrop);
 
-      // also allow click-to-place (mobile fallback) with minimal behavior:
+      // click-to-place (mobile fallback)
       let picked = null;
       tray.addEventListener("click", (ev) => {
         const btn = ev.target.closest(".ws-letter");
@@ -591,7 +584,6 @@
         if (state.placed != null) return;
 
         picked = btn.dataset.letter || "";
-        // visually mark picked but don't place yet
         Array.from(tray.querySelectorAll(".ws-letter")).forEach(b => b.classList.toggle("is-picked", b === btn));
       });
 
@@ -613,7 +605,6 @@
     });
 
     btnConfirm.addEventListener("click", () => {
-      // fire and forget async
       commitChildMove_();
     });
 
