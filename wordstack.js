@@ -55,11 +55,8 @@
   function judgeWord_(word) {
     const w = normalizeWord_(word);
 
-    // must be Hebrew letters only
     if (!w) return "לא תקין";
     if (!/^[\u0590-\u05FF]+$/.test(w)) return "לא תקין";
-
-    // require at least 2 letters (no "מאולץ" category anymore)
     if (w.length < 2) return "לא תקין";
 
     return "תקין";
@@ -113,7 +110,6 @@
   }
 
   function render(rootEl, model) {
-    // Build UI (keep same topbar grouping pattern as memory: actions left, stats right)
     rootEl.innerHTML = `
       <div class="ws-wrap">
         <div class="ws-cardbox">
@@ -168,6 +164,26 @@
 
     const CHILD_HINT_TEXT =
       "גוררים אות צהובה, מניחים ליד המילה הירוקה ולוחצים סיימתי";
+
+    function ensureAnimStyle_() {
+      if (document.getElementById("ws-wordstack-anim-style")) return;
+      const style = document.createElement("style");
+      style.id = "ws-wordstack-anim-style";
+      style.textContent = `
+        [data-parasha-games] .ws-word .ws-anim-letter{
+          display:inline-block;
+          transform-origin: 50% 80%;
+          animation: wsWordstackBounce .55s ease-out;
+        }
+        @keyframes wsWordstackBounce{
+          0%   { transform: translateY(0) scale(1); }
+          35%  { transform: translateY(-7px) scale(1.18); }
+          70%  { transform: translateY(0) scale(1.03); }
+          100% { transform: translateY(0) scale(1); }
+        }
+      `.trim();
+      document.head.appendChild(style);
+    }
 
     function hideBanner() {
       if (!banner) return;
@@ -251,7 +267,6 @@
     }
 
     function buildLetters_() {
-      // Hebrew letters in "natural" order, including finals in-sequence (end of set)
       const letters = [
         "א","ב","ג","ד","ה","ו","ז","ח","ט","י","כ","ל","מ","נ","ס","ע","פ","צ","ק","ר","ש","ת",
         "ך","ם","ן","ף","ץ"
@@ -259,12 +274,10 @@
       return letters;
     }
 
-    // pick a random starting letter (regular letters only, no finals)
     function randomStartLetter_() {
       const baseLetters = buildLetters_().slice(0, 22); // א..ת
       const n = baseLetters.length;
 
-      // prefer crypto randomness when available
       if (window.crypto && window.crypto.getRandomValues) {
         const buf = new Uint32Array(1);
         window.crypto.getRandomValues(buf);
@@ -289,14 +302,67 @@
       });
     }
 
+    function setWordHTML_(word, animSide, animLetter) {
+      const w = String(word || "");
+      if (!animSide || !animLetter || !w) {
+        elWord.textContent = w;
+        return;
+      }
+
+      const first = w.slice(0, 1);
+      const restFrom1 = w.slice(1);
+      const last = w.slice(-1);
+      const restToLast = w.slice(0, -1);
+
+      if (animSide === "start" && first === animLetter) {
+        elWord.innerHTML =
+          `<span class="ws-anim-letter">${first}</span>${restFrom1}`;
+        return;
+      }
+
+      if (animSide === "end" && last === animLetter) {
+        elWord.innerHTML =
+          `${restToLast}<span class="ws-anim-letter">${last}</span>`;
+        return;
+      }
+
+      // fallback: no span if mismatch
+      elWord.textContent = w;
+    }
+
     function renderWord_() {
-      elWord.textContent = state.word || "";
       elWord.classList.toggle("is-empty", !state.word);
 
-      // highlight data attrs (CSS highlight badge was removed in your CSS)
+      // keep attrs (CSS highlight badge removed in your CSS)
       elWord.classList.toggle("has-highlight", !!state.highlight);
       elWord.dataset.hl = state.highlight ? state.highlight.letter : "";
       elWord.dataset.hlby = state.highlight ? state.highlight.by : "";
+
+      // computer animation (bounce the newly added letter)
+      if (state.computerAnim && state.computerAnim.word === state.word) {
+        ensureAnimStyle_();
+        setWordHTML_(state.word, state.computerAnim.side, state.computerAnim.letter);
+
+        const animEl = elWord.querySelector(".ws-anim-letter");
+        if (animEl) {
+          animEl.addEventListener(
+            "animationend",
+            () => {
+              // clear anim flag + normalize to plain text
+              state.computerAnim = null;
+              elWord.textContent = state.word || "";
+            },
+            { once: true }
+          );
+        } else {
+          // if span not created, just clear flag
+          state.computerAnim = null;
+          elWord.textContent = state.word || "";
+        }
+        return;
+      }
+
+      elWord.textContent = state.word || "";
     }
 
     function showConfirmBar_(show) {
@@ -309,7 +375,6 @@
       state.placedNormalizedWord = null;
       showConfirmBar_(false);
 
-      // re-enable tray for current child turn
       Array.from(tray.querySelectorAll(".ws-letter")).forEach(btn => {
         btn.classList.remove("is-picked");
         btn.disabled = state.turn !== "child";
@@ -339,7 +404,6 @@
     }
 
     function placeLetter_(letter, side) {
-      // Only one placement allowed
       if (state.placed != null) return;
       if (state.turn !== "child") return;
 
@@ -348,7 +412,6 @@
       state.placedSide = side;
       state.placedNormalizedWord = normalizeWord_(draft);
 
-      // mark picked + disable all letters (no multiple drags)
       Array.from(tray.querySelectorAll(".ws-letter")).forEach(btn => {
         const isThis = btn.dataset.letter === letter;
         btn.classList.toggle("is-picked", isThis);
@@ -357,7 +420,6 @@
         btn.setAttribute("draggable", "false");
       });
 
-      // Show in drop zone
       if (side === "start") {
         dropStart.textContent = usedLetter;
         dropEnd.textContent = "";
@@ -382,12 +444,11 @@
       const verdict = judgeWord_(draft);
       const isValid = verdict === "תקין";
 
-      // bonus only for child + only if word is valid
+      // scoring:
+      // - valid word: +1
+      // - bonus word: total should be +2 => add +1 extra
       const isBonus = isValid && model.bonusList.includes(draft);
-
       const basePts = isValid ? 1 : 0;
-
-      // IMPORTANT: "bonus becomes 2 points total" => add +1 extra (so total = 2)
       const bonusPts = isBonus ? 1 : 0;
 
       state.word = draft;
@@ -398,14 +459,11 @@
       renderWord_();
       updateStats_();
 
-      // Banner rules:
-      // - if child is wrong -> show error
-      // - if bonus -> show compliment for 3-4 seconds
-      // - otherwise -> show nothing
       if (!isValid) {
         await showBanner("🙂 מילה לא תקינה — ממשיכים לשחק", 1500);
-      } else if (isBonus) {
-        await showBanner("🌟 יפה! זו מילה מהפרשה! +2", 3600);
+      } else {
+        // success feedback (always), then ONLY AFTER that -> computer turn
+        await showBanner("כל הכבוד! 🌟", 2600);
       }
 
       clearPlaced_();
@@ -419,7 +477,6 @@
 
       const letters = buildLetters_();
 
-      // random side order (stable-ish per turn)
       const seed = `${model.parashaLabel}|${state.word}|${state.scoreChild}|${state.scoreComputer}|wordstack`;
       const rand = mulberry32(hashStringToUint32(seed));
       const firstSide = rand() < 0.5 ? "start" : "end";
@@ -431,17 +488,17 @@
         const draft = normalizeWord_(word);
         const verdict = judgeWord_(draft);
         const isValid = verdict === "תקין";
-        return { draft, isValid, usedLetter: applyFinalIfEnd_(ltr, side === "end") };
+        const usedLetter = applyFinalIfEnd_(ltr, side === "end");
+        return { draft, isValid, usedLetter, side };
       }
 
       let chosen = null;
 
-      // scan sides in order; within side scan all letters, take first valid
       for (const side of sides) {
         for (const ltr of letters) {
           const r = tryBuild(side, ltr);
           if (!r.isValid) continue;
-          chosen = { side, ...r };
+          chosen = r;
           break;
         }
         if (chosen) break;
@@ -451,17 +508,25 @@
         await showBanner("🎉 ניצחת! למחשב אין מהלך טוב", 2200);
 
         state.highlight = null;
+        state.computerAnim = null;
         renderWord_();
 
         setTurnUI_("child");
         return;
       }
 
-      // commit computer move (no analysis text shown)
       state.word = chosen.draft;
       state.highlight = { letter: chosen.usedLetter, by: "computer" };
 
+      // computer always gets +1 for a valid word
       state.scoreComputer += 1;
+
+      // trigger animation for the newly added letter
+      state.computerAnim = {
+        word: state.word,
+        side: chosen.side,
+        letter: chosen.usedLetter
+      };
 
       renderWord_();
       updateStats_();
@@ -481,7 +546,8 @@
         scoreComputer: 0,
         turn: "child",
         highlight: null,
-        bannerMode: null
+        bannerMode: null,
+        computerAnim: null
       };
 
       renderTray_();
@@ -493,7 +559,6 @@
 
     // ---------- drag/drop ----------
     function wireDnD_() {
-      // Drag start on letter buttons
       tray.addEventListener("dragstart", (ev) => {
         const btn = ev.target.closest(".ws-letter");
         if (!btn) return;
@@ -530,7 +595,7 @@
       dropStart.addEventListener("drop", onDrop);
       dropEnd.addEventListener("drop", onDrop);
 
-      // also allow click-to-place (mobile fallback) with minimal behavior:
+      // mobile fallback: click-to-pick + click-to-place
       let picked = null;
       tray.addEventListener("click", (ev) => {
         const btn = ev.target.closest(".ws-letter");
@@ -540,8 +605,9 @@
         if (state.placed != null) return;
 
         picked = btn.dataset.letter || "";
-        // visually mark picked but don't place yet
-        Array.from(tray.querySelectorAll(".ws-letter")).forEach(b => b.classList.toggle("is-picked", b === btn));
+        Array.from(tray.querySelectorAll(".ws-letter")).forEach(b =>
+          b.classList.toggle("is-picked", b === btn)
+        );
       });
 
       function clickDrop(side) {
@@ -571,7 +637,6 @@
     resetAll_();
     wireDnD_();
 
-    // controller API (games.js calls reset() on accordion close)
     return {
       reset: () => resetAll_()
     };
