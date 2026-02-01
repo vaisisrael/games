@@ -111,7 +111,7 @@
   pointer-events: none;
 }
 [data-parasha-games] .puz-board[data-help="1"] .puz-guide{
-  opacity: .55; /* עזרה: נדלק ל-3 שניות */
+  opacity: .1; /* עזרה: נדלק ל-3 שניות */
 }
 
 /* Grid overlay */
