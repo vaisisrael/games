@@ -5,8 +5,25 @@
   const CONTROL_API =
     "https://script.google.com/macros/s/AKfycbxrOWGzfee9nKtBJqZEHLEADrNeD-2b8sARUuSFiaJDBNVn_T7iVueuA8uPr1bbdpkJYw/exec";
 
-  // version for cache busting (also used when loading game modules)
-  const BUILD_VERSION = "2026-01-30-rubik-mem-22";
+    // version for cache busting (also used when loading game modules)
+  const BUILD_VERSION = (() => {
+    // 1) prefer loader-provided version
+    if (window.PARASHA_GAMES_BUILD_VERSION) return String(window.PARASHA_GAMES_BUILD_VERSION);
+
+    // 2) fallback: try to read ?v= from this script url
+    const s = document.currentScript && document.currentScript.src;
+    if (s) {
+      try {
+        const u = new URL(s, window.location.href);
+        const v = u.searchParams.get("v");
+        if (v) return v;
+      } catch (_) {}
+    }
+
+    // 3) last resort: stable string
+    return "no-version";
+  })();
+
 
   const GAMES_DEFINITION = [
     { id: "memory", title: "🧠 זיכרון", js: "memory.js", css: "memory.css" },
