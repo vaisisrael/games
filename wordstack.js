@@ -310,8 +310,8 @@
 
         // highlight only if state.lastAddedIndex is set
         if (state.lastAddedIndex === i) {
-          span.style.color = "#15803d";       // green
-          span.style.fontWeight = "800";
+          span.style.color = "#000";       // green
+          span.style.fontWeight = "400";
         }
 
         elWord.appendChild(span);
