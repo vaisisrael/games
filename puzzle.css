@@ -106,7 +106,7 @@
   inset: 0;
   background-size: cover;
   background-position: center;
-  opacity: .18; /* דהוי כברירת מחדל */
+  opacity: .35; /* דהוי כברירת מחדל */
   transition: opacity .18s ease;
   pointer-events: none;
 }
