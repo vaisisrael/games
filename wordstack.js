@@ -261,6 +261,21 @@
       return letters;
     }
 
+    // NEW: pick a random starting letter (regular letters only, no finals)
+    function randomStartLetter_() {
+      const baseLetters = buildLetters_().slice(0, 22); // א..ת
+      const n = baseLetters.length;
+
+      // prefer crypto randomness when available
+      if (window.crypto && window.crypto.getRandomValues) {
+        const buf = new Uint32Array(1);
+        window.crypto.getRandomValues(buf);
+        return baseLetters[buf[0] % n];
+      }
+
+      return baseLetters[Math.floor(Math.random() * n)];
+    }
+
     function renderTray_() {
       tray.innerHTML = "";
       const letters = buildLetters_();
@@ -492,7 +507,8 @@
       hideBanner();
 
       state = {
-        word: "",
+        // NEW: start with a random opening letter
+        word: randomStartLetter_(),
         placed: null,
         placedSide: null,
         placedNormalizedWord: null,
@@ -509,7 +525,7 @@
       setTurnUI_("child");
 
       // initial hint
-      showBanner("בחר/י אות והנח/י בתחילת המילה או בסופה", 1500);
+      showBanner(`אות פתיחה: ${state.word} — עכשיו הוסף/י אות בתחילת המילה או בסופה`, 1700);
     }
 
     // ---------- drag/drop ----------
