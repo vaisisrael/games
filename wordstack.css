@@ -134,7 +134,7 @@
     radial-gradient(120% 120% at 90% 90%, rgba(22,163,74,.12), transparent 55%),
     #fff;
 
-  font-weight: 900;
+  font-weight: 400;
   font-size: 22px;
   letter-spacing: .5px;
 
@@ -214,7 +214,7 @@
   justify-content:center;
 
   font-weight: 500;
-  background: #ff0;
+  background: #fff;
   font-size: 18px;
   cursor: grab;
   user-select:none;
