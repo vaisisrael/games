@@ -80,7 +80,7 @@
   border: 1px solid rgba(0,0,0,.08);
   background: rgba(250,204,21,.14);
   padding: 8px 10px;
-  font-weight: 900;
+  font-weight: 400;
   text-align: center;
 
   min-height: 28px;
@@ -146,20 +146,6 @@
 
 [data-parasha-games] .ws-word.is-empty{
   color: #166534; /* גם אות פתיחה בירוק */
-}
-
-[data-parasha-games] .ws-word.has-highlight::after{
-  content: attr(data-hl);
-  position: absolute;
-  inset-inline-start: 8px;
-  top: 6px;
-  font-size: 12px;
-  font-weight: 900;
-  padding: 3px 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(0,0,0,.10);
-  background: rgba(59,130,246,.12);
-  color: rgba(0,0,0,.70);
 }
 
 [data-parasha-games] .ws-drop{
