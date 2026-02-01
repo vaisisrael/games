@@ -263,7 +263,7 @@
     }
 
     function updateStats_() {
-      elScore.textContent = `ניקוד: אתה ${state.scoreChild} | מחשב ${state.scoreComputer}`;
+      elScore.textContent = `ניקוד: 🧒 ${state.scoreChild} | 🤖 ${state.scoreComputer}`;
     }
 
     function buildLetters_() {
