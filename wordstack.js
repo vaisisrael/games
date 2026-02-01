@@ -238,7 +238,7 @@
         return;
       }
       if (turn === "computer") {
-        elTurn.textContent = "המחשב חושב… 🤖";
+        elTurn.textContent = "המחשב בוחר אות פתיחה… 🤖";
         return;
       }
       if (turn === "child") {
@@ -261,12 +261,11 @@
       return letters;
     }
 
-    // NEW: pick a random starting letter (regular letters only, no finals)
-    function randomStartLetter_() {
+    // NEW: pick opening letter randomly (regular letters only, no finals)
+    function randomOpeningLetter_() {
       const baseLetters = buildLetters_().slice(0, 22); // א..ת
       const n = baseLetters.length;
 
-      // prefer crypto randomness when available
       if (window.crypto && window.crypto.getRandomValues) {
         const buf = new Uint32Array(1);
         window.crypto.getRandomValues(buf);
@@ -503,18 +502,34 @@
       setTurnUI_("child");
     }
 
+    async function computerOpening_() {
+      // computer chooses the opening letter randomly (no scoring)
+      setTurnUI_("computer");
+      await wait(250);
+
+      const opening = randomOpeningLetter_();
+      state.word = opening;
+      state.highlight = { letter: opening, by: "computer" };
+
+      renderWord_();
+      updateStats_();
+
+      await showBanner(`🤖 המחשב בחר אות פתיחה: ${opening}`, 1400);
+
+      setTurnUI_("child");
+    }
+
     function resetAll_() {
       hideBanner();
 
       state = {
-        // NEW: start with a random opening letter
-        word: randomStartLetter_(),
+        word: "", // NEW: start empty, computer will choose opening letter
         placed: null,
         placedSide: null,
         placedNormalizedWord: null,
         scoreChild: 0,
         scoreComputer: 0,
-        turn: "child",
+        turn: "computer",
         highlight: null
       };
 
@@ -522,10 +537,9 @@
       clearPlaced_();
       renderWord_();
       updateStats_();
-      setTurnUI_("child");
 
-      // initial hint
-      showBanner(`אות פתיחה: ${state.word} — עכשיו הוסף/י אות בתחילת המילה או בסופה`, 1700);
+      // NEW: computer picks opening letter randomly, then gives turn to child
+      computerOpening_();
     }
 
     // ---------- drag/drop ----------
