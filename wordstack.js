@@ -141,11 +141,6 @@
           <div class="ws-banner" hidden></div>
 
           <div class="ws-body">
-            <div class="ws-title">
-              <div class="ws-name">תיבה ואות</div>
-              <div class="ws-sub">בכל תור מוסיפים אות לתיבה — בתחילתה או בסופה. אחר כך מאשרים ורואים איך יצא.</div>
-            </div>
-
             <div class="ws-wordcard">
               <div class="ws-wordline">
                 <div class="ws-drop ws-drop-start" data-side="start" aria-label="הנחה בתחילת המילה"></div>
@@ -181,11 +176,22 @@
     // state
     let state = null;
 
+    const CHILD_HINT_TEXT =
+      "כדי ליצור מילה חדשה - צריך לגרור אות ולהניח אותה מימין או משמאל למילה הקיימת";
+
     function hideBanner() {
       if (!banner) return;
       banner.hidden = true;
       banner.classList.remove("is-on");
       banner.textContent = "";
+    }
+
+    function showChildHint_() {
+      if (!banner) return;
+      banner.textContent = CHILD_HINT_TEXT;
+      banner.hidden = false;
+      requestAnimationFrame(() => banner.classList.add("is-on"));
+      state.bannerMode = "hint";
     }
 
     function showBanner(text, durationMs = 1600) {
@@ -194,6 +200,7 @@
       showBanner._token = (showBanner._token || 0) + 1;
       const token = showBanner._token;
 
+      state.bannerMode = "msg";
       banner.textContent = text;
       banner.hidden = false;
 
@@ -243,6 +250,7 @@
       }
       if (turn === "child") {
         elTurn.textContent = "התור שלך";
+        showChildHint_();
         return;
       }
       elTurn.textContent = "";
@@ -507,7 +515,7 @@
       hideBanner();
 
       state = {
-        // NEW: start with a random opening letter
+        // start with a random opening letter
         word: randomStartLetter_(),
         placed: null,
         placedSide: null,
@@ -515,7 +523,8 @@
         scoreChild: 0,
         scoreComputer: 0,
         turn: "child",
-        highlight: null
+        highlight: null,
+        bannerMode: null
       };
 
       renderTray_();
@@ -523,9 +532,6 @@
       renderWord_();
       updateStats_();
       setTurnUI_("child");
-
-      // initial hint
-      showBanner(`אות פתיחה: ${state.word} — עכשיו הוסף/י אות בתחילת המילה או בסופה`, 1700);
     }
 
     // ---------- drag/drop ----------
