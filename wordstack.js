@@ -124,11 +124,11 @@
         <div class="ws-cardbox">
           <div class="ws-topbar">
             <div class="ws-actions">
-              <button type="button" class="ws-btn ws-reset">איפוס</button>
               <div class="ws-levels" role="tablist" aria-label="בחירת רמה">
                 <button type="button" class="ws-btn ws-level ws-level-1" role="tab" aria-selected="true">רמה 1</button>
                 <button type="button" class="ws-btn ws-level ws-level-2" role="tab" aria-selected="false">רמה 2</button>
               </div>
+              <button type="button" class="ws-btn ws-reset">איפוס</button>
             </div>
 
             <div class="ws-stats" aria-live="polite">
@@ -145,11 +145,6 @@
                 <div class="ws-drop ws-drop-start" data-side="start" aria-label="הנחה בתחילת התיבה"></div>
                 <div class="ws-word" aria-label="התיבה הנוכחית"></div>
                 <div class="ws-drop ws-drop-end" data-side="end" aria-label="הנחה בסוף התיבה"></div>
-              </div>
-
-              <div class="ws-goals" aria-label="מילות בונוס">
-                <div class="ws-goal-title">הרכבת תיבה מהמילים שברשימה - מעניקה נקודת בונוס.</div>
-                <div class="ws-goal-words ws-goal-words-list"></div>
               </div>
 
               <div class="ws-confirmbar" hidden>
@@ -180,13 +175,8 @@
     const elTurn = rootEl.querySelector(".ws-turn");
     const elScore = rootEl.querySelector(".ws-score");
 
-    const elWordsList = rootEl.querySelector(".ws-goal-words-list");
-
     // state
     let state = null;
-
-    const CHILD_HINT_TEXT =
-      "כדי לבנות תיבה – גוררים אות מהמקלדת ומניחים מימין או משמאל לתיבה";
 
     function ensureAnimStyle_() {
       if (document.getElementById("ws-wordstack-anim-style")) return;
@@ -213,11 +203,30 @@
       banner.hidden = true;
       banner.classList.remove("is-on");
       banner.textContent = "";
+      banner.innerHTML = "";
+    }
+
+    function currentBonusList_() {
+      return state.level === 2 ? model.level2List : model.level1List;
+    }
+
+    function formatBonusText_() {
+      const list = (currentBonusList_() || []).slice();
+      list.sort((a, b) => String(a).localeCompare(String(b), "he"));
+      return list.join(", ");
     }
 
     function showChildHint_() {
       if (!banner) return;
-      banner.textContent = CHILD_HINT_TEXT;
+
+      const wordsText = formatBonusText_();
+
+      banner.innerHTML =
+        `<div>גוררים אות מהמקלדת ומרכיבים תיבה</div>` +
+        `<div class="ws-small">הרכבת תיבה מהמילים שברשימה - מעניקה נקודת בונוס` +
+        (wordsText ? `: ${wordsText}` : ``) +
+        `</div>`;
+
       banner.hidden = false;
       requestAnimationFrame(() => banner.classList.add("is-on"));
       state.bannerMode = "hint";
@@ -323,16 +332,6 @@
         btn.setAttribute("aria-label", `אות ${ch}`);
         tray.appendChild(btn);
       });
-    }
-
-    function currentBonusList_() {
-      return state.level === 2 ? model.level2List : model.level1List;
-    }
-
-    function renderGoals_() {
-      if (!elWordsList) return;
-      const list = currentBonusList_() || [];
-      elWordsList.textContent = list.join(" · ");
     }
 
     function renderLevelButtons_() {
@@ -580,7 +579,6 @@
       renderTray_();
       clearPlaced_();
       renderWord_();
-      renderGoals_();
       renderLevelButtons_();
       updateStats_();
       setTurnUI_("child");
@@ -591,8 +589,10 @@
       if (n !== 1 && n !== 2) return;
       if (state.level === n) return;
       state.level = n;
-      renderGoals_();
       renderLevelButtons_();
+      if (state.turn === "child" && state.bannerMode === "hint") {
+        showChildHint_();
+      }
     }
 
     // ---------- drag/drop ----------
