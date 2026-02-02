@@ -38,6 +38,13 @@
   display:flex;
   align-items:center;
   gap:8px;
+  flex-wrap: wrap;
+}
+
+[data-parasha-games] .ws-levels{
+  display:flex;
+  align-items:center;
+  gap:8px;
 }
 
 [data-parasha-games] .ws-stats{
@@ -71,6 +78,12 @@
 [data-parasha-games] .ws-btn:disabled{
   opacity: .55;
   cursor: default;
+}
+
+[data-parasha-games] .ws-level.is-active{
+  background: rgba(219,234,254,.9);
+  border-color: rgba(37,99,235,.35);
+  box-shadow: 0 10px 20px rgba(0,0,0,.06);
 }
 
 /* ===== Banner ===== */
@@ -123,7 +136,7 @@
   justify-content: center;
 }
 
-/* ===== שינוי מבוקש: המילה כרצף משבצות ===== */
+/* ===== שינוי מבוקש: התיבה כרצף משבצות ===== */
 [data-parasha-games] .ws-word{
   display: inline-flex;
   align-items: center;
@@ -147,7 +160,7 @@
   /* נשאר, אין שינוי נדרש */
 }
 
-/* משבצת אות – זהה בגודל/צבע/בולד למשבצות מימין ומשמאל */
+/* משבצת אות – טיפוגרפיה כמו המקלדת */
 [data-parasha-games] .ws-cell{
   width: 56px;
   height: 52px;
@@ -158,9 +171,8 @@
   align-items:center;
   justify-content:center;
 
-  font-weight: 900;
-  font-size: 22px;
-  color: rgba(0,0,0,.55);
+  font-weight: 500;
+  font-size: 18px;
   background: #fff;
 
   user-select: none;
@@ -174,10 +186,11 @@
   display:flex;
   align-items:center;
   justify-content:center;
-  font-weight: 900;
-  font-size: 22px;
-  color: rgba(0,0,0,.55);
+
+  font-weight: 500;
+  font-size: 18px;
   background: #fff;
+
   user-select: none;
 }
 
@@ -185,7 +198,6 @@
   border-style: solid;
   border-color: rgba(37,99,235,.35);
   background: rgba(219,234,254,.7);
-  color: rgba(0,0,0,.80);
 }
 
 [data-parasha-games] .ws-drop.is-disabled{
@@ -193,14 +205,9 @@
   pointer-events: none;
 }
 
-/* ===== הצגת מילות יעד (בונוס) ===== */
+/* ===== הצגת מילות בונוס ===== */
 [data-parasha-games] .ws-goals{
   margin-top: 10px;
-  display: grid;
-  gap: 8px;
-}
-
-[data-parasha-games] .ws-goal{
   border: 1px solid rgba(0,0,0,.06);
   border-radius: 12px;
   background: rgba(255,255,255,.75);
@@ -212,6 +219,7 @@
   font-size: 12px;
   color: rgba(0,0,0,.55);
   margin-bottom: 4px;
+  text-align: center;
 }
 
 [data-parasha-games] .ws-goal-words{
@@ -220,6 +228,7 @@
   line-height: 1.35;
   color: rgba(0,0,0,.55);
   word-break: break-word;
+  text-align: center;
 }
 
 /* ===== Confirm bar ===== */
