@@ -2,7 +2,8 @@
   "use strict";
 
   const BASE = "https://vaisisrael.github.io/games/";
-  const VERSION_URL = BASE + "version.txt";
+  const VERSION_URL = BASE + "version.txt?t=" + Date.now();
+
 
   async function getVersion() {
     const res = await fetch(VERSION_URL, { cache: "no-store" });
