@@ -1,8 +1,8 @@
-/* wordstack.js – Parasha Wordstack game (module)
+/* wordstack.js – Parasha "תיבה" game (module)
    Expects Apps Script:
    ?mode=wordstack&parasha=...
    returns:
-   { ok:true, row:{ parasha, wordstack_bonus } }
+   { ok:true, row:{ parasha, level1_age, level1_words, level2_age, level2_words } }
 
    NOTE: This module includes a lightweight local judge (no external AI).
    Replace judgeWord_() with your AI judge later (without changing UI/CSS contract).
@@ -94,16 +94,25 @@
     const data = await res.json();
 
     if (!data || !data.row) {
-      rootEl.innerHTML = `<div>לא נמצאו נתוני “תיבה ואות” לפרשה זו.</div>`;
+      rootEl.innerHTML = `<div>לא נמצאו נתוני “תיבה” לפרשה זו.</div>`;
       return { reset: () => {} };
     }
 
-    const bonusRaw = data.row.wordstack_bonus || "";
-    const bonusList = parseCsvList(bonusRaw).map(normalizeWord_);
+    const level1Age = data.row.level1_age || "";
+    const level2Age = data.row.level2_age || "";
+
+    const level1Raw = data.row.level1_words || "";
+    const level2Raw = data.row.level2_words || "";
+
+    const level1List = parseCsvList(level1Raw).map(normalizeWord_);
+    const level2List = parseCsvList(level2Raw).map(normalizeWord_);
 
     const model = {
       parashaLabel,
-      bonusList
+      level1Age,
+      level2Age,
+      level1List,
+      level2List
     };
 
     return render(rootEl, model);
@@ -134,6 +143,17 @@
                 <div class="ws-drop ws-drop-end" data-side="end" aria-label="הנחה בסוף המילה"></div>
               </div>
 
+              <div class="ws-goals" aria-label="מטרות">
+                <div class="ws-goal ws-goal-l1" aria-label="רמה 1">
+                  <div class="ws-goal-title">רמה 1 (עד גיל <span class="ws-age ws-age-l1"></span>)</div>
+                  <div class="ws-goal-words ws-goal-words-l1"></div>
+                </div>
+                <div class="ws-goal ws-goal-l2" aria-label="רמה 2">
+                  <div class="ws-goal-title">רמה 2 (עד גיל <span class="ws-age ws-age-l2"></span>)</div>
+                  <div class="ws-goal-words ws-goal-words-l2"></div>
+                </div>
+              </div>
+
               <div class="ws-confirmbar" hidden>
                 <button type="button" class="ws-btn ws-confirm">✔ סיימתי</button>
                 <button type="button" class="ws-btn ws-cancel">↩ ביטול</button>
@@ -158,6 +178,11 @@
 
     const elTurn = rootEl.querySelector(".ws-turn");
     const elScore = rootEl.querySelector(".ws-score");
+
+    const elAgeL1 = rootEl.querySelector(".ws-age-l1");
+    const elAgeL2 = rootEl.querySelector(".ws-age-l2");
+    const elWordsL1 = rootEl.querySelector(".ws-goal-words-l1");
+    const elWordsL2 = rootEl.querySelector(".ws-goal-words-l2");
 
     // state
     let state = null;
@@ -347,6 +372,14 @@
       }
     }
 
+    function renderGoals_() {
+      if (elAgeL1) elAgeL1.textContent = String(model.level1Age || "");
+      if (elAgeL2) elAgeL2.textContent = String(model.level2Age || "");
+
+      if (elWordsL1) elWordsL1.textContent = (model.level1List || []).join(" · ");
+      if (elWordsL2) elWordsL2.textContent = (model.level2List || []).join(" · ");
+    }
+
     function showConfirmBar_(show) {
       confirmBar.hidden = !show;
     }
@@ -429,7 +462,7 @@
       // scoring:
       // - valid word: +1
       // - bonus word: total should be +2 => add +1 extra
-      const isBonus = isValid && model.bonusList.includes(draft);
+      const isBonus = isValid && model.level1List.includes(draft);
       const basePts = isValid ? 1 : 0;
       const bonusPts = isBonus ? 1 : 0;
 
@@ -535,6 +568,7 @@
       renderTray_();
       clearPlaced_();
       renderWord_();
+      renderGoals_();
       updateStats_();
       setTurnUI_("child");
     }
