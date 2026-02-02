@@ -39,6 +39,7 @@
   align-items:center;
   gap:8px;
   flex-wrap: wrap;
+  direction: rtl;
 }
 
 [data-parasha-games] .ws-levels{
@@ -112,6 +113,12 @@
 [data-parasha-games] .ws-banner[hidden]{
   display:flex !important;
   visibility:hidden !important;
+}
+
+[data-parasha-games] .ws-banner .ws-small{
+  font-size: 12px;
+  line-height: 1.35;
+  opacity: .95;
 }
 
 /* ===== Body ===== */
@@ -203,32 +210,6 @@
 [data-parasha-games] .ws-drop.is-disabled{
   opacity: .55;
   pointer-events: none;
-}
-
-/* ===== הצגת מילות בונוס ===== */
-[data-parasha-games] .ws-goals{
-  margin-top: 10px;
-  border: 1px solid rgba(0,0,0,.06);
-  border-radius: 12px;
-  background: rgba(255,255,255,.75);
-  padding: 8px 10px;
-}
-
-[data-parasha-games] .ws-goal-title{
-  font-weight: 900;
-  font-size: 12px;
-  color: rgba(0,0,0,.55);
-  margin-bottom: 4px;
-  text-align: center;
-}
-
-[data-parasha-games] .ws-goal-words{
-  font-weight: 500;
-  font-size: 12px;
-  line-height: 1.35;
-  color: rgba(0,0,0,.55);
-  word-break: break-word;
-  text-align: center;
 }
 
 /* ===== Confirm bar ===== */
