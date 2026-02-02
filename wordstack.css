@@ -121,6 +121,30 @@
   opacity: .95;
 }
 
+/* ===== Hint banner split (ONLY for child hint) ===== */
+[data-parasha-games] .ws-banner.ws-hint{
+  justify-content: space-between;
+  text-align: right;
+  gap: 12px;
+  direction: rtl;
+}
+
+[data-parasha-games] .ws-banner.ws-hint .ws-hint-right{
+  flex: 0 0 38%;
+  min-width: 0;
+}
+
+[data-parasha-games] .ws-banner.ws-hint .ws-hint-left{
+  flex: 1 1 62%;
+  min-width: 0;
+  text-align: right;
+}
+
+[data-parasha-games] .ws-banner.ws-hint .ws-words{
+  color: rgba(37,99,235,.85);
+  font-weight: 700;
+}
+
 /* ===== Body ===== */
 [data-parasha-games] .ws-body{
   display:block;
@@ -143,31 +167,24 @@
   justify-content: center;
 }
 
-/* ===== שינוי מבוקש: התיבה כרצף משבצות ===== */
+/* ===== התיבה כרצף משבצות ===== */
 [data-parasha-games] .ws-word{
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
 
-  /* מבטל "קופסה גדולה" */
   min-width: 0;
   padding: 0;
   border: none;
   background: none;
 
-  /* להשאיר הגדרות טיפוגרפיה כלליות (המשבצות עצמן קובעות את המראה) */
   font-size: 22px;
   letter-spacing: .5px;
 
   position: relative;
 }
 
-[data-parasha-games] .ws-word.is-empty{
-  /* נשאר, אין שינוי נדרש */
-}
-
-/* משבצת אות – טיפוגרפיה כמו המקלדת */
 [data-parasha-games] .ws-cell{
   width: 56px;
   height: 52px;
@@ -251,7 +268,6 @@
   justify-content:center;
 
   font-weight: 500;
-  background: #fff;
   font-size: 18px;
   cursor: grab;
   user-select:none;
@@ -276,6 +292,27 @@
 
 /* Responsive */
 @media (max-width: 420px){
+  /* hint banner becomes stacked on mobile */
+  [data-parasha-games] .ws-banner.ws-hint{
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+    text-align: center;
+    padding: 10px 12px;
+  }
+
+  [data-parasha-games] .ws-banner.ws-hint .ws-hint-right,
+  [data-parasha-games] .ws-banner.ws-hint .ws-hint-left{
+    flex: none;
+    width: 100%;
+    text-align: center;
+  }
+
+  [data-parasha-games] .ws-banner .ws-small{
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
   [data-parasha-games] .ws-tray{
     grid-template-columns: repeat(7, minmax(0, 1fr));
   }
