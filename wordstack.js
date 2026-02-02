@@ -125,6 +125,10 @@
           <div class="ws-topbar">
             <div class="ws-actions">
               <button type="button" class="ws-btn ws-reset">איפוס</button>
+              <div class="ws-levels" role="tablist" aria-label="בחירת רמה">
+                <button type="button" class="ws-btn ws-level ws-level-1" role="tab" aria-selected="true">רמה 1</button>
+                <button type="button" class="ws-btn ws-level ws-level-2" role="tab" aria-selected="false">רמה 2</button>
+              </div>
             </div>
 
             <div class="ws-stats" aria-live="polite">
@@ -138,20 +142,14 @@
           <div class="ws-body">
             <div class="ws-wordcard">
               <div class="ws-wordline">
-                <div class="ws-drop ws-drop-start" data-side="start" aria-label="הנחה בתחילת המילה"></div>
-                <div class="ws-word" aria-label="המילה הנוכחית"></div>
-                <div class="ws-drop ws-drop-end" data-side="end" aria-label="הנחה בסוף המילה"></div>
+                <div class="ws-drop ws-drop-start" data-side="start" aria-label="הנחה בתחילת התיבה"></div>
+                <div class="ws-word" aria-label="התיבה הנוכחית"></div>
+                <div class="ws-drop ws-drop-end" data-side="end" aria-label="הנחה בסוף התיבה"></div>
               </div>
 
-              <div class="ws-goals" aria-label="מטרות">
-                <div class="ws-goal ws-goal-l1" aria-label="רמה 1">
-                  <div class="ws-goal-title">רמה 1 (עד גיל <span class="ws-age ws-age-l1"></span>)</div>
-                  <div class="ws-goal-words ws-goal-words-l1"></div>
-                </div>
-                <div class="ws-goal ws-goal-l2" aria-label="רמה 2">
-                  <div class="ws-goal-title">רמה 2 (עד גיל <span class="ws-age ws-age-l2"></span>)</div>
-                  <div class="ws-goal-words ws-goal-words-l2"></div>
-                </div>
+              <div class="ws-goals" aria-label="מילות בונוס">
+                <div class="ws-goal-title">הרכבת תיבה מהמילים שברשימה - מעניקה נקודת בונוס.</div>
+                <div class="ws-goal-words ws-goal-words-list"></div>
               </div>
 
               <div class="ws-confirmbar" hidden>
@@ -176,19 +174,19 @@
     const btnCancel = rootEl.querySelector(".ws-cancel");
     const btnReset = rootEl.querySelector(".ws-reset");
 
+    const btnLevel1 = rootEl.querySelector(".ws-level-1");
+    const btnLevel2 = rootEl.querySelector(".ws-level-2");
+
     const elTurn = rootEl.querySelector(".ws-turn");
     const elScore = rootEl.querySelector(".ws-score");
 
-    const elAgeL1 = rootEl.querySelector(".ws-age-l1");
-    const elAgeL2 = rootEl.querySelector(".ws-age-l2");
-    const elWordsL1 = rootEl.querySelector(".ws-goal-words-l1");
-    const elWordsL2 = rootEl.querySelector(".ws-goal-words-l2");
+    const elWordsList = rootEl.querySelector(".ws-goal-words-list");
 
     // state
     let state = null;
 
     const CHILD_HINT_TEXT =
-      "כדי לבנות מילה – גוררים אות מהמקלדת ומניחים מימין או משמאל למילה";
+      "כדי לבנות תיבה – גוררים אות מהמקלדת ומניחים מימין או משמאל לתיבה";
 
     function ensureAnimStyle_() {
       if (document.getElementById("ws-wordstack-anim-style")) return;
@@ -327,7 +325,28 @@
       });
     }
 
-    // ===== שינוי מבוקש: המילה כרצף משבצות =====
+    function currentBonusList_() {
+      return state.level === 2 ? model.level2List : model.level1List;
+    }
+
+    function renderGoals_() {
+      if (!elWordsList) return;
+      const list = currentBonusList_() || [];
+      elWordsList.textContent = list.join(" · ");
+    }
+
+    function renderLevelButtons_() {
+      if (!btnLevel1 || !btnLevel2) return;
+
+      const isL1 = state.level === 1;
+      btnLevel1.classList.toggle("is-active", isL1);
+      btnLevel2.classList.toggle("is-active", !isL1);
+
+      btnLevel1.setAttribute("aria-selected", isL1 ? "true" : "false");
+      btnLevel2.setAttribute("aria-selected", !isL1 ? "true" : "false");
+    }
+
+    // ===== שינוי מבוקש: התיבה כרצף משבצות =====
     function renderWord_() {
       elWord.classList.toggle("is-empty", !state.word);
 
@@ -370,14 +389,6 @@
           state.computerAnim = null;
         }
       }
-    }
-
-    function renderGoals_() {
-      if (elAgeL1) elAgeL1.textContent = String(model.level1Age || "");
-      if (elAgeL2) elAgeL2.textContent = String(model.level2Age || "");
-
-      if (elWordsL1) elWordsL1.textContent = (model.level1List || []).join(" · ");
-      if (elWordsL2) elWordsL2.textContent = (model.level2List || []).join(" · ");
     }
 
     function showConfirmBar_(show) {
@@ -462,7 +473,7 @@
       // scoring:
       // - valid word: +1
       // - bonus word: total should be +2 => add +1 extra
-      const isBonus = isValid && model.level1List.includes(draft);
+      const isBonus = isValid && currentBonusList_().includes(draft);
       const basePts = isValid ? 1 : 0;
       const bonusPts = isBonus ? 1 : 0;
 
@@ -475,7 +486,7 @@
       updateStats_();
 
       if (!isValid) {
-        await showBanner("🙂 מילה לא תקינה — ממשיכים לשחק", 1500);
+        await showBanner("🙂 תיבה לא תקינה — ממשיכים לשחק", 1500);
       } else {
         // success feedback (always), then ONLY AFTER that -> computer turn
         await showBanner("כל הכבוד! 🌟", 2600);
@@ -553,6 +564,7 @@
       hideBanner();
 
       state = {
+        level: 1,
         word: randomStartLetter_(),
         placed: null,
         placedSide: null,
@@ -569,8 +581,18 @@
       clearPlaced_();
       renderWord_();
       renderGoals_();
+      renderLevelButtons_();
       updateStats_();
       setTurnUI_("child");
+    }
+
+    function setLevel_(lvl) {
+      const n = Number(lvl);
+      if (n !== 1 && n !== 2) return;
+      if (state.level === n) return;
+      state.level = n;
+      renderGoals_();
+      renderLevelButtons_();
     }
 
     // ---------- drag/drop ----------
@@ -648,6 +670,9 @@
     });
 
     btnReset.addEventListener("click", () => resetAll_());
+
+    btnLevel1.addEventListener("click", () => setLevel_(1));
+    btnLevel2.addEventListener("click", () => setLevel_(2));
 
     // init
     resetAll_();
