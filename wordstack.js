@@ -186,12 +186,13 @@
         [data-parasha-games] .ws-word .ws-anim-cell{
           display:inline-flex;
           transform-origin: 50% 80%;
-          animation: wsWordstackBounce .55s ease-out;
+          animation: wsWordstackBounce 1.15s ease-out;
         }
         @keyframes wsWordstackBounce{
           0%   { transform: translateY(0) scale(1); }
-          35%  { transform: translateY(-7px) scale(1.18); }
-          70%  { transform: translateY(0) scale(1.03); }
+          18%  { transform: translateY(0) scale(1); }
+          48%  { transform: translateY(-8px) scale(1.18); }
+          78%  { transform: translateY(0) scale(1.04); }
           100% { transform: translateY(0) scale(1); }
         }
       `.trim();
@@ -202,6 +203,7 @@
       if (!banner) return;
       banner.hidden = true;
       banner.classList.remove("is-on");
+      banner.classList.remove("ws-hint");
       banner.textContent = "";
       banner.innerHTML = "";
     }
@@ -221,11 +223,14 @@
 
       const wordsText = formatBonusText_();
 
-      banner.innerHTML =
-        `<div>גוררים אות מהמקלדת ומרכיבים תיבה</div>` +
-        `<div class="ws-small">הרכבת תיבה מהמילים שברשימה - מעניקה נקודת בונוס` +
-        (wordsText ? `: ${wordsText}` : ``) +
-        `</div>`;
+      banner.classList.add("ws-hint");
+      banner.innerHTML = `
+        <div class="ws-hint-right">גוררים אות מהמקלדת ומרכיבים תיבה</div>
+        <div class="ws-hint-left ws-small">
+          <span class="ws-bonus-title">הרכבת תיבה מהמילים שברשימה - מעניקה נקודת בונוס</span>
+          ${wordsText ? `: <span class="ws-words">${wordsText}</span>` : ``}
+        </div>
+      `.trim();
 
       banner.hidden = false;
       requestAnimationFrame(() => banner.classList.add("is-on"));
@@ -239,6 +244,7 @@
       const token = showBanner._token;
 
       state.bannerMode = "msg";
+      banner.classList.remove("ws-hint");
       banner.textContent = text;
       banner.hidden = false;
 
@@ -345,7 +351,7 @@
       btnLevel2.setAttribute("aria-selected", !isL1 ? "true" : "false");
     }
 
-    // ===== שינוי מבוקש: התיבה כרצף משבצות =====
+    // ===== התיבה כרצף משבצות =====
     function renderWord_() {
       elWord.classList.toggle("is-empty", !state.word);
 
@@ -478,27 +484,29 @@
 
       state.word = draft;
       state.highlight = { letter: state.placed, by: "child" };
-
       state.scoreChild += basePts + bonusPts;
 
       renderWord_();
       updateStats_();
 
+      // IMPORTANT: once the letter joins the תיבה, clear the side box immediately
+      clearPlaced_();
+
       if (!isValid) {
         await showBanner("🙂 תיבה לא תקינה — ממשיכים לשחק", 1500);
       } else {
-        // success feedback (always), then ONLY AFTER that -> computer turn
         await showBanner("כל הכבוד! 🌟", 2600);
       }
-
-      clearPlaced_();
 
       await computerTurn_();
     }
 
     async function computerTurn_() {
       setTurnUI_("computer");
-      await wait(400);
+
+      // IMPORTANT: real thinking pause (1–2 seconds)
+      const thinkMs = 1200 + Math.floor(Math.random() * 801); // 1200..2000
+      await wait(thinkMs);
 
       const letters = buildLetters_();
 
