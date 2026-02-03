@@ -696,3 +696,4 @@
     init: async (rootEl, ctx) => initWordstack(rootEl, ctx)
   });
 })();
+
