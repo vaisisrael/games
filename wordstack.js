@@ -11,6 +11,28 @@
 (() => {
   "use strict";
 
+  // ===== AI (Apps Script) endpoints for Wordstack =====
+  const WS_AI_API = "https://script.google.com/macros/s/AKfycbwUtXv4CafFNv19FMwI69OJqk_zAj6iF-ztoz8cCTVZ6J6th8oXJoOuFyVR2cVVhm68WA/exec";
+
+  async function wsAiValidate_(word) {
+    const url = WS_AI_API + "?mode=ws_validate&word=" + encodeURIComponent(String(word || ""));
+    const r = await fetch(url, { method: "GET" });
+    const j = await r.json();
+    return !!(j && j.ok && j.valid);
+  }
+
+  async function wsAiMove_(age, current) {
+    const url =
+      WS_AI_API +
+      "?mode=ws_move&age=" +
+      encodeURIComponent(String(age || "")) +
+      "&current=" +
+      encodeURIComponent(String(current || ""));
+    const r = await fetch(url, { method: "GET" });
+    const j = await r.json();
+    return j; // {ok:true, side, letter} | {ok:true, nomove:true} | {ok:false, error}
+  }
+
   // ---------- helpers ----------
   function parseCsvList(s) {
     return String(s || "")
@@ -472,8 +494,7 @@
 
       setTurnUI_("checking");
 
-      const verdict = judgeWord_(draft);
-      const isValid = verdict === "תקין";
+      const isValid = await wsAiValidate_(draft);
 
       // scoring:
       // - valid word: +1
@@ -508,36 +529,24 @@
       const thinkMs = 1200 + Math.floor(Math.random() * 801); // 1200..2000
       await wait(thinkMs);
 
-      const letters = buildLetters_();
+      const ageStr = (state.level === 2 ? model.level2Age : model.level1Age);
+      const ageNum = Number(String(ageStr || "").trim());
+      const age = (Number.isFinite(ageNum) && ageNum > 0) ? ageNum : 8;
 
-      const seed = `${model.parashaLabel}|${state.word}|${state.scoreChild}|${state.scoreComputer}|wordstack`;
-      const rand = mulberry32(hashStringToUint32(seed));
-      const firstSide = rand() < 0.5 ? "start" : "end";
-      const secondSide = firstSide === "start" ? "end" : "start";
-      const sides = [firstSide, secondSide];
+      const mv = await wsAiMove_(age, state.word);
 
-      function tryBuild(side, ltr) {
-        const { word } = computeDraftWord_(ltr, side);
-        const draft = normalizeWord_(word);
-        const verdict = judgeWord_(draft);
-        const isValid = verdict === "תקין";
-        const usedLetter = applyFinalIfEnd_(ltr, side === "end");
-        return { draft, isValid, usedLetter, side };
+      if (!mv || mv.ok !== true) {
+        await showBanner("🙂 תקלה זמנית — נסו שוב", 1600);
+
+        state.highlight = null;
+        state.computerAnim = null;
+        renderWord_();
+
+        setTurnUI_("child");
+        return;
       }
 
-      let chosen = null;
-
-      for (const side of sides) {
-        for (const ltr of letters) {
-          const r = tryBuild(side, ltr);
-          if (!r.isValid) continue;
-          chosen = r;
-          break;
-        }
-        if (chosen) break;
-      }
-
-      if (!chosen) {
+      if (mv.nomove) {
         await showBanner("🎉 ניצחת! למחשב אין מהלך טוב", 2200);
 
         state.highlight = null;
@@ -548,8 +557,22 @@
         return;
       }
 
-      state.word = chosen.draft;
-      state.highlight = { letter: chosen.usedLetter, by: "computer" };
+      if (!mv.side || !mv.letter || (mv.side !== "start" && mv.side !== "end") || String(mv.letter).length !== 1) {
+        await showBanner("🙂 תקלה זמנית — נסו שוב", 1600);
+
+        state.highlight = null;
+        state.computerAnim = null;
+        renderWord_();
+
+        setTurnUI_("child");
+        return;
+      }
+
+      const { word: nextWord, usedLetter } = computeDraftWord_(String(mv.letter), mv.side);
+      const draft = normalizeWord_(nextWord);
+
+      state.word = draft;
+      state.highlight = { letter: usedLetter, by: "computer" };
 
       // computer always gets +1 for a valid word
       state.scoreComputer += 1;
@@ -557,8 +580,8 @@
       // trigger animation for the newly added letter
       state.computerAnim = {
         word: state.word,
-        side: chosen.side,
-        letter: chosen.usedLetter
+        side: mv.side,
+        letter: usedLetter
       };
 
       renderWord_();
@@ -696,4 +719,3 @@
     init: async (rootEl, ctx) => initWordstack(rootEl, ctx)
   });
 })();
-
