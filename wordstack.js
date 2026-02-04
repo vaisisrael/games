@@ -1,21 +1,20 @@
 /* wordstack.js – Parasha "סדר את המילה" game (module)
 
-   NEW GAME (per your latest spec):
-   - The child plays alone.
-   - For each round, the game picks a random TARGET word from the sheet list (per level),
-     scrambles its letters randomly, and shows the scrambled word LOCKED on top.
-   - The child types the correct (ordered) word in the editor and clicks "סיימתי".
-   - If correct -> +1 point, brief success banner, next word.
-   - If incorrect -> brief fail banner, next word.
-   - No dictionary, no AI, no computer move, no "ממשיכים", no plus-one validation.
+   GAME:
+   - Child plays alone.
+   - Each round: pick a TARGET word from the sheet list (per level),
+     scramble its letters randomly, and show the scrambled word LOCKED on top.
+   - Child types the correct word and clicks "סיימתי".
+   - Correct -> +1 success, banner, next word.
+   - Incorrect -> +1 error, banner (longer), next word.
+   - No dictionary, no AI, no computer, no plus-one validation.
 
    Data expected from Apps Script:
    ?mode=wordstack&parasha=...
    returns:
    { ok:true, row:{ parasha, level1_chain, level2_chain } }
 
-   Notes:
-   - Words are comma-separated in the sheet.
+   Words are comma-separated in the sheet.
 */
 
 (() => {
@@ -32,15 +31,11 @@
   function normalizeWord_(w) {
     return String(w || "")
       .trim()
-      .replace(/\s+/g, ""); // no spaces
+      .replace(/\s+/g, "");
   }
 
   function isHebrewOnly_(w) {
     return /^[\u0590-\u05FF]+$/.test(w);
-  }
-
-  function wait(ms) {
-    return new Promise(r => setTimeout(r, ms));
   }
 
   function randInt_(min, max) {
@@ -56,18 +51,17 @@
     return a + Math.floor(Math.random() * (b - a + 1));
   }
 
-  function pickRandom_(arr) {
-    const list = Array.isArray(arr) ? arr : [];
-    if (!list.length) return "";
-    return list[randInt_(0, list.length - 1)];
+  function shuffleArrayInPlace_(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const k = randInt_(0, i);
+      const t = arr[i]; arr[i] = arr[k]; arr[k] = t;
+    }
+    return arr;
   }
 
   function shuffleString_(s) {
     const a = Array.from(String(s || ""));
-    for (let i = a.length - 1; i > 0; i--) {
-      const k = randInt_(0, i);
-      const t = a[i]; a[i] = a[k]; a[k] = t;
-    }
+    shuffleArrayInPlace_(a);
     return a.join("");
   }
 
@@ -75,17 +69,14 @@
     const w = normalizeWord_(word);
     if (w.length <= 1) return w;
 
-    // Try a few shuffles to avoid returning the same word
     for (let i = 0; i < 8; i++) {
       const s = shuffleString_(w);
       if (s !== w) return s;
     }
-    // If it keeps matching (e.g., repeated letters), return last shuffle
     return shuffleString_(w);
   }
 
   function sanitizeList_(list) {
-    // Keep Hebrew-only, length>=2 (you can relax later if you want)
     return (Array.isArray(list) ? list : [])
       .map(normalizeWord_)
       .filter(w => w && w.length >= 2 && isHebrewOnly_(w));
@@ -100,11 +91,11 @@
     const data = await res.json();
 
     if (!data || !data.row) {
-      rootEl.innerHTML = `<div>לא נמצאו נתונים למשחק “סדר את המילה” לפרשה זו.</div>`;
+      rootEl.innerHTML = `<div>לא נמצאו נתונים למשחק הזה בפרשה זו.</div>`;
       return { reset: () => {} };
     }
 
-    // NEW FIELD NAMES (per your request)
+    // Field names (new game)
     const level1Raw = data.row.level1_chain || "";
     const level2Raw = data.row.level2_chain || "";
 
@@ -138,13 +129,13 @@
           </div>
 
           <div class="ws-body">
-            <div class="ws-lockedCard" aria-label="המילה המשובשת">
-              <div class="ws-lockedTitle">סדר את המילה</div>
-              <div class="ws-lockedWord" aria-label="המילה המשובשת"></div>
+            <div class="ws-lockedCard" aria-label="המילה שהתערבבה">
+              <div class="ws-lockedTitle">זו המילה שהתערבבה</div>
+              <div class="ws-lockedWord" aria-label="המילה שהתערבבה"></div>
             </div>
 
             <div class="ws-openCard" aria-label="משטח עריכה">
-              <div class="ws-openTitle">כתוב למטה את המילה הנכונה</div>
+              <div class="ws-openTitle">זו המילה הנכונה</div>
               <textarea class="ws-openInput" rows="1" aria-label="כתיבת המילה הנכונה"></textarea>
 
               <div class="ws-openActions">
@@ -174,8 +165,15 @@
     // ---------- state ----------
     let state = null;
 
-    function currentList_() {
-      return state.level === 2 ? model.level2List : model.level1List;
+    function listForLevel_(lvl) {
+      return lvl === 2 ? model.level2List : model.level1List;
+    }
+
+    function buildPoolForLevel_(lvl) {
+      const list = listForLevel_(lvl);
+      const pool = list.slice();
+      shuffleArrayInPlace_(pool);
+      return pool;
     }
 
     function setLevelUI_() {
@@ -187,8 +185,7 @@
     }
 
     function updateStatus_() {
-      // Simple & clear
-      elStatus.textContent = `ניקוד: ${state.score}`;
+      elStatus.textContent = `${state.successes} הצלחות, ${state.errors} שגיאות`;
     }
 
     function autoGrowInput_() {
@@ -234,14 +231,38 @@
       });
     }
 
+    function drawNextTarget_() {
+      // Ensure we cycle through the list instead of random-repeating the same word
+      const lvl = state.level;
+
+      if (!state.poolByLevel[lvl] || state.poolByLevel[lvl].length === 0) {
+        state.poolByLevel[lvl] = buildPoolForLevel_(lvl);
+      }
+
+      let target = state.poolByLevel[lvl].pop() || "";
+
+      // Avoid immediate repeat if possible
+      if (target && state.prevTarget && target === state.prevTarget) {
+        // If we still have other options, swap with another
+        if (state.poolByLevel[lvl].length > 0) {
+          const alt = state.poolByLevel[lvl].pop();
+          // put the repeated one back into the pool front-ish
+          state.poolByLevel[lvl].unshift(target);
+          target = alt || target;
+        }
+      }
+
+      // Fallback if list empty
+      if (!target) target = "בראשית";
+
+      state.prevTarget = target;
+      return target;
+    }
+
     function nextRound_() {
       hideBanner_();
 
-      const list = currentList_();
-      const target = normalizeWord_(pickRandom_(list));
-
-      // Fallback if list empty
-      state.targetWord = target || "בראשית";
+      state.targetWord = drawNextTarget_();
       state.scrambledWord = scrambleNotSame_(state.targetWord);
 
       elLocked.textContent = state.scrambledWord;
@@ -249,18 +270,22 @@
       clearInput_();
       setInputsEnabled_(true);
       updateStatus_();
-
-      // focus for quick play
       elInput.focus();
     }
 
     async function resetAll_() {
       state = {
         level: 1,
-        score: 0,
+        successes: 0,
+        errors: 0,
         targetWord: "",
-        scrambledWord: ""
+        scrambledWord: "",
+        prevTarget: "",
+        poolByLevel: { 1: [], 2: [] }
       };
+
+      // prime pool
+      state.poolByLevel[1] = buildPoolForLevel_(1);
 
       setLevelUI_();
       updateStatus_();
@@ -273,7 +298,15 @@
       if (state.level === n) return;
 
       state.level = n;
-      state.score = 0; // clean start per level
+
+      // reset counters per level (simple & clean)
+      state.successes = 0;
+      state.errors = 0;
+      state.prevTarget = "";
+
+      // rebuild pool for chosen level
+      state.poolByLevel[n] = buildPoolForLevel_(n);
+
       setLevelUI_();
       updateStatus_();
       nextRound_();
@@ -288,9 +321,8 @@
         return;
       }
 
-      // strict equality (simple and smart)
       if (typed === target) {
-        state.score += 1;
+        state.successes += 1;
         updateStatus_();
         setInputsEnabled_(false);
         await showBannerMessage_("כל הכבוד! 🌟", 850);
@@ -298,9 +330,11 @@
         return;
       }
 
-      // fail: no point, move on
+      // fail: keep message 1s longer
+      state.errors += 1;
+      updateStatus_();
       setInputsEnabled_(false);
-      await showBannerMessage_("לא הפעם 🙂 עוברים הלאה", 950);
+      await showBannerMessage_("לא הפעם 🙂 עוברים הלאה", 1950);
       nextRound_();
     }
 
