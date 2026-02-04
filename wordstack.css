@@ -1,5 +1,8 @@
 /* wordstack.css – "סדר את המילה" (simple, calm, notebook input)
-   Banner message only.
+   Updates:
+   - Two cards side-by-side (scrambled + editor)
+   - Scrambled word looks locked/blocked (non-editable)
+   - Textarea has no scrollbar
 */
 
 [data-parasha-games] .ws-wrap{
@@ -132,9 +135,21 @@
   line-height: 1.35;
 }
 
-/* ===== Body ===== */
+/* ===== Body: 2 cards in one row ===== */
 [data-parasha-games] .ws-body{
-  display:block;
+  display:flex;
+  gap:10px;
+  align-items: stretch;
+}
+
+[data-parasha-games] .ws-lockedCard{
+  flex: 0 0 42%;
+  min-width: 220px;
+}
+
+[data-parasha-games] .ws-openCard{
+  flex: 1 1 auto;
+  min-width: 240px;
 }
 
 /* ===== Cards ===== */
@@ -144,8 +159,8 @@
   border-radius: 16px;
   background: rgba(255,255,255,.88);
   box-shadow: 0 8px 18px rgba(0,0,0,.06);
-  padding: 12px;
-  margin: 10px 0 12px;
+  padding: 10px;               /* smaller */
+  margin: 0;                   /* same row - no vertical margins */
 }
 
 [data-parasha-games] .ws-lockedTitle,
@@ -157,9 +172,13 @@
   direction: rtl;
 }
 
-/* Scrambled word (locked) */
+[data-parasha-games] .ws-emo{
+  margin-inline-start: 6px;
+}
+
+/* Scrambled word (locked, non-editable look) */
 [data-parasha-games] .ws-lockedWord{
-  font-size: 26px;
+  font-size: 24px;
   font-weight: 900;
   letter-spacing: .4px;
   direction: rtl;
@@ -168,10 +187,15 @@
 
   border-radius: 14px;
   border: 1px dashed rgba(0,0,0,.18);
-  background: #fff;
+  background: #f9fafb;
+
+  cursor: not-allowed;
+  user-select: none;
+  opacity: .92;
+  filter: saturate(.85);
 }
 
-/* Notebook style input */
+/* Notebook style input (no scrollbar) */
 [data-parasha-games] .ws-openInput{
   width: 100%;
   box-sizing: border-box;
@@ -180,7 +204,16 @@
   outline: none;
   resize: none;
 
-  font-size: 22px;
+  overflow: hidden;            /* <-- no scrollbar */
+  scrollbar-width: none;       /* Firefox */
+}
+[data-parasha-games] .ws-openInput::-webkit-scrollbar{
+  width: 0;
+  height: 0;
+}
+
+[data-parasha-games] .ws-openInput{
+  font-size: 20px;             /* a bit smaller to fit row */
   font-weight: 500;
   direction: rtl;
   text-align: right;
@@ -216,8 +249,19 @@
   margin-top: 10px;
 }
 
-/* Responsive */
-@media (max-width: 420px){
+/* Responsive: stack on small screens */
+@media (max-width: 520px){
+  [data-parasha-games] .ws-body{
+    display:block;
+  }
+
+  [data-parasha-games] .ws-lockedCard,
+  [data-parasha-games] .ws-openCard{
+    min-width: 0;
+    margin: 10px 0 12px;
+    padding: 12px;
+  }
+
   [data-parasha-games] .ws-lockedWord{
     font-size: 24px;
   }
