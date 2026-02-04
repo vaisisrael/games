@@ -1,5 +1,5 @@
 /* wordstack.css – "תיבה ואות" (notebook input, calm)
-   Update: banner action button styled as a real button ("ממשיכים")
+   Banner action button styled as a real button ("ממשיכים")
 */
 
 [data-parasha-games] .ws-wrap{
@@ -132,7 +132,7 @@
   line-height: 1.35;
 }
 
-/* ✅ Banner action button: real button feel */
+/* Banner action button: real button feel */
 [data-parasha-games] .ws-banner-btn{
   border: 1px solid rgba(37,99,235,.28);
   background: rgba(219,234,254,.95);
