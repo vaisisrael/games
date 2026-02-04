@@ -1,216 +1,74 @@
-/* wordstack.css – "תיבה ואות" (notebook input, clean, calm) */
+/* wordstack.css – "תיבה ואות" UI */
 
 [data-parasha-games] .ws-wrap{
-  --w-bg: #f6f7fb;
-  --w-surface: #ffffff;
-  --w-border: rgba(0,0,0,.10);
-  --w-text: #1f2937;
-  --w-muted: #6b7280;
-  --w-shadow: 0 10px 25px rgba(0,0,0,.08);
+  --w-bg:#f6f7fb;
+  --w-border:rgba(0,0,0,.10);
+  --w-text:#1f2937;
+  --w-muted:#6b7280;
+  --w-shadow:0 10px 25px rgba(0,0,0,.08);
 
-  font-family: "Rubik", system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans Hebrew", "Heebo", sans-serif !important;
-  color: var(--w-text);
-}
-
-[data-parasha-games] .ws-wrap,
-[data-parasha-games] .ws-wrap *{
-  font-family: inherit !important;
+  font-family:"Rubik",system-ui,"Heebo",sans-serif!important;
+  color:var(--w-text);
 }
 
 [data-parasha-games] .ws-cardbox{
-  background: linear-gradient(180deg, var(--w-bg), #fff);
-  border: 1px solid var(--w-border);
-  border-radius: 16px;
-  box-shadow: var(--w-shadow);
-  padding: 12px;
+  background:linear-gradient(180deg,var(--w-bg),#fff);
+  border:1px solid var(--w-border);
+  border-radius:16px;
+  box-shadow:var(--w-shadow);
+  padding:12px;
 }
 
-/* ===== Topbar ===== */
 [data-parasha-games] .ws-topbar{
   display:flex;
   align-items:center;
   gap:10px;
-  flex-wrap: wrap;
-  margin-bottom: 10px;
+  flex-wrap:wrap;
+  margin-bottom:10px;
 }
 
 [data-parasha-games] .ws-actions{
   display:flex;
   align-items:center;
   gap:8px;
-  flex-wrap: wrap;
-  direction: rtl;
-}
-
-[data-parasha-games] .ws-levels{
-  display:flex;
-  align-items:center;
-  gap:8px;
+  direction:rtl;
 }
 
 [data-parasha-games] .ws-status{
-  margin-inline-start: auto;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  font-weight: 900;
-  color: var(--w-muted);
-  white-space: nowrap;
+  margin-inline-start:auto;
+  font-weight:900;
+  color:var(--w-muted);
 }
 
-/* Buttons */
 [data-parasha-games] .ws-btn{
-  border: 1px solid var(--w-border);
-  background: #eef2ff;
-  border-radius: 12px;
-  padding: 8px 10px;
-  cursor: pointer;
-  font-weight: 900;
-  font-size: 14px;
-  user-select:none;
-  -webkit-appearance: none;
-  appearance: none;
+  border:1px solid var(--w-border);
+  background:#eef2ff;
+  border-radius:12px;
+  padding:8px 10px;
+  cursor:pointer;
+  font-weight:900;
 }
 
-[data-parasha-games] .ws-btn:hover{
-  box-shadow: 0 6px 14px rgba(0,0,0,.06);
-}
-
-[data-parasha-games] .ws-btn:disabled{
-  opacity: .55;
-  cursor: default;
-}
-
-/* Active level */
-[data-parasha-games] .ws-level.is-active{
-  background: rgba(219,234,254,.9);
-  border-color: rgba(37,99,235,.35);
-  box-shadow: 0 10px 20px rgba(0,0,0,.06);
-}
-
-/* ===== Banner ===== */
-[data-parasha-games] .ws-banner{
-  margin: 8px 0 10px;
-  border-radius: 14px;
-  border: 1px solid rgba(0,0,0,.08);
-  background: rgba(250,204,21,.14);
-  padding: 8px 10px;
-  font-weight: 400;
-  text-align: center;
-
-  min-height: 28px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  opacity: 0;
-  transform: translateY(-2px);
-  transition: opacity .14s ease, transform .14s ease;
-}
-[data-parasha-games] .ws-banner.is-on{
-  opacity: 1;
-  transform: translateY(0);
-}
-[data-parasha-games] .ws-banner[hidden]{
-  display:flex !important;
-  visibility:hidden !important;
-}
-
-/* ===== Body ===== */
-[data-parasha-games] .ws-body{
-  display:block;
-}
-
-/* ===== Cards ===== */
 [data-parasha-games] .ws-lockedCard,
 [data-parasha-games] .ws-openCard{
-  border: 1px solid rgba(0,0,0,.08);
-  border-radius: 16px;
-  background: rgba(255,255,255,.88);
-  box-shadow: 0 8px 18px rgba(0,0,0,.06);
-  padding: 12px;
-  margin: 10px 0 12px;
+  border:1px solid rgba(0,0,0,.08);
+  border-radius:16px;
+  background:#fff;
+  padding:12px;
+  margin:10px 0;
 }
 
-[data-parasha-games] .ws-lockedTitle,
-[data-parasha-games] .ws-openTitle{
-  font-weight: 900;
-  color: var(--w-muted);
-  font-size: 13px;
-  margin-bottom: 8px;
-  direction: rtl;
-}
-
-/* Locked word */
 [data-parasha-games] .ws-lockedWord{
-  font-size: 26px;
-  font-weight: 900;
-  letter-spacing: .4px;
-  direction: rtl;
-  text-align: center;
-  padding: 8px 6px;
-
-  border-radius: 14px;
-  border: 1px dashed rgba(0,0,0,.18);
-  background: #fff;
+  font-size:26px;
+  font-weight:900;
+  text-align:center;
 }
 
-/* Notebook style input */
 [data-parasha-games] .ws-openInput{
-  width: 100%;
-  box-sizing: border-box;
-
-  border: none;
-  outline: none;
-  resize: none;
-
-  font-size: 22px;
-  font-weight: 500;
-  direction: rtl;
-  text-align: right;
-
-  padding: 8px 6px 10px;
-
-  background:
-    linear-gradient(#fff, #fff) padding-box,
-    repeating-linear-gradient(
-      to bottom,
-      rgba(0,0,0,0) 0px,
-      rgba(0,0,0,0) 30px,
-      rgba(0,0,0,.10) 31px
-    );
-
-  border-radius: 14px;
-  border: 1px solid rgba(0,0,0,.08);
-
-  min-height: 46px;
-  line-height: 31px;
-}
-
-[data-parasha-games] .ws-openInput:disabled{
-  opacity: .95;
-}
-
-/* Actions */
-[data-parasha-games] .ws-openActions{
-  display:flex;
-  align-items:center;
-  justify-content: center;
-  gap:10px;
-  margin-top: 10px;
-}
-
-/* Responsive */
-@media (max-width: 420px){
-  [data-parasha-games] .ws-lockedWord{
-    font-size: 24px;
-  }
-
-  [data-parasha-games] .ws-openInput{
-    font-size: 20px;
-  }
-
-  [data-parasha-games] .ws-topbar{
-    gap:8px;
-  }
+  width:100%;
+  border:1px solid rgba(0,0,0,.08);
+  border-radius:14px;
+  font-size:22px;
+  direction:rtl;
+  padding:8px;
 }
