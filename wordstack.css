@@ -1,4 +1,6 @@
-/* wordstack.css – "תיבה ואות" (notebook input, calm) */
+/* wordstack.css – "תיבה ואות" (notebook input, calm)
+   Update: banner action button styled as a real button ("ממשיכים")
+*/
 
 [data-parasha-games] .ws-wrap{
   --w-bg: #f6f7fb;
@@ -130,20 +132,39 @@
   line-height: 1.35;
 }
 
+/* ✅ Banner action button: real button feel */
 [data-parasha-games] .ws-banner-btn{
-  border: 1px solid rgba(0,0,0,.12);
-  background: rgba(255,255,255,.9);
-  border-radius: 10px;
-  padding: 6px 10px;
+  border: 1px solid rgba(37,99,235,.28);
+  background: rgba(219,234,254,.95);
+  border-radius: 12px;
+  padding: 7px 12px;
   font-weight: 900;
   cursor: pointer;
   font-size: 13px;
   user-select: none;
   -webkit-appearance: none;
   appearance: none;
+
+  box-shadow: 0 8px 18px rgba(0,0,0,.08);
+  line-height: 1;
 }
+
 [data-parasha-games] .ws-banner-btn:hover{
-  box-shadow: 0 6px 14px rgba(0,0,0,.06);
+  box-shadow: 0 12px 24px rgba(0,0,0,.10);
+}
+
+[data-parasha-games] .ws-banner-btn:active{
+  transform: translateY(1px);
+  box-shadow: 0 6px 14px rgba(0,0,0,.08);
+}
+
+[data-parasha-games] .ws-banner-btn:focus{
+  outline: none;
+}
+
+[data-parasha-games] .ws-banner-btn:focus-visible{
+  outline: 3px solid rgba(37,99,235,.28);
+  outline-offset: 2px;
 }
 
 /* ===== Body ===== */
