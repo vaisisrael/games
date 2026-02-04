@@ -1,8 +1,10 @@
 /* wordstack.js – Parasha "תיבה ואות" game (module)
-   Fixes in this version:
-   1) One-letter-add check now treats final letters as equivalent (ן=נ, ך=כ, etc.)
-   2) Computer word is NOT locked until user clicks "תורי ▶"
-   3) Open title is dynamic: child/computer turn wording
+   Updates per latest request:
+   - No "התור שלך — ..." status text (instruction is above open box)
+   - Locked title: first = "מילת הפתיחה", thereafter = "המילה הנוכחית"
+   - Open box is ONLY for the child with fixed instruction text
+   - Computer does NOT write into open box; computer word appears in yellow banner + small "תורי"
+   - Child valid submit: lock immediately + banner "כל הכבוד"
 */
 
 (() => {
@@ -33,7 +35,6 @@
 
   function normalizeForCompare_(w) {
     const s = normalizeWord_(w);
-    // replace finals anywhere (safe for comparison)
     return Array.from(s).map(ch => FINAL_TO_NORMAL.get(ch) || ch).join("");
   }
 
@@ -51,7 +52,6 @@
   }
 
   function randInt_(min, max) {
-    // inclusive
     const a = Math.ceil(min);
     const b = Math.floor(max);
 
@@ -70,7 +70,7 @@
     return list[randInt_(0, list.length - 1)];
   }
 
-  // ✅ one-letter add anywhere (start/middle/end) - comparison uses normalized finals
+  // one-letter add anywhere (start/middle/end) - comparison uses normalized finals
   function isOneLetterAdded_(oldWord, newWord) {
     const a = normalizeForCompare_(oldWord);
     const b = normalizeForCompare_(newWord);
@@ -79,8 +79,8 @@
     if (!isHebrewOnly_(a) || !isHebrewOnly_(b)) return false;
     if (b.length !== a.length + 1) return false;
 
-    let i = 0; // a
-    let j = 0; // b
+    let i = 0;
+    let j = 0;
     let skipped = 0;
 
     while (i < a.length && j < b.length) {
@@ -89,19 +89,15 @@
       } else {
         skipped++;
         if (skipped > 1) return false;
-        j++; // skip one inserted char in b
+        j++; // skip inserted char in b
       }
     }
 
-    // must have consumed all of a
-    if (i !== a.length) return false;
-
-    // if no skip happened inside, insertion is at the end -> still valid
-    return true;
+    return i === a.length;
   }
 
   // Temporary computer move:
-  // tries adding ONE letter at start/end (simple placeholder) and accepts first passing judgeWord_.
+  // tries adding ONE letter at start/end (simple placeholder).
   function computerPickMove_(current) {
     const base = normalizeWord_(current);
     if (!base) return "";
@@ -151,9 +147,7 @@
     const level1List = parseCsvList(level1Raw).map(normalizeWord_).filter(Boolean);
     const level2List = parseCsvList(level2Raw).map(normalizeWord_).filter(Boolean);
 
-    const model = { level1List, level2List };
-
-    return render(rootEl, model);
+    return render(rootEl, { level1List, level2List });
   }
 
   function render(rootEl, model) {
@@ -172,16 +166,21 @@
             <div class="ws-status" aria-live="polite"></div>
           </div>
 
-          <div class="ws-banner" hidden></div>
+          <div class="ws-banner" hidden>
+            <div class="ws-banner-row">
+              <span class="ws-banner-text"></span>
+              <button type="button" class="ws-banner-btn" hidden>תורי</button>
+            </div>
+          </div>
 
           <div class="ws-body">
-            <div class="ws-lockedCard" aria-label="המילה הנוכחית">
-              <div class="ws-lockedTitle">המילה הנוכחית</div>
-              <div class="ws-lockedWord" aria-label="המילה הנוכחית"></div>
+            <div class="ws-lockedCard" aria-label="המילה הנעולה">
+              <div class="ws-lockedTitle"></div>
+              <div class="ws-lockedWord" aria-label="המילה הנעולה"></div>
             </div>
 
             <div class="ws-openCard" aria-label="אזור כתיבה">
-              <div class="ws-openTitle"></div>
+              <div class="ws-openTitle">כאן כותבים מילה חדשה מאותן אותיות בתוספת אות אחת</div>
               <textarea class="ws-openInput" rows="1" aria-label="כתיבת מילה חדשה"></textarea>
 
               <div class="ws-openActions">
@@ -193,15 +192,19 @@
       </div>
     `.trim();
 
-    const banner = rootEl.querySelector(".ws-banner");
     const elStatus = rootEl.querySelector(".ws-status");
+
+    const banner = rootEl.querySelector(".ws-banner");
+    const bannerText = rootEl.querySelector(".ws-banner-text");
+    const bannerBtn = rootEl.querySelector(".ws-banner-btn");
 
     const btnReset = rootEl.querySelector(".ws-reset");
     const btnLevel1 = rootEl.querySelector(".ws-level-1");
     const btnLevel2 = rootEl.querySelector(".ws-level-2");
 
+    const elLockedTitle = rootEl.querySelector(".ws-lockedTitle");
     const elLocked = rootEl.querySelector(".ws-lockedWord");
-    const elOpenTitle = rootEl.querySelector(".ws-openTitle");
+
     const elInput = rootEl.querySelector(".ws-openInput");
     const btnMain = rootEl.querySelector(".ws-mainBtn");
 
@@ -217,45 +220,12 @@
       return normalizeWord_(w) || "";
     }
 
-    function hideBanner_() {
-      if (!banner) return;
-      banner.hidden = true;
-      banner.classList.remove("is-on");
-      banner.textContent = "";
-    }
-
-    function showBanner_(text, durationMs = 1400) {
-      if (!banner) return Promise.resolve();
-
-      showBanner_._token = (showBanner_._token || 0) + 1;
-      const token = showBanner_._token;
-
-      banner.textContent = text;
-      banner.hidden = false;
-      requestAnimationFrame(() => banner.classList.add("is-on"));
-
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          if (showBanner_._token !== token) return resolve();
-          banner.classList.remove("is-on");
-          setTimeout(() => {
-            if (showBanner_._token !== token) return resolve();
-            banner.hidden = true;
-            resolve();
-          }, 140);
-        }, durationMs);
-      });
-    }
-
-    function setLevelUI_() {
-      const isL1 = state.level === 1;
-      btnLevel1.classList.toggle("is-active", isL1);
-      btnLevel2.classList.toggle("is-active", !isL1);
-      btnLevel1.setAttribute("aria-selected", isL1 ? "true" : "false");
-      btnLevel2.setAttribute("aria-selected", !isL1 ? "true" : "false");
+    function setLockedTitle_() {
+      elLockedTitle.textContent = state.isFirstLock ? "מילת הפתיחה" : "המילה הנוכחית";
     }
 
     function renderLocked_() {
+      setLockedTitle_();
       elLocked.textContent = state.lockedWord || "";
     }
 
@@ -269,57 +239,103 @@
       autoGrowInput_();
     }
 
-    function setInput_(word) {
-      elInput.value = String(word || "");
-      autoGrowInput_();
+    function setInputsEnabled_(enabled) {
+      elInput.disabled = !enabled;
+      btnMain.disabled = !enabled;
+    }
+
+    function clearStatus_() {
+      // user asked to not show turn instruction here; keep empty
+      elStatus.textContent = "";
+    }
+
+    function hideBanner_() {
+      if (!banner) return;
+      banner.hidden = true;
+      banner.classList.remove("is-on");
+      bannerText.textContent = "";
+      bannerBtn.hidden = true;
+    }
+
+    function showBannerMessage_(text, durationMs = 1400) {
+      if (!banner) return Promise.resolve();
+
+      showBannerMessage_._token = (showBannerMessage_._token || 0) + 1;
+      const token = showBannerMessage_._token;
+
+      bannerBtn.hidden = true;
+      bannerText.textContent = text;
+      banner.hidden = false;
+
+      requestAnimationFrame(() => banner.classList.add("is-on"));
+
+      return new Promise((resolve) => {
+        setTimeout(() => {
+          if (showBannerMessage_._token !== token) return resolve();
+          banner.classList.remove("is-on");
+          setTimeout(() => {
+            if (showBannerMessage_._token !== token) return resolve();
+            banner.hidden = true;
+            resolve();
+          }, 140);
+        }, durationMs);
+      });
+    }
+
+    function showBannerComputerWord_(word) {
+      // persistent until user clicks "תורי"
+      bannerText.textContent = `המחשב כתב: ${word}`;
+      bannerBtn.hidden = false;
+      banner.hidden = false;
+      requestAnimationFrame(() => banner.classList.add("is-on"));
+    }
+
+    function setLevelUI_() {
+      const isL1 = state.level === 1;
+      btnLevel1.classList.toggle("is-active", isL1);
+      btnLevel2.classList.toggle("is-active", !isL1);
+      btnLevel1.setAttribute("aria-selected", isL1 ? "true" : "false");
+      btnLevel2.setAttribute("aria-selected", !isL1 ? "true" : "false");
     }
 
     function setChildTurn_() {
       state.turn = "child";
       state.pendingComputerWord = null;
 
-      elOpenTitle.textContent = "תורי לכתוב מילה חדשה";
-      elInput.disabled = false;
+      clearStatus_();
+      hideBanner_();
+      clearInput_();
 
-      btnMain.disabled = false;
-      btnMain.textContent = "סיימתי";
-
-      elStatus.textContent = "התור שלך — בנה מילה חדשה והוסף אות אחת";
+      setInputsEnabled_(true);
       elInput.focus();
     }
 
     function setComputerThinking_() {
       state.turn = "computer";
+      clearStatus_();
+      setInputsEnabled_(false);
 
-      elOpenTitle.textContent = "תור המחשב לכתוב מילה חדשה";
-      elInput.disabled = true;
-
-      btnMain.disabled = true;
-      btnMain.textContent = "סיימתי";
-
-      elStatus.textContent = "המחשב חושב…";
+      // show thinking message briefly; then it will be replaced by computer word + button
+      showBannerMessage_("המחשב חושב…", 1200);
     }
 
     function setAfterComputer_() {
       state.turn = "afterComputer";
-
-      elOpenTitle.textContent = "תור המחשב לכתוב מילה חדשה";
-      elInput.disabled = true;
-
-      btnMain.disabled = false;
-      btnMain.textContent = "תורי ▶";
-
-      elStatus.textContent = "עכשיו תורך";
+      clearStatus_();
+      setInputsEnabled_(false);
+      // banner will show the word + button
     }
 
     function resetAll_() {
       hideBanner_();
+      clearStatus_();
 
       state = {
         level: 1,
         lockedWord: "",
         pendingComputerWord: null,
-        turn: "child"
+        turn: "child",
+        isFirstLock: true
       };
 
       const start = pickStartWord_();
@@ -327,7 +343,6 @@
 
       setLevelUI_();
       renderLocked_();
-      clearInput_();
       setChildTurn_();
     }
 
@@ -337,13 +352,13 @@
       if (state.level === n) return;
 
       state.level = n;
-
       const start = pickStartWord_();
+
       state.lockedWord = start || state.lockedWord || "בראשית";
+      state.isFirstLock = true;
 
       setLevelUI_();
       renderLocked_();
-      clearInput_();
       setChildTurn_();
     }
 
@@ -352,25 +367,29 @@
       const current = normalizeWord_(state.lockedWord);
 
       if (!typed) {
-        await showBanner_("כתוב מילה לפני סיימתי 🙂", 1200);
+        await showBannerMessage_("כתוב מילה לפני סיימתי 🙂", 1200);
         return;
       }
 
       if (!isOneLetterAdded_(current, typed)) {
-        await showBanner_("צריך להוסיף בדיוק אות אחת למילה הנוכחית", 1600);
+        await showBannerMessage_("צריך להוסיף בדיוק אות אחת למילה הנעולה", 1600);
         return;
       }
 
       if (!judgeWord_(typed)) {
-        await showBanner_("המילה לא נראית תקינה — נסה שוב 🙂", 1600);
+        await showBannerMessage_("המילה לא נראית תקינה — נסה שוב 🙂", 1600);
         return;
       }
 
-      // ✅ child locks immediately
+      // child locks immediately
       state.lockedWord = typed;
       renderLocked_();
-      clearInput_();
+      state.isFirstLock = false;
 
+      // banner praise
+      await showBannerMessage_("כל הכבוד! 🌟", 1100);
+
+      // after praise, computer turn
       await computerTurn_();
     }
 
@@ -383,19 +402,35 @@
       const next = computerPickMove_(state.lockedWord);
 
       if (!next) {
-        await showBanner_("למחשב אין מהלך כרגע 🤖", 1600);
+        await showBannerMessage_("למחשב אין מהלך כרגע 🤖", 1600);
         setChildTurn_();
         return;
       }
 
-      // ❗ IMPORTANT: do NOT lock yet
       state.pendingComputerWord = next;
 
-      // show only in open box
-      setInput_(next);
+      // open box remains for child only: keep it empty/disabled
+      clearInput_();
 
-      // lock stays unchanged until user clicks "תורי ▶"
+      // show computer word in banner + small "תורי"
+      showBannerComputerWord_(next);
+
       setAfterComputer_();
+    }
+
+    function acceptComputerWord_() {
+      if (state.turn !== "afterComputer") return;
+      if (!state.pendingComputerWord) return;
+
+      state.lockedWord = state.pendingComputerWord;
+      state.pendingComputerWord = null;
+      state.isFirstLock = false;
+
+      renderLocked_();
+
+      // clear banner + enable child input
+      hideBanner_();
+      setChildTurn_();
     }
 
     // ---------- events ----------
@@ -404,30 +439,15 @@
     elInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
-        if (state.turn === "child") childSubmit_();
+        if (!btnMain.disabled) childSubmit_();
       }
     });
 
     btnMain.addEventListener("click", () => {
-      if (state.turn === "child") {
-        childSubmit_();
-        return;
-      }
-
-      if (state.turn === "afterComputer") {
-        // ✔ now lock computer word
-        if (state.pendingComputerWord) {
-          state.lockedWord = state.pendingComputerWord;
-          state.pendingComputerWord = null;
-          renderLocked_();
-        }
-
-        // and immediately clear open box
-        clearInput_();
-
-        setChildTurn_();
-      }
+      if (state.turn === "child") childSubmit_();
     });
+
+    bannerBtn.addEventListener("click", () => acceptComputerWord_());
 
     btnReset.addEventListener("click", () => resetAll_());
     btnLevel1.addEventListener("click", () => setLevel_(1));
