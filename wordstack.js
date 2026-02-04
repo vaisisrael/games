@@ -1,37 +1,15 @@
-/* wordstack.js – Parasha "תיבה" game (module)
+/* wordstack.js – Parasha "תיבה ואות" game (module)
    Expects Apps Script:
    ?mode=wordstack&parasha=...
    returns:
-   { ok:true, row:{ parasha, level1_age, level1_words, level2_age, level2_words } }
+   { ok:true, row:{ parasha, level1_words, level2_words } }
 
-   NOTE: This module includes a lightweight local judge (no external AI).
-   Replace judgeWord_() with your AI judge later (without changing UI/CSS contract).
+   NO AI. NO UrlFetch. Local validation placeholder.
+   Next step: local Hebrew dictionary + inflection rules.
 */
 
 (() => {
   "use strict";
-
-  // ===== AI (Apps Script) endpoints for Wordstack =====
-  const WS_AI_API = "https://script.google.com/macros/s/AKfycbwUtXv4CafFNv19FMwI69OJqk_zAj6iF-ztoz8cCTVZ6J6th8oXJoOuFyVR2cVVhm68WA/exec";
-
-  async function wsAiValidate_(word) {
-    const url = WS_AI_API + "?mode=ws_validate&word=" + encodeURIComponent(String(word || ""));
-    const r = await fetch(url, { method: "GET" });
-    const j = await r.json();
-    return !!(j && j.ok && j.valid);
-  }
-
-  async function wsAiMove_(age, current) {
-    const url =
-      WS_AI_API +
-      "?mode=ws_move&age=" +
-      encodeURIComponent(String(age || "")) +
-      "&current=" +
-      encodeURIComponent(String(current || ""));
-    const r = await fetch(url, { method: "GET" });
-    const j = await r.json();
-    return j; // {ok:true, side, letter} | {ok:true, nomove:true} | {ok:false, error}
-  }
 
   // ---------- helpers ----------
   function parseCsvList(s) {
@@ -47,64 +25,112 @@
       .replace(/\s+/g, ""); // no spaces
   }
 
-  // final letter conversions at END of word only
-  const FINAL_MAP = new Map([
-    ["כ", "ך"],
-    ["מ", "ם"],
-    ["נ", "ן"],
-    ["פ", "ף"],
-    ["צ", "ץ"],
-    ["ך", "ך"],
-    ["ם", "ם"],
-    ["ן", "ן"],
-    ["ף", "ף"],
-    ["ץ", "ץ"]
-  ]);
-
-  function applyFinalIfEnd_(letter, isEnd) {
-    const l = String(letter || "");
-    if (!isEnd) return l; // only end
-    return FINAL_MAP.get(l) || l;
+  function isHebrewOnly_(w) {
+    return /^[\u0590-\u05FF]+$/.test(w);
   }
 
-  function stripFinalToNormal_(word) {
-    // keep as-is; no reverse mapping required for your rules
-    return String(word || "");
-  }
-
-  // Basic local judge (placeholder).
-  // Returns: "תקין" | "לא תקין"
+  // Placeholder local judge (to be replaced with dictionary+inflection).
+  // Returns true/false.
   function judgeWord_(word) {
     const w = normalizeWord_(word);
-
-    if (!w) return "לא תקין";
-    if (!/^[\u0590-\u05FF]+$/.test(w)) return "לא תקין";
-    if (w.length < 2) return "לא תקין";
-
-    return "תקין";
-  }
-
-  // seeded random (stable-ish)
-  function hashStringToUint32(str) {
-    let h = 2166136261;
-    for (let i = 0; i < str.length; i++) {
-      h ^= str.charCodeAt(i);
-      h = Math.imul(h, 16777619);
-    }
-    return h >>> 0;
-  }
-
-  function mulberry32(seed) {
-    return function () {
-      let t = (seed += 0x6D2B79F5);
-      t = Math.imul(t ^ (t >>> 15), t | 1);
-      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-    };
+    if (!w) return false;
+    if (!isHebrewOnly_(w)) return false;
+    if (w.length < 2) return false;
+    return true;
   }
 
   function wait(ms) {
     return new Promise(r => setTimeout(r, ms));
+  }
+
+  function randInt_(min, max) {
+    // inclusive
+    const a = Math.ceil(min);
+    const b = Math.floor(max);
+    if (window.crypto && window.crypto.getRandomValues) {
+      const buf = new Uint32Array(1);
+      window.crypto.getRandomValues(buf);
+      const span = (b - a + 1);
+      return a + (buf[0] % span);
+    }
+    return a + Math.floor(Math.random() * (b - a + 1));
+  }
+
+  function pickRandom_(arr) {
+    const list = Array.isArray(arr) ? arr : [];
+    if (!list.length) return "";
+    return list[randInt_(0, list.length - 1)];
+  }
+
+  // Check: newWord is oldWord with exactly ONE extra letter inserted anywhere.
+  function isOneLetterAdded_(oldWord, newWord) {
+    const a = normalizeWord_(oldWord);
+    const b = normalizeWord_(newWord);
+
+    if (!a || !b) return false;
+    if (b.length !== a.length + 1) return false;
+    if (!isHebrewOnly_(a) || !isHebrewOnly_(b)) return false;
+
+    // two pointers: can skip exactly one char in b
+    let i = 0; // a
+    let j = 0; // b
+    let skipped = 0;
+
+    while (i < a.length && j < b.length) {
+      if (a[i] === b[j]) {
+        i++; j++;
+      } else {
+        skipped++;
+        if (skipped > 1) return false;
+        j++; // skip one char in b (the added letter)
+      }
+    }
+
+    // if we finished a and b has one char left => that's the inserted char
+    if (i === a.length && j === b.length) {
+      // inserted char must have happened earlier
+      return skipped === 1;
+    }
+    if (i === a.length && j === b.length - 1) {
+      // inserted char is last
+      return skipped === 0;
+    }
+    return false;
+  }
+
+  // naive computer move (temporary):
+  // tries to add one letter at start or end (randomly) from א..ת, plus finals,
+  // and accepts the first candidate that passes judgeWord_.
+  function computerPickMove_(current) {
+    const base = normalizeWord_(current);
+    if (!base) return "";
+
+    const letters = [
+      "א","ב","ג","ד","ה","ו","ז","ח","ט","י","כ","ל","מ","נ","ס","ע","פ","צ","ק","ר","ש","ת",
+      "ך","ם","ן","ף","ץ"
+    ];
+
+    const tryOrder = letters.slice();
+    // shuffle tryOrder lightly
+    for (let i = tryOrder.length - 1; i > 0; i--) {
+      const k = randInt_(0, i);
+      const t = tryOrder[i]; tryOrder[i] = tryOrder[k]; tryOrder[k] = t;
+    }
+
+    const preferSide = (randInt_(0, 1) === 0) ? "start" : "end";
+
+    for (let pass = 0; pass < 2; pass++) {
+      const side = (pass === 0) ? preferSide : (preferSide === "start" ? "end" : "start");
+      for (const ch of tryOrder) {
+        const candidate = side === "start" ? (ch + base) : (base + ch);
+        if (!isOneLetterAdded_(base, candidate)) continue; // should be true, but keep safe
+        if (!judgeWord_(candidate)) continue;
+        return candidate;
+      }
+    }
+
+    // no move found under placeholder judge
+    return "";
   }
 
   // ---------- module init ----------
@@ -116,23 +142,18 @@
     const data = await res.json();
 
     if (!data || !data.row) {
-      rootEl.innerHTML = `<div>לא נמצאו נתוני “תיבה” לפרשה זו.</div>`;
+      rootEl.innerHTML = `<div>לא נמצאו נתוני “תיבה ואות” לפרשה זו.</div>`;
       return { reset: () => {} };
     }
-
-    const level1Age = data.row.level1_age || "";
-    const level2Age = data.row.level2_age || "";
 
     const level1Raw = data.row.level1_words || "";
     const level2Raw = data.row.level2_words || "";
 
-    const level1List = parseCsvList(level1Raw).map(normalizeWord_);
-    const level2List = parseCsvList(level2Raw).map(normalizeWord_);
+    const level1List = parseCsvList(level1Raw).map(normalizeWord_).filter(Boolean);
+    const level2List = parseCsvList(level2Raw).map(normalizeWord_).filter(Boolean);
 
     const model = {
       parashaLabel,
-      level1Age,
-      level2Age,
       level1List,
       level2List
     };
@@ -153,130 +174,79 @@
               <button type="button" class="ws-btn ws-reset">איפוס</button>
             </div>
 
-            <div class="ws-stats" aria-live="polite">
-              <span class="ws-turn"></span>
-              <span class="ws-score"></span>
-            </div>
+            <div class="ws-status" aria-live="polite"></div>
           </div>
 
           <div class="ws-banner" hidden></div>
 
           <div class="ws-body">
-            <div class="ws-wordcard">
-              <div class="ws-wordline">
-                <div class="ws-drop ws-drop-start" data-side="start" aria-label="הנחה בתחילת התיבה"></div>
-                <div class="ws-word" aria-label="התיבה הנוכחית"></div>
-                <div class="ws-drop ws-drop-end" data-side="end" aria-label="הנחה בסוף התיבה"></div>
-              </div>
-
-              <div class="ws-confirmbar" hidden>
-                <button type="button" class="ws-btn ws-confirm">✔ סיימתי</button>
-                <button type="button" class="ws-btn ws-cancel">↩ ביטול</button>
-              </div>
+            <div class="ws-lockedCard" aria-label="תיבה נעולה">
+              <div class="ws-lockedTitle">תיבה נעולה</div>
+              <div class="ws-lockedWord" aria-label="המילה הנוכחית"></div>
             </div>
 
-            <div class="ws-tray" aria-label="מגש אותיות"></div>
+            <div class="ws-openCard" aria-label="תיבה פתוחה">
+              <div class="ws-openTitle">תיבה פתוחה</div>
+
+              <textarea class="ws-openInput" rows="1" aria-label="כתיבת מילה בתיבה הפתוחה"></textarea>
+
+              <div class="ws-openActions">
+                <button type="button" class="ws-btn ws-done">✔ סיימתי</button>
+                <button type="button" class="ws-btn ws-next" hidden>המשך ▶</button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     `.trim();
 
     const banner = rootEl.querySelector(".ws-banner");
-    const elWord = rootEl.querySelector(".ws-word");
-    const tray = rootEl.querySelector(".ws-tray");
-    const dropStart = rootEl.querySelector(".ws-drop-start");
-    const dropEnd = rootEl.querySelector(".ws-drop-end");
-    const confirmBar = rootEl.querySelector(".ws-confirmbar");
-    const btnConfirm = rootEl.querySelector(".ws-confirm");
-    const btnCancel = rootEl.querySelector(".ws-cancel");
-    const btnReset = rootEl.querySelector(".ws-reset");
+    const elStatus = rootEl.querySelector(".ws-status");
 
+    const btnReset = rootEl.querySelector(".ws-reset");
     const btnLevel1 = rootEl.querySelector(".ws-level-1");
     const btnLevel2 = rootEl.querySelector(".ws-level-2");
 
-    const elTurn = rootEl.querySelector(".ws-turn");
-    const elScore = rootEl.querySelector(".ws-score");
+    const elLocked = rootEl.querySelector(".ws-lockedWord");
+    const elInput = rootEl.querySelector(".ws-openInput");
 
-    // state
+    const btnDone = rootEl.querySelector(".ws-done");
+    const btnNext = rootEl.querySelector(".ws-next");
+
+    // ---------- state ----------
     let state = null;
 
-    function ensureAnimStyle_() {
-      if (document.getElementById("ws-wordstack-anim-style")) return;
-      const style = document.createElement("style");
-      style.id = "ws-wordstack-anim-style";
-      style.textContent = `
-        [data-parasha-games] .ws-word .ws-anim-cell{
-          display:inline-flex;
-          transform-origin: 50% 80%;
-          animation: wsWordstackBounce 1.15s ease-out;
-        }
-        @keyframes wsWordstackBounce{
-          0%   { transform: translateY(0) scale(1); }
-          18%  { transform: translateY(0) scale(1); }
-          48%  { transform: translateY(-8px) scale(1.18); }
-          78%  { transform: translateY(0) scale(1.04); }
-          100% { transform: translateY(0) scale(1); }
-        }
-      `.trim();
-      document.head.appendChild(style);
+    function currentStartList_() {
+      return state.level === 2 ? model.level2List : model.level1List;
+    }
+
+    function pickStartWord_() {
+      const list = currentStartList_();
+      const w = pickRandom_(list);
+      return normalizeWord_(w) || "";
     }
 
     function hideBanner() {
       if (!banner) return;
       banner.hidden = true;
       banner.classList.remove("is-on");
-      banner.classList.remove("ws-hint");
       banner.textContent = "";
-      banner.innerHTML = "";
     }
 
-    function currentBonusList_() {
-      return state.level === 2 ? model.level2List : model.level1List;
-    }
-
-    function formatBonusText_() {
-      const list = (currentBonusList_() || []).slice();
-      list.sort((a, b) => String(a).localeCompare(String(b), "he"));
-      return list.join(", ");
-    }
-
-    function showChildHint_() {
-      if (!banner) return;
-
-      const wordsText = formatBonusText_();
-
-      banner.classList.add("ws-hint");
-      banner.innerHTML = `
-        <div class="ws-hint-right">גוררים אות מהמקלדת ומרכיבים תיבה</div>
-        <div class="ws-hint-left ws-small">
-          <span class="ws-bonus-title">הרכבת תיבה מהמילים שברשימה - מעניקה נקודת בונוס</span>
-          ${wordsText ? `: <span class="ws-words">${wordsText}</span>` : ``}
-        </div>
-      `.trim();
-
-      banner.hidden = false;
-      requestAnimationFrame(() => banner.classList.add("is-on"));
-      state.bannerMode = "hint";
-    }
-
-    function showBanner(text, durationMs = 1600) {
+    function showBanner(text, durationMs = 1400) {
       if (!banner) return Promise.resolve();
 
       showBanner._token = (showBanner._token || 0) + 1;
       const token = showBanner._token;
 
-      state.bannerMode = "msg";
-      banner.classList.remove("ws-hint");
       banner.textContent = text;
       banner.hidden = false;
-
       requestAnimationFrame(() => banner.classList.add("is-on"));
 
       return new Promise((resolve) => {
         setTimeout(() => {
           if (showBanner._token !== token) return resolve();
           banner.classList.remove("is-on");
-
           setTimeout(() => {
             if (showBanner._token !== token) return resolve();
             banner.hidden = true;
@@ -286,308 +256,61 @@
       });
     }
 
-    function setTurnUI_(turn) {
-      // turn: "child" | "checking" | "computer" | "idle"
-      state.turn = turn;
-
-      const isChild = turn === "child";
-      const disabled = !isChild;
-
-      tray.classList.toggle("is-disabled", disabled);
-      tray.setAttribute("aria-disabled", disabled ? "true" : "false");
-
-      // disable/enable tray buttons
-      Array.from(tray.querySelectorAll(".ws-letter")).forEach(btn => {
-        btn.disabled = disabled || state.placed != null;
-        btn.setAttribute("aria-disabled", btn.disabled ? "true" : "false");
-        btn.setAttribute("draggable", (!btn.disabled).toString());
-      });
-
-      dropStart.classList.toggle("is-disabled", disabled);
-      dropEnd.classList.toggle("is-disabled", disabled);
-
-      if (turn === "checking") {
-        elTurn.textContent = "בודקים…";
-        return;
-      }
-      if (turn === "computer") {
-        elTurn.textContent = "המחשב חושב… 🤖";
-        return;
-      }
-      if (turn === "child") {
-        elTurn.textContent = "התור שלך";
-        showChildHint_();
-        return;
-      }
-      elTurn.textContent = "";
-    }
-
-    function updateStats_() {
-      elScore.textContent = `ניקוד: 🧒 ${state.scoreChild} | 🤖 ${state.scoreComputer}`;
-    }
-
-    function buildLetters_() {
-      const letters = [
-        "א","ב","ג","ד","ה","ו","ז","ח","ט","י","כ","ל","מ","נ","ס","ע","פ","צ","ק","ר","ש","ת",
-        "ך","ם","ן","ף","ץ"
-      ];
-      return letters;
-    }
-
-    function randomStartLetter_() {
-      const baseLetters = buildLetters_().slice(0, 22); // א..ת
-      const n = baseLetters.length;
-
-      if (window.crypto && window.crypto.getRandomValues) {
-        const buf = new Uint32Array(1);
-        window.crypto.getRandomValues(buf);
-        return baseLetters[buf[0] % n];
-      }
-
-      return baseLetters[Math.floor(Math.random() * n)];
-    }
-
-    function renderTray_() {
-      tray.innerHTML = "";
-      const letters = buildLetters_();
-      letters.forEach((ch) => {
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "ws-letter";
-        btn.textContent = ch;
-        btn.dataset.letter = ch;
-        btn.setAttribute("draggable", "true");
-        btn.setAttribute("aria-label", `אות ${ch}`);
-        tray.appendChild(btn);
-      });
-    }
-
-    function renderLevelButtons_() {
-      if (!btnLevel1 || !btnLevel2) return;
-
+    function setLevelUI_() {
       const isL1 = state.level === 1;
       btnLevel1.classList.toggle("is-active", isL1);
       btnLevel2.classList.toggle("is-active", !isL1);
-
       btnLevel1.setAttribute("aria-selected", isL1 ? "true" : "false");
       btnLevel2.setAttribute("aria-selected", !isL1 ? "true" : "false");
     }
 
-    // ===== התיבה כרצף משבצות =====
-    function renderWord_() {
-      elWord.classList.toggle("is-empty", !state.word);
+    function setTurnUI_(turn) {
+      state.turn = turn; // "child" | "computer" | "lockstep"
 
-      // keep attrs (CSS highlight badge removed in your CSS)
-      elWord.classList.toggle("has-highlight", !!state.highlight);
-      elWord.dataset.hl = state.highlight ? state.highlight.letter : "";
-      elWord.dataset.hlby = state.highlight ? state.highlight.by : "";
-
-      const w = String(state.word || "");
-      const chars = Array.from(w);
-
-      elWord.innerHTML = "";
-
-      // computer animation: animate the newly added letter cell (start/end)
-      let animIndex = -1;
-      if (state.computerAnim && state.computerAnim.word === state.word && chars.length) {
-        ensureAnimStyle_();
-        animIndex = (state.computerAnim.side === "start") ? 0 : (chars.length - 1);
-      }
-
-      chars.forEach((ch, idx) => {
-        const cell = document.createElement("span");
-        cell.className = "ws-cell";
-        if (idx === animIndex) cell.classList.add("ws-anim-cell");
-        cell.textContent = ch;
-        elWord.appendChild(cell);
-      });
-
-      if (animIndex >= 0) {
-        const animEl = elWord.querySelector(".ws-anim-cell");
-        if (animEl) {
-          animEl.addEventListener(
-            "animationend",
-            () => {
-              state.computerAnim = null;
-            },
-            { once: true }
-          );
-        } else {
-          state.computerAnim = null;
-        }
-      }
-    }
-
-    function showConfirmBar_(show) {
-      confirmBar.hidden = !show;
-    }
-
-    function clearPlaced_() {
-      state.placed = null;
-      state.placedSide = null;
-      state.placedNormalizedWord = null;
-      showConfirmBar_(false);
-
-      Array.from(tray.querySelectorAll(".ws-letter")).forEach(btn => {
-        btn.classList.remove("is-picked");
-        btn.disabled = state.turn !== "child";
-        btn.setAttribute("aria-disabled", btn.disabled ? "true" : "false");
-        btn.setAttribute("draggable", (!btn.disabled).toString());
-      });
-
-      dropStart.classList.remove("is-hot");
-      dropEnd.classList.remove("is-hot");
-      dropStart.textContent = "";
-      dropEnd.textContent = "";
-    }
-
-    function computeDraftWord_(letter, side) {
-      const isEnd = side === "end";
-      const letterFixed = applyFinalIfEnd_(letter, isEnd);
-      const base = stripFinalToNormal_(state.word);
-
-      if (!base) {
-        return { word: letterFixed, usedLetter: letterFixed };
-      }
-
-      if (side === "start") {
-        return { word: letterFixed + base, usedLetter: letterFixed };
-      }
-      return { word: base + letterFixed, usedLetter: letterFixed };
-    }
-
-    function placeLetter_(letter, side) {
-      if (state.placed != null) return;
-      if (state.turn !== "child") return;
-
-      const { word: draft, usedLetter } = computeDraftWord_(letter, side);
-      state.placed = usedLetter;
-      state.placedSide = side;
-      state.placedNormalizedWord = normalizeWord_(draft);
-
-      Array.from(tray.querySelectorAll(".ws-letter")).forEach(btn => {
-        const isThis = btn.dataset.letter === letter;
-        btn.classList.toggle("is-picked", isThis);
-        btn.disabled = true;
-        btn.setAttribute("aria-disabled", "true");
-        btn.setAttribute("draggable", "false");
-      });
-
-      if (side === "start") {
-        dropStart.textContent = usedLetter;
-        dropEnd.textContent = "";
-      } else {
-        dropEnd.textContent = usedLetter;
-        dropStart.textContent = "";
-      }
-
-      dropStart.classList.toggle("is-hot", side === "start");
-      dropEnd.classList.toggle("is-hot", side === "end");
-
-      showConfirmBar_(true);
-    }
-
-    async function commitChildMove_() {
-      if (!state.placedNormalizedWord) return;
-
-      const draft = state.placedNormalizedWord;
-
-      setTurnUI_("checking");
-
-      const isValid = await wsAiValidate_(draft);
-
-      // scoring:
-      // - valid word: +1
-      // - bonus word: total should be +2 => add +1 extra
-      const isBonus = isValid && currentBonusList_().includes(draft);
-      const basePts = isValid ? 1 : 0;
-      const bonusPts = isBonus ? 1 : 0;
-
-      state.word = draft;
-      state.highlight = { letter: state.placed, by: "child" };
-      state.scoreChild += basePts + bonusPts;
-
-      renderWord_();
-      updateStats_();
-
-      // IMPORTANT: once the letter joins the תיבה, clear the side box immediately
-      clearPlaced_();
-
-      if (!isValid) {
-        await showBanner("🙂 תיבה לא תקינה — ממשיכים לשחק", 1500);
-      } else {
-        await showBanner("כל הכבוד! 🌟", 2600);
-      }
-
-      await computerTurn_();
-    }
-
-    async function computerTurn_() {
-      setTurnUI_("computer");
-
-      // IMPORTANT: real thinking pause (1–2 seconds)
-      const thinkMs = 1200 + Math.floor(Math.random() * 801); // 1200..2000
-      await wait(thinkMs);
-
-      const ageStr = (state.level === 2 ? model.level2Age : model.level1Age);
-      const ageNum = Number(String(ageStr || "").trim());
-      const age = (Number.isFinite(ageNum) && ageNum > 0) ? ageNum : 8;
-
-      const mv = await wsAiMove_(age, state.word);
-
-      if (!mv || mv.ok !== true) {
-        await showBanner("🙂 תקלה זמנית — נסו שוב", 1600);
-
-        state.highlight = null;
-        state.computerAnim = null;
-        renderWord_();
-
-        setTurnUI_("child");
+      if (turn === "child") {
+        elStatus.textContent = "התור שלך";
+        elInput.disabled = false;
+        btnDone.disabled = false;
+        btnDone.hidden = false;
+        btnNext.hidden = true;
+        elInput.focus();
         return;
       }
 
-      if (mv.nomove) {
-        await showBanner("🎉 ניצחת! למחשב אין מהלך טוב", 2200);
-
-        state.highlight = null;
-        state.computerAnim = null;
-        renderWord_();
-
-        setTurnUI_("child");
+      if (turn === "computer") {
+        elStatus.textContent = "המחשב חושב…";
+        elInput.disabled = true;
+        btnDone.disabled = true;
+        btnDone.hidden = false; // stays but disabled
+        btnNext.hidden = true;
         return;
       }
 
-      if (!mv.side || !mv.letter || (mv.side !== "start" && mv.side !== "end") || String(mv.letter).length !== 1) {
-        await showBanner("🙂 תקלה זמנית — נסו שוב", 1600);
+      // lockstep: waiting for user to press "המשך"
+      elStatus.textContent = "לחץ המשך כדי לנעול";
+      elInput.disabled = true;
+      btnDone.hidden = true;
+      btnNext.hidden = false;
+    }
 
-        state.highlight = null;
-        state.computerAnim = null;
-        renderWord_();
+    function renderLocked_() {
+      elLocked.textContent = state.lockedWord || "";
+    }
 
-        setTurnUI_("child");
-        return;
-      }
+    function autoGrowInput_() {
+      // keep it 1-2 lines comfortably
+      elInput.style.height = "auto";
+      elInput.style.height = Math.min(elInput.scrollHeight, 92) + "px";
+    }
 
-      const { word: nextWord, usedLetter } = computeDraftWord_(String(mv.letter), mv.side);
-      const draft = normalizeWord_(nextWord);
+    function clearOpen_() {
+      elInput.value = "";
+      autoGrowInput_();
+    }
 
-      state.word = draft;
-      state.highlight = { letter: usedLetter, by: "computer" };
-
-      // computer always gets +1 for a valid word
-      state.scoreComputer += 1;
-
-      // trigger animation for the newly added letter
-      state.computerAnim = {
-        word: state.word,
-        side: mv.side,
-        letter: usedLetter
-      };
-
-      renderWord_();
-      updateStats_();
-
-      setTurnUI_("child");
+    function setOpen_(word) {
+      elInput.value = String(word || "");
+      autoGrowInput_();
     }
 
     function resetAll_() {
@@ -595,23 +318,16 @@
 
       state = {
         level: 1,
-        word: randomStartLetter_(),
-        placed: null,
-        placedSide: null,
-        placedNormalizedWord: null,
-        scoreChild: 0,
-        scoreComputer: 0,
-        turn: "child",
-        highlight: null,
-        bannerMode: null,
-        computerAnim: null
+        lockedWord: "",
+        turn: "child"
       };
 
-      renderTray_();
-      clearPlaced_();
-      renderWord_();
-      renderLevelButtons_();
-      updateStats_();
+      const start = pickStartWord_();
+      state.lockedWord = start || "בראשית"; // fallback safe
+
+      setLevelUI_();
+      renderLocked_();
+      clearOpen_();
       setTurnUI_("child");
     }
 
@@ -619,95 +335,119 @@
       const n = Number(lvl);
       if (n !== 1 && n !== 2) return;
       if (state.level === n) return;
+
       state.level = n;
-      renderLevelButtons_();
-      if (state.turn === "child" && state.bannerMode === "hint") {
-        showChildHint_();
-      }
+      setLevelUI_();
+
+      // On level switch: soft reset to a fresh start word (per your "איפוס" idea)
+      const start = pickStartWord_();
+      state.lockedWord = start || state.lockedWord || "בראשית";
+      renderLocked_();
+      clearOpen_();
+      setTurnUI_("child");
     }
 
-    // ---------- drag/drop ----------
-    function wireDnD_() {
-      tray.addEventListener("dragstart", (ev) => {
-        const btn = ev.target.closest(".ws-letter");
-        if (!btn) return;
-        if (btn.disabled) {
-          ev.preventDefault();
-          return;
-        }
-        ev.dataTransfer.setData("text/plain", btn.dataset.letter || "");
-        ev.dataTransfer.effectAllowed = "copy";
-      });
+    async function onDone_() {
+      if (state.turn !== "child") return;
 
-      function onDragOverDrop(ev) {
-        if (state.turn !== "child") return;
-        if (state.placed != null) return;
-        ev.preventDefault();
-        ev.dataTransfer.dropEffect = "copy";
+      const typed = normalizeWord_(elInput.value);
+      const current = normalizeWord_(state.lockedWord);
+
+      // basic checks
+      if (!typed) {
+        await showBanner("כתוב מילה לפני סיימתי 🙂", 1300);
+        return;
       }
 
-      function onDrop(ev) {
-        if (state.turn !== "child") return;
-        if (state.placed != null) return;
-        ev.preventDefault();
-        const letter = String(ev.dataTransfer.getData("text/plain") || "").trim();
-        if (!letter) return;
-
-        const side = ev.currentTarget?.dataset?.side || "";
-        if (side !== "start" && side !== "end") return;
-
-        placeLetter_(letter, side);
+      if (!isOneLetterAdded_(current, typed)) {
+        await showBanner("צריך להוסיף בדיוק אות אחת למילה הנעולה", 1600);
+        return;
       }
 
-      dropStart.addEventListener("dragover", onDragOverDrop);
-      dropEnd.addEventListener("dragover", onDragOverDrop);
-      dropStart.addEventListener("drop", onDrop);
-      dropEnd.addEventListener("drop", onDrop);
-
-      // mobile fallback: click-to-pick + click-to-place
-      let picked = null;
-      tray.addEventListener("click", (ev) => {
-        const btn = ev.target.closest(".ws-letter");
-        if (!btn) return;
-        if (btn.disabled) return;
-        if (state.turn !== "child") return;
-        if (state.placed != null) return;
-
-        picked = btn.dataset.letter || "";
-        Array.from(tray.querySelectorAll(".ws-letter")).forEach(b =>
-          b.classList.toggle("is-picked", b === btn)
-        );
-      });
-
-      function clickDrop(side) {
-        if (state.turn !== "child") return;
-        if (state.placed != null) return;
-        if (!picked) return;
-        placeLetter_(picked, side);
-        picked = null;
+      // local word validity (placeholder)
+      if (!judgeWord_(typed)) {
+        await showBanner("המילה לא נראית תקינה — נסה שוב 🙂", 1600);
+        return;
       }
 
-      dropStart.addEventListener("click", () => clickDrop("start"));
-      dropEnd.addEventListener("click", () => clickDrop("end"));
+      // accept: keep it in open box, wait for "המשך"
+      setOpen_(typed);
+      setTurnUI_("lockstep");
+    }
+
+    async function onNext_() {
+      // lockstep means: lock whatever is in open into locked, then next turn is other side
+      const openWord = normalizeWord_(elInput.value);
+      if (!openWord) {
+        // should not happen, but keep safe
+        setTurnUI_("child");
+        return;
+      }
+
+      // commit lock
+      state.lockedWord = openWord;
+      renderLocked_();
+      clearOpen_();
+
+      // decide whose move is next:
+      // after child commits -> computer turn
+      // after computer commits -> child turn
+      if (state.lastMover === "computer") {
+        state.lastMover = "child";
+        setTurnUI_("child");
+        return;
+      }
+
+      // child just committed
+      state.lastMover = "child";
+      await computerTurn_();
+    }
+
+    async function computerTurn_() {
+      setTurnUI_("computer");
+
+      const thinkMs = randInt_(1200, 2000);
+      await wait(thinkMs);
+
+      const next = computerPickMove_(state.lockedWord);
+
+      if (!next) {
+        // no move under placeholder judge
+        await showBanner("למחשב אין מהלך כרגע 🤖", 1800);
+        setTurnUI_("child");
+        return;
+      }
+
+      // show computer move in open box (immediate, no typing animation)
+      setOpen_(next);
+      state.lastMover = "computer";
+      setTurnUI_("lockstep");
     }
 
     // ---------- events ----------
-    btnCancel.addEventListener("click", () => {
-      clearPlaced_();
+    elInput.addEventListener("input", () => {
+      autoGrowInput_();
+      // while child is typing, keep buttons state stable (no extra UI)
     });
 
-    btnConfirm.addEventListener("click", () => {
-      commitChildMove_();
+    elInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        // prevent newline; treat Enter as "סיימתי" in child turn
+        e.preventDefault();
+        if (state.turn === "child") onDone_();
+        if (state.turn === "lockstep") onNext_();
+      }
     });
+
+    btnDone.addEventListener("click", () => onDone_());
+    btnNext.addEventListener("click", () => onNext_());
 
     btnReset.addEventListener("click", () => resetAll_());
-
     btnLevel1.addEventListener("click", () => setLevel_(1));
     btnLevel2.addEventListener("click", () => setLevel_(2));
 
     // init
     resetAll_();
-    wireDnD_();
 
     return {
       reset: () => resetAll_()
