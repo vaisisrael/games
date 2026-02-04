@@ -1,10 +1,12 @@
 /* wordstack.js – Parasha "תיבה ואות" game (module)
-   Updates per latest request:
-   - No "התור שלך — ..." status text (instruction is above open box)
+   Current behavior (per your spec):
    - Locked title: first = "מילת הפתיחה", thereafter = "המילה הנוכחית"
-   - Open box is ONLY for the child with fixed instruction text
-   - Computer does NOT write into open box; computer word appears in yellow banner + small "תורי"
-   - Child valid submit: lock immediately + banner "כל הכבוד"
+   - Open box is ONLY for the child, with fixed instruction text
+   - Child clicks "סיימתי": if valid -> locks immediately + banner "כל הכבוד"
+   - Computer does NOT write into open box; computer word appears in yellow banner + small button "ממשיכים"
+   - Clicking "ממשיכים" locks computer word and enables child input
+   - Validation rule (no dictionary yet): ALL letters from locked word are used + exactly ONE extra letter (order doesn't matter)
+     + final letters normalized for comparison (ך=כ, ם=מ, ן=נ, ף=פ, ץ=צ)
 */
 
 (() => {
@@ -38,7 +40,7 @@
     return Array.from(s).map(ch => FINAL_TO_NORMAL.get(ch) || ch).join("");
   }
 
-  // Placeholder local judge (to be replaced with dictionary+inflection).
+  // Placeholder local judge (dictionary will come later)
   function judgeWord_(word) {
     const w = normalizeWord_(word);
     if (!w) return false;
@@ -70,34 +72,44 @@
     return list[randInt_(0, list.length - 1)];
   }
 
-  // one-letter add anywhere (start/middle/end) - comparison uses normalized finals
-  function isOneLetterAdded_(oldWord, newWord) {
-    const a = normalizeForCompare_(oldWord);
-    const b = normalizeForCompare_(newWord);
+  // ✅ Validation: use ALL letters from oldWord + exactly ONE extra letter (order free)
+  function isAllLettersPlusOne_(oldWord, newWord) {
+    const aRaw = normalizeForCompare_(oldWord);
+    const bRaw = normalizeForCompare_(newWord);
 
-    if (!a || !b) return false;
-    if (!isHebrewOnly_(a) || !isHebrewOnly_(b)) return false;
-    if (b.length !== a.length + 1) return false;
+    if (!aRaw || !bRaw) return false;
+    if (!isHebrewOnly_(aRaw) || !isHebrewOnly_(bRaw)) return false;
 
-    let i = 0;
-    let j = 0;
-    let skipped = 0;
+    if (bRaw.length !== aRaw.length + 1) return false;
 
-    while (i < a.length && j < b.length) {
-      if (a[i] === b[j]) {
-        i++; j++;
+    const counts = new Map();
+    for (const ch of Array.from(aRaw)) {
+      counts.set(ch, (counts.get(ch) || 0) + 1);
+    }
+
+    let extra = 0;
+    for (const ch of Array.from(bRaw)) {
+      const c = counts.get(ch) || 0;
+      if (c > 0) {
+        counts.set(ch, c - 1);
       } else {
-        skipped++;
-        if (skipped > 1) return false;
-        j++; // skip inserted char in b
+        extra++;
+        if (extra > 1) return false;
       }
     }
 
-    return i === a.length;
+    if (extra !== 1) return false;
+
+    // ensure ALL old letters were used (no leftovers)
+    for (const v of counts.values()) {
+      if (v !== 0) return false;
+    }
+
+    return true;
   }
 
   // Temporary computer move:
-  // tries adding ONE letter at start/end (simple placeholder).
+  // tries adding ONE letter at start/end (order-free validation will accept anagrams anyway)
   function computerPickMove_(current) {
     const base = normalizeWord_(current);
     if (!base) return "";
@@ -120,8 +132,13 @@
       const side = (pass === 0) ? preferSide : (preferSide === "start" ? "end" : "start");
       for (const ch of tryOrder) {
         const cand = (side === "start") ? (ch + base) : (base + ch);
-        if (!isOneLetterAdded_(base, cand)) continue;
+
+        // structural rule (all letters + one extra)
+        if (!isAllLettersPlusOne_(base, cand)) continue;
+
+        // dictionary placeholder
         if (!judgeWord_(cand)) continue;
+
         return cand;
       }
     }
@@ -169,7 +186,7 @@
           <div class="ws-banner" hidden>
             <div class="ws-banner-row">
               <span class="ws-banner-text"></span>
-              <button type="button" class="ws-banner-btn" hidden>תורי</button>
+              <button type="button" class="ws-banner-btn" hidden>ממשיכים</button>
             </div>
           </div>
 
@@ -245,7 +262,7 @@
     }
 
     function clearStatus_() {
-      // user asked to not show turn instruction here; keep empty
+      // per request: no explanatory text here
       elStatus.textContent = "";
     }
 
@@ -283,9 +300,10 @@
     }
 
     function showBannerComputerWord_(word) {
-      // persistent until user clicks "תורי"
+      // persistent until user clicks "ממשיכים"
       bannerText.textContent = `המחשב כתב: ${word}`;
       bannerBtn.hidden = false;
+      bannerBtn.textContent = "ממשיכים";
       banner.hidden = false;
       requestAnimationFrame(() => banner.classList.add("is-on"));
     }
@@ -315,7 +333,7 @@
       clearStatus_();
       setInputsEnabled_(false);
 
-      // show thinking message briefly; then it will be replaced by computer word + button
+      // brief thinking message, then replaced by the word+button
       showBannerMessage_("המחשב חושב…", 1200);
     }
 
@@ -323,7 +341,6 @@
       state.turn = "afterComputer";
       clearStatus_();
       setInputsEnabled_(false);
-      // banner will show the word + button
     }
 
     function resetAll_() {
@@ -371,8 +388,8 @@
         return;
       }
 
-      if (!isOneLetterAdded_(current, typed)) {
-        await showBannerMessage_("צריך להוסיף בדיוק אות אחת למילה הנעולה", 1600);
+      if (!isAllLettersPlusOne_(current, typed)) {
+        await showBannerMessage_("צריך לנצל את כל האותיות ולהוסיף אות אחת", 1700);
         return;
       }
 
@@ -383,13 +400,12 @@
 
       // child locks immediately
       state.lockedWord = typed;
-      renderLocked_();
       state.isFirstLock = false;
+      renderLocked_();
 
-      // banner praise
+      // banner praise (then computer turn)
       await showBannerMessage_("כל הכבוד! 🌟", 1100);
 
-      // after praise, computer turn
       await computerTurn_();
     }
 
@@ -409,10 +425,10 @@
 
       state.pendingComputerWord = next;
 
-      // open box remains for child only: keep it empty/disabled
+      // open box belongs to child only
       clearInput_();
 
-      // show computer word in banner + small "תורי"
+      // show computer word in banner + "ממשיכים"
       showBannerComputerWord_(next);
 
       setAfterComputer_();
@@ -428,7 +444,7 @@
 
       renderLocked_();
 
-      // clear banner + enable child input
+      // enable child
       hideBanner_();
       setChildTurn_();
     }
