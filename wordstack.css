@@ -1,5 +1,5 @@
-/* wordstack.css – "תיבה ואות" (notebook input, calm)
-   Banner action button styled as a real button ("ממשיכים")
+/* wordstack.css – "סדר את המילה" (simple, calm, notebook input)
+   Cleaned: no banner button ("ממשיכים") styles, no remnants of the previous computer-turn game.
 */
 
 [data-parasha-games] .ws-wrap{
@@ -90,7 +90,7 @@
   box-shadow: 0 10px 20px rgba(0,0,0,.06);
 }
 
-/* ===== Banner ===== */
+/* ===== Banner (message only) ===== */
 [data-parasha-games] .ws-banner{
   margin: 8px 0 10px;
   border-radius: 14px;
@@ -132,41 +132,6 @@
   line-height: 1.35;
 }
 
-/* Banner action button: real button feel */
-[data-parasha-games] .ws-banner-btn{
-  border: 1px solid rgba(37,99,235,.28);
-  background: rgba(219,234,254,.95);
-  border-radius: 12px;
-  padding: 7px 12px;
-  font-weight: 900;
-  cursor: pointer;
-  font-size: 13px;
-  user-select: none;
-  -webkit-appearance: none;
-  appearance: none;
-
-  box-shadow: 0 8px 18px rgba(0,0,0,.08);
-  line-height: 1;
-}
-
-[data-parasha-games] .ws-banner-btn:hover{
-  box-shadow: 0 12px 24px rgba(0,0,0,.10);
-}
-
-[data-parasha-games] .ws-banner-btn:active{
-  transform: translateY(1px);
-  box-shadow: 0 6px 14px rgba(0,0,0,.08);
-}
-
-[data-parasha-games] .ws-banner-btn:focus{
-  outline: none;
-}
-
-[data-parasha-games] .ws-banner-btn:focus-visible{
-  outline: 3px solid rgba(37,99,235,.28);
-  outline-offset: 2px;
-}
-
 /* ===== Body ===== */
 [data-parasha-games] .ws-body{
   display:block;
@@ -192,7 +157,7 @@
   direction: rtl;
 }
 
-/* Locked word */
+/* Scrambled word (locked) */
 [data-parasha-games] .ws-lockedWord{
   font-size: 26px;
   font-weight: 900;
