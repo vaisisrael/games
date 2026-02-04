@@ -1,4 +1,4 @@
-/* wordstack.css – "תיבה ואות" (notebook input, clean, calm) */
+/* wordstack.css – "תיבה ואות" (notebook input, calm) */
 
 [data-parasha-games] .ws-wrap{
   --w-bg: #f6f7fb;
@@ -116,6 +116,36 @@
   visibility:hidden !important;
 }
 
+[data-parasha-games] .ws-banner-row{
+  width: 100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  direction: rtl;
+}
+
+[data-parasha-games] .ws-banner-text{
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+[data-parasha-games] .ws-banner-btn{
+  border: 1px solid rgba(0,0,0,.12);
+  background: rgba(255,255,255,.9);
+  border-radius: 10px;
+  padding: 6px 10px;
+  font-weight: 900;
+  cursor: pointer;
+  font-size: 13px;
+  user-select: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+[data-parasha-games] .ws-banner-btn:hover{
+  box-shadow: 0 6px 14px rgba(0,0,0,.06);
+}
+
 /* ===== Body ===== */
 [data-parasha-games] .ws-body{
   display:block;
@@ -212,5 +242,10 @@
 
   [data-parasha-games] .ws-topbar{
     gap:8px;
+  }
+
+  [data-parasha-games] .ws-banner-row{
+    flex-wrap: wrap;
+    gap: 8px;
   }
 }
