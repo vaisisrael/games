@@ -1,16 +1,29 @@
 /* wordstack.js – Parasha "תיבה ואות" game (module)
-   Current behavior (per your spec):
+   Dictionary integration (from your URL):
+   - Loads word list once (cached) from:
+     https://raw.githubusercontent.com/eyaler/hebrew_wordlists/refs/heads/main/all_no_fatverb.txt
+   - judgeWord_() now checks membership in the loaded dictionary (final letters normalized)
+   - If dictionary fails to load, falls back to basic Hebrew-only + length>=2 (so game still runs)
+
+   Existing behavior kept (per your latest spec):
    - Locked title: first = "מילת הפתיחה", thereafter = "המילה הנוכחית"
    - Open box is ONLY for the child, with fixed instruction text
    - Child clicks "סיימתי": if valid -> locks immediately + banner "כל הכבוד"
-   - Computer does NOT write into open box; computer word appears in yellow banner + small button "ממשיכים"
+   - Computer does NOT write into open box; computer word appears in yellow banner + button "ממשיכים"
    - Clicking "ממשיכים" locks computer word and enables child input
-   - Validation rule (no dictionary yet): ALL letters from locked word are used + exactly ONE extra letter (order doesn't matter)
+   - Structural validation: ALL letters from locked word are used + exactly ONE extra letter (order doesn't matter)
      + final letters normalized for comparison (ך=כ, ם=מ, ן=נ, ף=פ, ץ=צ)
 */
 
 (() => {
   "use strict";
+
+  // ===== Dictionary source (your provided URL) =====
+  const WS_DICT_URL =
+    "https://raw.githubusercontent.com/eyaler/hebrew_wordlists/refs/heads/main/all_no_fatverb.txt";
+
+  // Global cache (shared between games/pages in same tab)
+  const WS_DICT_CACHE_KEY = "__wsHebrewDictCache_v1__";
 
   // ---------- helpers ----------
   function parseCsvList(s) {
@@ -40,15 +53,6 @@
     return Array.from(s).map(ch => FINAL_TO_NORMAL.get(ch) || ch).join("");
   }
 
-  // Placeholder local judge (dictionary will come later)
-  function judgeWord_(word) {
-    const w = normalizeWord_(word);
-    if (!w) return false;
-    if (!isHebrewOnly_(w)) return false;
-    if (w.length < 2) return false;
-    return true;
-  }
-
   function wait(ms) {
     return new Promise(r => setTimeout(r, ms));
   }
@@ -72,7 +76,82 @@
     return list[randInt_(0, list.length - 1)];
   }
 
-  // ✅ Validation: use ALL letters from oldWord + exactly ONE extra letter (order free)
+  // ---------- dictionary loader ----------
+  async function fetchTextWithTimeout_(url, timeoutMs) {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), timeoutMs);
+
+    try {
+      const res = await fetch(url, { method: "GET", signal: ctrl.signal, cache: "force-cache" });
+      if (!res.ok) throw new Error("HTTP " + res.status);
+      return await res.text();
+    } finally {
+      clearTimeout(t);
+    }
+  }
+
+  async function loadDictionaryOnce_() {
+    // cache object shape:
+    // { ok: true, set: Set<string>, loadedAt: number, url: string }
+    // { ok: false, error: string, loadedAt: number, url: string }
+    const g = window;
+    if (g[WS_DICT_CACHE_KEY] && g[WS_DICT_CACHE_KEY].loadedAt) return g[WS_DICT_CACHE_KEY];
+
+    // create in-progress promise to dedupe concurrent calls
+    if (g[WS_DICT_CACHE_KEY] && g[WS_DICT_CACHE_KEY].promise) return await g[WS_DICT_CACHE_KEY].promise;
+
+    g[WS_DICT_CACHE_KEY] = { promise: null };
+
+    g[WS_DICT_CACHE_KEY].promise = (async () => {
+      try {
+        const txt = await fetchTextWithTimeout_(WS_DICT_URL, 15000);
+        const set = new Set();
+
+        // Each line = a word
+        const lines = txt.split(/\r?\n/);
+        for (let i = 0; i < lines.length; i++) {
+          const w = normalizeWord_(lines[i]);
+          if (!w) continue;
+          if (!isHebrewOnly_(w)) continue;
+          // store normalized (so finals match)
+          set.add(normalizeForCompare_(w));
+        }
+
+        const payload = { ok: true, set, loadedAt: Date.now(), url: WS_DICT_URL };
+        g[WS_DICT_CACHE_KEY] = payload;
+        return payload;
+      } catch (e) {
+        const payload = {
+          ok: false,
+          error: (e && e.name === "AbortError") ? "timeout" : String(e || "error"),
+          loadedAt: Date.now(),
+          url: WS_DICT_URL
+        };
+        g[WS_DICT_CACHE_KEY] = payload;
+        return payload;
+      }
+    })();
+
+    return await g[WS_DICT_CACHE_KEY].promise;
+  }
+
+  // judgeWord_ now uses dictionary if available, otherwise basic fallback
+  function makeJudge_(dictSetOrNull) {
+    return function judgeWord_(word) {
+      const w = normalizeWord_(word);
+      if (!w) return false;
+      if (!isHebrewOnly_(w)) return false;
+      if (w.length < 2) return false;
+
+      if (dictSetOrNull && dictSetOrNull instanceof Set) {
+        return dictSetOrNull.has(normalizeForCompare_(w));
+      }
+      // fallback (dictionary not loaded)
+      return true;
+    };
+  }
+
+  // ---------- Validation: use ALL letters from oldWord + exactly ONE extra letter (order free) ----------
   function isAllLettersPlusOne_(oldWord, newWord) {
     const aRaw = normalizeForCompare_(oldWord);
     const bRaw = normalizeForCompare_(newWord);
@@ -100,7 +179,6 @@
 
     if (extra !== 1) return false;
 
-    // ensure ALL old letters were used (no leftovers)
     for (const v of counts.values()) {
       if (v !== 0) return false;
     }
@@ -109,8 +187,8 @@
   }
 
   // Temporary computer move:
-  // tries adding ONE letter at start/end (order-free validation will accept anagrams anyway)
-  function computerPickMove_(current) {
+  // tries adding ONE letter at start/end (order-free validation will accept anagrams anyway).
+  function computerPickMove_(current, judgeWord_) {
     const base = normalizeWord_(current);
     if (!base) return "";
 
@@ -133,10 +211,7 @@
       for (const ch of tryOrder) {
         const cand = (side === "start") ? (ch + base) : (base + ch);
 
-        // structural rule (all letters + one extra)
         if (!isAllLettersPlusOne_(base, cand)) continue;
-
-        // dictionary placeholder
         if (!judgeWord_(cand)) continue;
 
         return cand;
@@ -227,6 +302,7 @@
 
     // ---------- state ----------
     let state = null;
+    let judgeWord_ = makeJudge_(null);
 
     function currentList_() {
       return state.level === 2 ? model.level2List : model.level1List;
@@ -262,7 +338,6 @@
     }
 
     function clearStatus_() {
-      // per request: no explanatory text here
       elStatus.textContent = "";
     }
 
@@ -300,7 +375,6 @@
     }
 
     function showBannerComputerWord_(word) {
-      // persistent until user clicks "ממשיכים"
       bannerText.textContent = `המחשב כתב: ${word}`;
       bannerBtn.hidden = false;
       bannerBtn.textContent = "ממשיכים";
@@ -328,22 +402,18 @@
       elInput.focus();
     }
 
-    function setComputerThinking_() {
-      state.turn = "computer";
-      clearStatus_();
-      setInputsEnabled_(false);
-
-      // brief thinking message, then replaced by the word+button
-      showBannerMessage_("המחשב חושב…", 1200);
+    async function ensureDictionaryLoaded_() {
+      // If already loaded/failed earlier, use cached result.
+      const d = await loadDictionaryOnce_();
+      if (d.ok && d.set) {
+        judgeWord_ = makeJudge_(d.set);
+        return true;
+      }
+      judgeWord_ = makeJudge_(null);
+      return false;
     }
 
-    function setAfterComputer_() {
-      state.turn = "afterComputer";
-      clearStatus_();
-      setInputsEnabled_(false);
-    }
-
-    function resetAll_() {
+    async function resetAll_() {
       hideBanner_();
       clearStatus_();
 
@@ -355,6 +425,20 @@
         isFirstLock: true
       };
 
+      // disable input while loading dictionary (first time only)
+      setInputsEnabled_(false);
+      bannerText.textContent = "טוענים מילון…";
+      bannerBtn.hidden = true;
+      banner.hidden = false;
+      requestAnimationFrame(() => banner.classList.add("is-on"));
+
+      const ok = await ensureDictionaryLoaded_();
+      // hide loading banner; optionally notify on failure (brief)
+      hideBanner_();
+      if (!ok) {
+        await showBannerMessage_("לא נטען מילון — ממשיכים במצב בסיסי", 1600);
+      }
+
       const start = pickStartWord_();
       state.lockedWord = start || "בראשית";
 
@@ -363,7 +447,7 @@
       setChildTurn_();
     }
 
-    function setLevel_(lvl) {
+    async function setLevel_(lvl) {
       const n = Number(lvl);
       if (n !== 1 && n !== 2) return;
       if (state.level === n) return;
@@ -394,7 +478,7 @@
       }
 
       if (!judgeWord_(typed)) {
-        await showBannerMessage_("המילה לא נראית תקינה — נסה שוב 🙂", 1600);
+        await showBannerMessage_("המילה לא נמצאה במילון — נסה שוב 🙂", 1700);
         return;
       }
 
@@ -403,19 +487,22 @@
       state.isFirstLock = false;
       renderLocked_();
 
-      // banner praise (then computer turn)
+      // praise, then computer turn
       await showBannerMessage_("כל הכבוד! 🌟", 1100);
 
       await computerTurn_();
     }
 
     async function computerTurn_() {
-      setComputerThinking_();
+      clearStatus_();
+      setInputsEnabled_(false);
 
-      const thinkMs = randInt_(1200, 2000);
+      // thinking
+      await showBannerMessage_("המחשב חושב…", 900);
+      const thinkMs = randInt_(800, 1400);
       await wait(thinkMs);
 
-      const next = computerPickMove_(state.lockedWord);
+      const next = computerPickMove_(state.lockedWord, judgeWord_);
 
       if (!next) {
         await showBannerMessage_("למחשב אין מהלך כרגע 🤖", 1600);
@@ -430,8 +517,7 @@
 
       // show computer word in banner + "ממשיכים"
       showBannerComputerWord_(next);
-
-      setAfterComputer_();
+      state.turn = "afterComputer";
     }
 
     function acceptComputerWord_() {
@@ -444,7 +530,6 @@
 
       renderLocked_();
 
-      // enable child
       hideBanner_();
       setChildTurn_();
     }
@@ -465,7 +550,11 @@
 
     bannerBtn.addEventListener("click", () => acceptComputerWord_());
 
-    btnReset.addEventListener("click", () => resetAll_());
+    btnReset.addEventListener("click", () => {
+      // resetAll_ is async; fire-and-forget with internal UI handling
+      resetAll_();
+    });
+
     btnLevel1.addEventListener("click", () => setLevel_(1));
     btnLevel2.addEventListener("click", () => setLevel_(2));
 
