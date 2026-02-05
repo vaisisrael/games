@@ -1,16 +1,16 @@
 /* wordstack.js – Parasha "סדר את המילה" game (module)
 
    SPEC (current):
-   - Top shows a SCRAMBLED word (locked look) 😞 + a tiny hint button 💡 (design only for now)
-   - Bottom is an editor where the child types the CORRECT word 😊 + tiny green check (✓) to submit
+   - Top shows a SCRAMBLED word (locked look) + tiny hint button 💡 (design only for now)
+   - Bottom is an editor where the child types the CORRECT word + tiny green check (✓) to submit
    - Submit:
-       correct -> successes++
-       wrong   -> errors++
-     then move to NEXT word from sheet (randomized pool)
-   - Status: "X הצלחות, X שגיאות"
-   - No dictionary / AI / server validation; words are from sheet.
+       correct -> 👍
+       wrong   -> 👎
+     then move to NEXT word from the level word stack
+   - Game ENDS when the level stack is finished (no refilling).
+   - Status: 👍 X, 👎 Y, 👣 Z (moves remaining)
 
-   Data expected from Apps Script (your existing sheet fields):
+   Data expected from Apps Script:
    ?mode=wordstack&parasha=...
    returns:
    { ok:true, row:{ parasha, level1_words, level2_words } }
@@ -106,7 +106,7 @@
       return { reset: () => {} };
     }
 
-    // IMPORTANT: use your existing field names (level1_words/level2_words)
+    // IMPORTANT: existing field names
     const level1Raw = data.row.level1_words || "";
     const level2Raw = data.row.level2_words || "";
 
@@ -141,17 +141,17 @@
 
           <div class="ws-body">
 
-            <div class="ws-lockedCard" aria-label="המילה שהתערבבה">
+            <div class="ws-lockedCard" aria-label="המילה שהתבלבלה">
               <div class="ws-lockedTitle ws-titleRow">
-                <span>זו המילה שהתערבבה <span class="ws-emo">😞</span></span>
+                <span>המילה שהתבלבלה</span>
                 <button type="button" class="ws-hintBtn" aria-label="רמז" title="רמז (בקרוב)">💡</button>
               </div>
-              <div class="ws-lockedWord" aria-label="המילה שהתערבבה" aria-disabled="true"></div>
+              <div class="ws-lockedWord" aria-label="המילה שהתבלבלה" aria-disabled="true"></div>
             </div>
 
-            <div class="ws-openCard" aria-label="משטח עריכה">
+            <div class="ws-openCard" aria-label="המילה הנכונה">
               <div class="ws-openTitle ws-titleRow">
-                <span>כאן כותבים את המילה הנכונה <span class="ws-emo">😊</span></span>
+                <span>המילה הנכונה</span>
                 <button type="button" class="ws-checkBtn" aria-label="בדיקה" title="בדיקה">✓</button>
               </div>
               <textarea class="ws-openInput" rows="1" aria-label="כתיבת המילה הנכונה"></textarea>
@@ -164,7 +164,6 @@
     `.trim();
 
     const elStatus = rootEl.querySelector(".ws-status");
-
     const banner = rootEl.querySelector(".ws-banner");
     const bannerText = rootEl.querySelector(".ws-banner-text");
 
@@ -183,11 +182,11 @@
       return (lvl === 2) ? model.level2List : model.level1List;
     }
 
-    function buildPoolForLevel_(lvl) {
+    function buildStackForLevel_(lvl) {
       const list = listForLevel_(lvl);
-      const pool = list.slice();
-      shuffleArrayInPlace_(pool);
-      return pool;
+      const stack = list.slice();
+      shuffleArrayInPlace_(stack);
+      return stack;
     }
 
     function setLevelUI_() {
@@ -199,11 +198,11 @@
     }
 
     function updateStatus_() {
-      elStatus.textContent = `${state.successes} הצלחות, ${state.errors} שגיאות`;
+      // 👣 is what remains AFTER the current word was drawn
+      elStatus.textContent = `👍 ${state.likes}  👎 ${state.dislikes}  👣 ${state.remaining}`;
     }
 
     function autoGrowInput_() {
-      // Keep it visually compact; still autosize within a small cap
       elInput.style.height = "auto";
       elInput.style.height = Math.min(elInput.scrollHeight, 56) + "px";
     }
@@ -246,33 +245,36 @@
       });
     }
 
+    function endGame_() {
+      // lock UI + friendly message
+      setInputsEnabled_(false);
+      elLocked.textContent = "";
+      clearInput_();
+      updateStatus_();
+      showBannerMessage_("כל הכבוד! 🎉 סיימת את כל המילים ברמה הזו.", 2200);
+    }
+
     function drawNextTarget_() {
       const lvl = state.level;
+      const stack = state.stackByLevel[lvl] || [];
 
-      if (!state.poolByLevel[lvl] || state.poolByLevel[lvl].length === 0) {
-        state.poolByLevel[lvl] = buildPoolForLevel_(lvl);
-      }
+      if (stack.length === 0) return "";
 
-      let target = state.poolByLevel[lvl].pop() || "";
-
-      // Avoid immediate repeat when possible
-      if (target && state.prevTarget && target === state.prevTarget && state.poolByLevel[lvl].length > 0) {
-        const alt = state.poolByLevel[lvl].pop();
-        state.poolByLevel[lvl].unshift(target);
-        target = alt || target;
-      }
-
-      // If list is empty after sanitize, we fall back (but that indicates your sheet field is empty)
-      if (!target) target = "בראשית";
-
-      state.prevTarget = target;
+      const target = stack.pop() || "";
+      state.remaining = stack.length; // after drawing this word
       return target;
     }
 
     function nextRound_() {
       hideBanner_();
 
-      state.targetWord = drawNextTarget_();
+      const target = drawNextTarget_();
+      if (!target) {
+        endGame_();
+        return;
+      }
+
+      state.targetWord = target;
       state.scrambledWord = scrambleNotSame_(state.targetWord);
 
       elLocked.textContent = state.scrambledWord;
@@ -286,18 +288,19 @@
     async function resetAll_() {
       state = {
         level: 1,
-        successes: 0,
-        errors: 0,
+        likes: 0,
+        dislikes: 0,
+        remaining: 0,
         targetWord: "",
         scrambledWord: "",
-        prevTarget: "",
-        poolByLevel: { 1: [], 2: [] }
+        stackByLevel: { 1: [], 2: [] }
       };
 
-      state.poolByLevel[1] = buildPoolForLevel_(1);
+      // build stacks ONCE (no refilling)
+      state.stackByLevel[1] = buildStackForLevel_(1);
+      state.stackByLevel[2] = buildStackForLevel_(2);
 
       setLevelUI_();
-      updateStatus_();
       nextRound_();
     }
 
@@ -307,13 +310,15 @@
       if (state.level === n) return;
 
       state.level = n;
-      state.successes = 0;
-      state.errors = 0;
-      state.prevTarget = "";
-      state.poolByLevel[n] = buildPoolForLevel_(n);
+
+      // reset counters per level (simple & clean)
+      state.likes = 0;
+      state.dislikes = 0;
+
+      // rebuild ONLY this level stack (start fresh for this level)
+      state.stackByLevel[n] = buildStackForLevel_(n);
 
       setLevelUI_();
-      updateStatus_();
       nextRound_();
     }
 
@@ -327,17 +332,17 @@
       }
 
       if (typed === target) {
-        state.successes += 1;
-        updateStatus_();
+        state.likes += 1;
         setInputsEnabled_(false);
+        updateStatus_();
         await showBannerMessage_("כל הכבוד! 🌟", 850);
         nextRound_();
         return;
       }
 
-      state.errors += 1;
-      updateStatus_();
+      state.dislikes += 1;
       setInputsEnabled_(false);
+      updateStatus_();
 
       // keep the "לא הפעם" message 1s longer (1950ms)
       await showBannerMessage_("לא הפעם 🙂 עוברים הלאה", 1950);
