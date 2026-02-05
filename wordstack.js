@@ -141,7 +141,7 @@
 
           <div class="ws-body">
 
-            <div class="ws-lockedCard" aria-label="המילה שהתבלבלה">
+            <div class="ws-lockedCard" aria-label="המילה מהפרשה - שהתבלבלה">
               <div class="ws-lockedTitle">המילה שהתבלבלה</div>
 
               <div class="ws-fieldWrap ws-fieldWrap-locked">
