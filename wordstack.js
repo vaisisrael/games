@@ -142,10 +142,10 @@
           <div class="ws-body">
 
             <div class="ws-lockedCard" aria-label="המילה מהפרשה - שהתבלבלה">
-              <div class="ws-lockedTitle">המילה שהתבלבלה</div>
+              <div class="ws-lockedTitle">המילה מהפרשה - שהתבלבלה</div>
 
               <div class="ws-fieldWrap ws-fieldWrap-locked">
-                <div class="ws-lockedWord" aria-label="המילה שהתבלבלה" aria-disabled="true"></div>
+                <div class="ws-lockedWord" aria-label="המילה מהפרשה - שהתבלבלה" aria-disabled="true"></div>
                 <button type="button" class="ws-hintBtn ws-inboxBtn" aria-label="רמז" title="רמז (בקרוב)">💡</button>
               </div>
             </div>
