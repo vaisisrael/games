@@ -1,11 +1,8 @@
 /* wordstack.css – "סדר את המילה" (simple, calm, compact row)
-   Requested changes included:
-   - No face emojis
-   - Titles updated
-   - Status uses 👍 👎 👣
-   - Same-row cards already compact
-   - No textarea scrollbar
-   - Tiny hint button + tiny green check button
+   Changes requested:
+   1) Make both cards same width (like the shorter one)
+   2) Put 💡 and ✓ INSIDE the boxes
+   3) Status separators use |
 */
 
 [data-parasha-games] .ws-wrap{
@@ -67,7 +64,7 @@
   font-size: 13px;
 }
 
-/* Buttons */
+/* Buttons (topbar) */
 [data-parasha-games] .ws-btn{
   border: 1px solid var(--w-border);
   background: #eef2ff;
@@ -146,14 +143,11 @@
   align-items: stretch;
 }
 
-[data-parasha-games] .ws-lockedCard{
+/* 1) Same width for both (use the "shorter" size) */
+[data-parasha-games] .ws-lockedCard,
+[data-parasha-games] .ws-openCard{
   flex: 0 0 42%;
   min-width: 210px;
-}
-
-[data-parasha-games] .ws-openCard{
-  flex: 1 1 auto;
-  min-width: 230px;
 }
 
 /* ===== Cards ===== */
@@ -167,55 +161,58 @@
   margin: 0;
 }
 
-/* Title row with small side buttons */
-[data-parasha-games] .ws-titleRow{
-  display:flex;
-  align-items:center;
-  justify-content: space-between;
-  gap:8px;
-  direction: rtl;
-
+[data-parasha-games] .ws-lockedTitle,
+[data-parasha-games] .ws-openTitle{
   font-weight: 900;
   color: var(--w-muted);
   font-size: 12px;
   margin-bottom: 7px;
+  direction: rtl;
 }
 
-/* Tiny hint button (design only) */
-[data-parasha-games] .ws-hintBtn{
-  border: 1px solid rgba(0,0,0,.10);
-  background: #fff;
+/* 2) Buttons INSIDE the boxes */
+[data-parasha-games] .ws-fieldWrap{
+  position: relative;
+}
+
+/* base style for in-box buttons */
+[data-parasha-games] .ws-inboxBtn{
+  position: absolute;
+  top: 6px;
+  left: 6px; /* stays intuitive inside the box */
+  z-index: 2;
+
   border-radius: 10px;
-  padding: 4px 7px;
+  padding: 4px 8px;
   cursor: pointer;
-  font-size: 14px;
   line-height: 1;
   user-select: none;
   -webkit-appearance: none;
   appearance: none;
 }
+
+[data-parasha-games] .ws-hintBtn{
+  border: 1px solid rgba(0,0,0,.10);
+  background: #fff;
+  font-size: 14px;
+}
+
 [data-parasha-games] .ws-hintBtn:hover{
   box-shadow: 0 6px 14px rgba(0,0,0,.06);
 }
 
-/* Tiny green check button */
 [data-parasha-games] .ws-checkBtn{
   border: 1px solid rgba(16,185,129,.35);
   background: rgba(16,185,129,.14);
   color: rgba(5,150,105,1);
-  border-radius: 10px;
-  padding: 4px 9px;
-  cursor: pointer;
   font-weight: 900;
   font-size: 14px;
-  line-height: 1;
-  user-select: none;
-  -webkit-appearance: none;
-  appearance: none;
 }
+
 [data-parasha-games] .ws-checkBtn:hover{
   box-shadow: 0 6px 14px rgba(0,0,0,.06);
 }
+
 [data-parasha-games] .ws-checkBtn:disabled{
   opacity: .55;
   cursor: default;
@@ -243,6 +240,11 @@
   user-select: none;
   opacity: .92;
   filter: saturate(.85);
+}
+
+/* make room for inside button */
+[data-parasha-games] .ws-fieldWrap-locked .ws-lockedWord{
+  padding-left: 44px;
 }
 
 /* Input (no scrollbar) */
@@ -287,6 +289,11 @@
 
 [data-parasha-games] .ws-openInput:disabled{
   opacity: .95;
+}
+
+/* make room for inside check button */
+[data-parasha-games] .ws-fieldWrap-open .ws-openInput{
+  padding-left: 44px;
 }
 
 /* Responsive: stack on small screens */
