@@ -1,11 +1,11 @@
 /* wordstack.css – "סדר את המילה" (simple, calm, compact row)
-   Updates requested:
-   - Two cards in one row, smaller & same height feel
-   - Smaller fonts
-   - Locked word looks blocked/locked
-   - Textarea no scrollbar
-   - Tiny green check button next to "correct" title
-   - Tiny hint button next to "scrambled" title (design only)
+   Requested changes included:
+   - No face emojis
+   - Titles updated
+   - Status uses 👍 👎 👣
+   - Same-row cards already compact
+   - No textarea scrollbar
+   - Tiny hint button + tiny green check button
 */
 
 [data-parasha-games] .ws-wrap{
@@ -181,10 +181,6 @@
   margin-bottom: 7px;
 }
 
-[data-parasha-games] .ws-emo{
-  margin-inline-start: 6px;
-}
-
 /* Tiny hint button (design only) */
 [data-parasha-games] .ws-hintBtn{
   border: 1px solid rgba(0,0,0,.10);
@@ -234,7 +230,7 @@
   text-align: center;
 
   padding: 8px 6px;
-  min-height: 44px;            /* match input feel */
+  min-height: 44px;
   display:flex;
   align-items:center;
   justify-content:center;
@@ -258,7 +254,7 @@
   outline: none;
   resize: none;
 
-  overflow: hidden;            /* no scrollbar */
+  overflow: hidden;
   scrollbar-width: none;
 }
 [data-parasha-games] .ws-openInput::-webkit-scrollbar{
