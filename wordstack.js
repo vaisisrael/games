@@ -1,19 +1,19 @@
 /* wordstack.js – Parasha "סדר את המילה" game (module)
 
    SPEC (current):
-   - Top shows a SCRAMBLED (wrong) word (locked / non-editable look) 😞
-   - Bottom is an editor where the child types the CORRECT word 😊
-   - Child clicks "סיימתי":
+   - Top shows a SCRAMBLED word (locked look) 😞 + a tiny hint button 💡 (design only for now)
+   - Bottom is an editor where the child types the CORRECT word 😊 + tiny green check (✓) to submit
+   - Submit:
        correct -> successes++
        wrong   -> errors++
-     then move to NEXT word from sheet (randomized pool, no sticking on same target)
+     then move to NEXT word from sheet (randomized pool)
    - Status: "X הצלחות, X שגיאות"
-   - No dictionary / AI / server validation of Hebrew; words are from sheet.
+   - No dictionary / AI / server validation; words are from sheet.
 
-   Data expected from Apps Script:
+   Data expected from Apps Script (your existing sheet fields):
    ?mode=wordstack&parasha=...
    returns:
-   { ok:true, row:{ parasha, level1_chain, level2_chain } }
+   { ok:true, row:{ parasha, level1_words, level2_words } }
 
    Words are comma-separated in the sheet.
 */
@@ -86,7 +86,6 @@
     const w = String(word || "");
     if (w.length <= 1) return w;
 
-    // try to avoid same arrangement
     for (let i = 0; i < 10; i++) {
       const s = shuffleString_(w);
       if (s !== w) return s;
@@ -107,8 +106,9 @@
       return { reset: () => {} };
     }
 
-    const level1Raw = data.row.level1_chain || "";
-    const level2Raw = data.row.level2_chain || "";
+    // IMPORTANT: use your existing field names (level1_words/level2_words)
+    const level1Raw = data.row.level1_words || "";
+    const level2Raw = data.row.level2_words || "";
 
     const level1List = sanitizeList_(parseCsvList(level1Raw));
     const level2List = sanitizeList_(parseCsvList(level2Raw));
@@ -142,17 +142,19 @@
           <div class="ws-body">
 
             <div class="ws-lockedCard" aria-label="המילה שהתערבבה">
-              <div class="ws-lockedTitle">זו המילה שהתערבבה <span class="ws-emo">😞</span></div>
+              <div class="ws-lockedTitle ws-titleRow">
+                <span>זו המילה שהתערבבה <span class="ws-emo">😞</span></span>
+                <button type="button" class="ws-hintBtn" aria-label="רמז" title="רמז (בקרוב)">💡</button>
+              </div>
               <div class="ws-lockedWord" aria-label="המילה שהתערבבה" aria-disabled="true"></div>
             </div>
 
             <div class="ws-openCard" aria-label="משטח עריכה">
-              <div class="ws-openTitle">כאן כותבים את המילה הנכונה <span class="ws-emo">😊</span></div>
-              <textarea class="ws-openInput" rows="1" aria-label="כתיבת המילה הנכונה"></textarea>
-
-              <div class="ws-openActions">
-                <button type="button" class="ws-btn ws-mainBtn">סיימתי</button>
+              <div class="ws-openTitle ws-titleRow">
+                <span>כאן כותבים את המילה הנכונה <span class="ws-emo">😊</span></span>
+                <button type="button" class="ws-checkBtn" aria-label="בדיקה" title="בדיקה">✓</button>
               </div>
+              <textarea class="ws-openInput" rows="1" aria-label="כתיבת המילה הנכונה"></textarea>
             </div>
 
           </div>
@@ -172,7 +174,7 @@
 
     const elLocked = rootEl.querySelector(".ws-lockedWord");
     const elInput = rootEl.querySelector(".ws-openInput");
-    const btnMain = rootEl.querySelector(".ws-mainBtn");
+    const btnCheck = rootEl.querySelector(".ws-checkBtn");
 
     // ---------- state ----------
     let state = null;
@@ -201,8 +203,9 @@
     }
 
     function autoGrowInput_() {
+      // Keep it visually compact; still autosize within a small cap
       elInput.style.height = "auto";
-      elInput.style.height = Math.min(elInput.scrollHeight, 92) + "px";
+      elInput.style.height = Math.min(elInput.scrollHeight, 56) + "px";
     }
 
     function clearInput_() {
@@ -212,7 +215,7 @@
 
     function setInputsEnabled_(enabled) {
       elInput.disabled = !enabled;
-      btnMain.disabled = !enabled;
+      btnCheck.disabled = !enabled;
     }
 
     function hideBanner_() {
@@ -259,7 +262,7 @@
         target = alt || target;
       }
 
-      // If STILL empty, show a stable fallback (but this indicates sheet is empty after sanitize)
+      // If list is empty after sanitize, we fall back (but that indicates your sheet field is empty)
       if (!target) target = "בראשית";
 
       state.prevTarget = target;
@@ -319,7 +322,7 @@
       const target = sanitizeWord_(state.targetWord);
 
       if (!typed) {
-        await showBannerMessage_("כתוב משהו לפני סיימתי 🙂", 900);
+        await showBannerMessage_("כתוב משהו לפני הבדיקה 🙂", 900);
         return;
       }
 
@@ -336,7 +339,7 @@
       updateStatus_();
       setInputsEnabled_(false);
 
-      // keep the "לא הפעם" message 1s longer (per your earlier request)
+      // keep the "לא הפעם" message 1s longer (1950ms)
       await showBannerMessage_("לא הפעם 🙂 עוברים הלאה", 1950);
       nextRound_();
     }
@@ -347,11 +350,11 @@
     elInput.addEventListener("keydown", (e) => {
       if (e.key === "Enter") {
         e.preventDefault();
-        if (!btnMain.disabled) childSubmit_();
+        if (!btnCheck.disabled) childSubmit_();
       }
     });
 
-    btnMain.addEventListener("click", () => childSubmit_());
+    btnCheck.addEventListener("click", () => childSubmit_());
 
     btnReset.addEventListener("click", () => resetAll_());
     btnLevel1.addEventListener("click", () => setLevel_(1));
