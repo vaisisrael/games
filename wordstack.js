@@ -8,7 +8,7 @@
        wrong   -> 👎
      then move to NEXT word from the level word stack
    - Game ENDS when the level stack is finished (no refilling).
-   - Status: 👍 X, 👎 Y, 👣 Z (moves remaining)
+   - Status: 👍 X | 👎 Y | 👣 Z (moves remaining)
 
    Data expected from Apps Script:
    ?mode=wordstack&parasha=...
@@ -142,19 +142,21 @@
           <div class="ws-body">
 
             <div class="ws-lockedCard" aria-label="המילה שהתבלבלה">
-              <div class="ws-lockedTitle ws-titleRow">
-                <span>המילה שהתבלבלה</span>
-                <button type="button" class="ws-hintBtn" aria-label="רמז" title="רמז (בקרוב)">💡</button>
+              <div class="ws-lockedTitle">המילה שהתבלבלה</div>
+
+              <div class="ws-fieldWrap ws-fieldWrap-locked">
+                <div class="ws-lockedWord" aria-label="המילה שהתבלבלה" aria-disabled="true"></div>
+                <button type="button" class="ws-hintBtn ws-inboxBtn" aria-label="רמז" title="רמז (בקרוב)">💡</button>
               </div>
-              <div class="ws-lockedWord" aria-label="המילה שהתבלבלה" aria-disabled="true"></div>
             </div>
 
             <div class="ws-openCard" aria-label="המילה הנכונה">
-              <div class="ws-openTitle ws-titleRow">
-                <span>המילה הנכונה</span>
-                <button type="button" class="ws-checkBtn" aria-label="בדיקה" title="בדיקה">✓</button>
+              <div class="ws-openTitle">המילה הנכונה</div>
+
+              <div class="ws-fieldWrap ws-fieldWrap-open">
+                <textarea class="ws-openInput" rows="1" aria-label="כתיבת המילה הנכונה"></textarea>
+                <button type="button" class="ws-checkBtn ws-inboxBtn" aria-label="בדיקה" title="בדיקה">✓</button>
               </div>
-              <textarea class="ws-openInput" rows="1" aria-label="כתיבת המילה הנכונה"></textarea>
             </div>
 
           </div>
@@ -198,8 +200,7 @@
     }
 
     function updateStatus_() {
-      // 👣 is what remains AFTER the current word was drawn
-      elStatus.textContent = `👍 ${state.likes}  👎 ${state.dislikes}  👣 ${state.remaining}`;
+      elStatus.textContent = `👍 ${state.likes} | 👎 ${state.dislikes} | 👣 ${state.remaining}`;
     }
 
     function autoGrowInput_() {
@@ -246,7 +247,6 @@
     }
 
     function endGame_() {
-      // lock UI + friendly message
       setInputsEnabled_(false);
       elLocked.textContent = "";
       clearInput_();
@@ -261,7 +261,7 @@
       if (stack.length === 0) return "";
 
       const target = stack.pop() || "";
-      state.remaining = stack.length; // after drawing this word
+      state.remaining = stack.length;
       return target;
     }
 
@@ -296,7 +296,6 @@
         stackByLevel: { 1: [], 2: [] }
       };
 
-      // build stacks ONCE (no refilling)
       state.stackByLevel[1] = buildStackForLevel_(1);
       state.stackByLevel[2] = buildStackForLevel_(2);
 
@@ -310,12 +309,8 @@
       if (state.level === n) return;
 
       state.level = n;
-
-      // reset counters per level (simple & clean)
       state.likes = 0;
       state.dislikes = 0;
-
-      // rebuild ONLY this level stack (start fresh for this level)
       state.stackByLevel[n] = buildStackForLevel_(n);
 
       setLevelUI_();
@@ -344,7 +339,6 @@
       setInputsEnabled_(false);
       updateStatus_();
 
-      // keep the "לא הפעם" message 1s longer (1950ms)
       await showBannerMessage_("לא הפעם 🙂 עוברים הלאה", 1950);
       nextRound_();
     }
