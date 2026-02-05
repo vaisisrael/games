@@ -1,8 +1,11 @@
-/* wordstack.css – "סדר את המילה" (simple, calm, notebook input)
-   Updates:
-   - Two cards side-by-side (scrambled + editor)
-   - Scrambled word looks locked/blocked (non-editable)
-   - Textarea has no scrollbar
+/* wordstack.css – "סדר את המילה" (simple, calm, compact row)
+   Updates requested:
+   - Two cards in one row, smaller & same height feel
+   - Smaller fonts
+   - Locked word looks blocked/locked
+   - Textarea no scrollbar
+   - Tiny green check button next to "correct" title
+   - Tiny hint button next to "scrambled" title (design only)
 */
 
 [data-parasha-games] .ws-wrap{
@@ -27,7 +30,7 @@
   border: 1px solid var(--w-border);
   border-radius: 16px;
   box-shadow: var(--w-shadow);
-  padding: 12px;
+  padding: 10px;
 }
 
 /* ===== Topbar ===== */
@@ -36,7 +39,7 @@
   align-items:center;
   gap:10px;
   flex-wrap: wrap;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 [data-parasha-games] .ws-actions{
@@ -61,6 +64,7 @@
   font-weight: 900;
   color: var(--w-muted);
   white-space: nowrap;
+  font-size: 13px;
 }
 
 /* Buttons */
@@ -68,10 +72,10 @@
   border: 1px solid var(--w-border);
   background: #eef2ff;
   border-radius: 12px;
-  padding: 8px 10px;
+  padding: 7px 10px;
   cursor: pointer;
   font-weight: 900;
-  font-size: 14px;
+  font-size: 13px;
   user-select:none;
   -webkit-appearance: none;
   appearance: none;
@@ -93,17 +97,17 @@
   box-shadow: 0 10px 20px rgba(0,0,0,.06);
 }
 
-/* ===== Banner (message only) ===== */
+/* ===== Banner ===== */
 [data-parasha-games] .ws-banner{
-  margin: 8px 0 10px;
+  margin: 6px 0 8px;
   border-radius: 14px;
   border: 1px solid rgba(0,0,0,.08);
   background: rgba(250,204,21,.14);
-  padding: 8px 10px;
+  padding: 7px 10px;
   font-weight: 400;
   text-align: center;
 
-  min-height: 28px;
+  min-height: 26px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -131,11 +135,11 @@
 }
 
 [data-parasha-games] .ws-banner-text{
-  font-size: 14px;
+  font-size: 13px;
   line-height: 1.35;
 }
 
-/* ===== Body: 2 cards in one row ===== */
+/* ===== Body: two cards in one row ===== */
 [data-parasha-games] .ws-body{
   display:flex;
   gap:10px;
@@ -144,12 +148,12 @@
 
 [data-parasha-games] .ws-lockedCard{
   flex: 0 0 42%;
-  min-width: 220px;
+  min-width: 210px;
 }
 
 [data-parasha-games] .ws-openCard{
   flex: 1 1 auto;
-  min-width: 240px;
+  min-width: 230px;
 }
 
 /* ===== Cards ===== */
@@ -159,31 +163,81 @@
   border-radius: 16px;
   background: rgba(255,255,255,.88);
   box-shadow: 0 8px 18px rgba(0,0,0,.06);
-  padding: 10px;               /* smaller */
-  margin: 0;                   /* same row - no vertical margins */
+  padding: 8px;
+  margin: 0;
 }
 
-[data-parasha-games] .ws-lockedTitle,
-[data-parasha-games] .ws-openTitle{
+/* Title row with small side buttons */
+[data-parasha-games] .ws-titleRow{
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap:8px;
+  direction: rtl;
+
   font-weight: 900;
   color: var(--w-muted);
-  font-size: 13px;
-  margin-bottom: 8px;
-  direction: rtl;
+  font-size: 12px;
+  margin-bottom: 7px;
 }
 
 [data-parasha-games] .ws-emo{
   margin-inline-start: 6px;
 }
 
-/* Scrambled word (locked, non-editable look) */
-[data-parasha-games] .ws-lockedWord{
-  font-size: 24px;
+/* Tiny hint button (design only) */
+[data-parasha-games] .ws-hintBtn{
+  border: 1px solid rgba(0,0,0,.10);
+  background: #fff;
+  border-radius: 10px;
+  padding: 4px 7px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  user-select: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+[data-parasha-games] .ws-hintBtn:hover{
+  box-shadow: 0 6px 14px rgba(0,0,0,.06);
+}
+
+/* Tiny green check button */
+[data-parasha-games] .ws-checkBtn{
+  border: 1px solid rgba(16,185,129,.35);
+  background: rgba(16,185,129,.14);
+  color: rgba(5,150,105,1);
+  border-radius: 10px;
+  padding: 4px 9px;
+  cursor: pointer;
   font-weight: 900;
-  letter-spacing: .4px;
+  font-size: 14px;
+  line-height: 1;
+  user-select: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+[data-parasha-games] .ws-checkBtn:hover{
+  box-shadow: 0 6px 14px rgba(0,0,0,.06);
+}
+[data-parasha-games] .ws-checkBtn:disabled{
+  opacity: .55;
+  cursor: default;
+}
+
+/* Scrambled word (locked look) */
+[data-parasha-games] .ws-lockedWord{
+  font-size: 20px;
+  font-weight: 900;
+  letter-spacing: .2px;
   direction: rtl;
   text-align: center;
+
   padding: 8px 6px;
+  min-height: 44px;            /* match input feel */
+  display:flex;
+  align-items:center;
+  justify-content:center;
 
   border-radius: 14px;
   border: 1px dashed rgba(0,0,0,.18);
@@ -195,7 +249,7 @@
   filter: saturate(.85);
 }
 
-/* Notebook style input (no scrollbar) */
+/* Input (no scrollbar) */
 [data-parasha-games] .ws-openInput{
   width: 100%;
   box-sizing: border-box;
@@ -204,8 +258,8 @@
   outline: none;
   resize: none;
 
-  overflow: hidden;            /* <-- no scrollbar */
-  scrollbar-width: none;       /* Firefox */
+  overflow: hidden;            /* no scrollbar */
+  scrollbar-width: none;
 }
 [data-parasha-games] .ws-openInput::-webkit-scrollbar{
   width: 0;
@@ -213,40 +267,30 @@
 }
 
 [data-parasha-games] .ws-openInput{
-  font-size: 20px;             /* a bit smaller to fit row */
+  font-size: 19px;
   font-weight: 500;
   direction: rtl;
   text-align: right;
 
   padding: 8px 6px 10px;
+  min-height: 44px;
+  line-height: 28px;
 
   background:
     linear-gradient(#fff, #fff) padding-box,
     repeating-linear-gradient(
       to bottom,
       rgba(0,0,0,0) 0px,
-      rgba(0,0,0,0) 30px,
-      rgba(0,0,0,.10) 31px
+      rgba(0,0,0,0) 26px,
+      rgba(0,0,0,.10) 27px
     );
 
   border-radius: 14px;
   border: 1px solid rgba(0,0,0,.08);
-
-  min-height: 46px;
-  line-height: 31px;
 }
 
 [data-parasha-games] .ws-openInput:disabled{
   opacity: .95;
-}
-
-/* Actions */
-[data-parasha-games] .ws-openActions{
-  display:flex;
-  align-items:center;
-  justify-content: center;
-  gap:10px;
-  margin-top: 10px;
 }
 
 /* Responsive: stack on small screens */
@@ -259,15 +303,15 @@
   [data-parasha-games] .ws-openCard{
     min-width: 0;
     margin: 10px 0 12px;
-    padding: 12px;
+    padding: 10px;
   }
 
   [data-parasha-games] .ws-lockedWord{
-    font-size: 24px;
+    font-size: 20px;
   }
 
   [data-parasha-games] .ws-openInput{
-    font-size: 20px;
+    font-size: 19px;
   }
 
   [data-parasha-games] .ws-topbar{
