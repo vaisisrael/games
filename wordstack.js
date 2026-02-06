@@ -1,7 +1,7 @@
 /* wordstack.js – Parasha "סדר את המילה" game (module)
 
    SPEC (current):
-   - Top shows a SCRAMBLED word (locked look) + tiny hint button 💡 (design only for now)
+   - Top shows a SCRAMBLED word (locked look) + tiny hint button 💡 (now functional)
    - Bottom is an editor where the child types the CORRECT word + tiny green check (✓) to submit
    - Submit:
        correct -> 👍
@@ -13,9 +13,18 @@
    Data expected from Apps Script:
    ?mode=wordstack&parasha=...
    returns:
-   { ok:true, row:{ parasha, level1_words, level2_words } }
+   {
+     ok:true,
+     row:{
+       parasha,
+       level1_words, level2_words,
+       level1_hint,  level2_hint
+     }
+   }
 
    Words are comma-separated in the sheet.
+   Hints are comma-separated emojis aligned by index to the words list.
+   If a word has no emoji hint, sheet should contain "?" for that position.
 */
 
 (() => {
@@ -52,6 +61,23 @@
     return (Array.isArray(list) ? list : [])
       .map(sanitizeWord_)
       .filter(w => w && w.length >= 2 && isHebrewOnly_(w));
+  }
+
+  // ---------- hints ----------
+  function sanitizeHint_(h) {
+    const s = String(h || "").trim();
+    if (!s || s === "?") return "?";
+    return s; // allow emoji (or any short symbol) as-is
+  }
+
+  function buildHintsAlignedToWords_(rawHints, wordsList) {
+    const hints = parseCsvList(rawHints || "").map(sanitizeHint_);
+    const out = new Array(wordsList.length);
+
+    for (let i = 0; i < wordsList.length; i++) {
+      out[i] = (i < hints.length) ? sanitizeHint_(hints[i]) : "?";
+    }
+    return out;
   }
 
   // ---------- randomness ----------
@@ -106,14 +132,20 @@
       return { reset: () => {} };
     }
 
-    // IMPORTANT: existing field names
     const level1Raw = data.row.level1_words || "";
     const level2Raw = data.row.level2_words || "";
+
+    // NEW: hint fields (renamed in sheet)
+    const level1HintRaw = data.row.level1_hint || "";
+    const level2HintRaw = data.row.level2_hint || "";
 
     const level1List = sanitizeList_(parseCsvList(level1Raw));
     const level2List = sanitizeList_(parseCsvList(level2Raw));
 
-    return render(rootEl, { level1List, level2List });
+    const level1Hints = buildHintsAlignedToWords_(level1HintRaw, level1List);
+    const level2Hints = buildHintsAlignedToWords_(level2HintRaw, level2List);
+
+    return render(rootEl, { level1List, level2List, level1Hints, level2Hints });
   }
 
   function render(rootEl, model) {
@@ -146,7 +178,7 @@
 
               <div class="ws-fieldWrap ws-fieldWrap-locked">
                 <div class="ws-lockedWord" aria-label="המילה מהפרשה - שהתבלבלה" aria-disabled="true"></div>
-                <button type="button" class="ws-hintBtn ws-inboxBtn" aria-label="רמז" title="רמז (בקרוב)">💡</button>
+                <button type="button" class="ws-hintBtn ws-inboxBtn" aria-label="רמז" title="רמז">💡</button>
               </div>
             </div>
 
@@ -174,6 +206,8 @@
     const btnLevel2 = rootEl.querySelector(".ws-level-2");
 
     const elLocked = rootEl.querySelector(".ws-lockedWord");
+    const btnHint = rootEl.querySelector(".ws-hintBtn");
+
     const elInput = rootEl.querySelector(".ws-openInput");
     const btnCheck = rootEl.querySelector(".ws-checkBtn");
 
@@ -184,9 +218,13 @@
       return (lvl === 2) ? model.level2List : model.level1List;
     }
 
+    function hintsForLevel_(lvl) {
+      return (lvl === 2) ? model.level2Hints : model.level1Hints;
+    }
+
     function buildStackForLevel_(lvl) {
       const list = listForLevel_(lvl);
-      const stack = list.slice();
+      const stack = list.slice(); // words only (shuffled)
       shuffleArrayInPlace_(stack);
       return stack;
     }
@@ -251,6 +289,7 @@
       elLocked.textContent = "";
       clearInput_();
       updateStatus_();
+      btnHint.hidden = true;
       showBannerMessage_("כל הכבוד! 🎉 סיימת את כל המילים ברמה הזו.", 2200);
     }
 
@@ -263,6 +302,20 @@
       const target = stack.pop() || "";
       state.remaining = stack.length;
       return target;
+    }
+
+    function applyHintForCurrentTarget_() {
+      const lvl = state.level;
+      const hints = hintsForLevel_(lvl);
+      const list = listForLevel_(lvl);
+
+      const idx = list.indexOf(state.targetWord);
+      const hint = (idx >= 0 && idx < hints.length) ? sanitizeHint_(hints[idx]) : "?";
+
+      state.currentHint = hint;
+
+      // bulb appears only if there is an emoji (not "?")
+      btnHint.hidden = (hint === "?" || !hint);
     }
 
     function nextRound_() {
@@ -279,6 +332,8 @@
 
       elLocked.textContent = state.scrambledWord;
 
+      applyHintForCurrentTarget_();
+
       clearInput_();
       setInputsEnabled_(true);
       updateStatus_();
@@ -293,6 +348,7 @@
         remaining: 0,
         targetWord: "",
         scrambledWord: "",
+        currentHint: "?",
         stackByLevel: { 1: [], 2: [] }
       };
 
@@ -343,6 +399,12 @@
       nextRound_();
     }
 
+    async function showHint_() {
+      const h = sanitizeHint_(state.currentHint);
+      if (!h || h === "?") return; // button should be hidden anyway
+      await showBannerMessage_(`רמז: ${h}`, 2000);
+    }
+
     // ---------- events ----------
     elInput.addEventListener("input", () => autoGrowInput_());
 
@@ -354,6 +416,8 @@
     });
 
     btnCheck.addEventListener("click", () => childSubmit_());
+
+    btnHint.addEventListener("click", () => showHint_());
 
     btnReset.addEventListener("click", () => resetAll_());
     btnLevel1.addEventListener("click", () => setLevel_(1));
