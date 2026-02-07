@@ -1,3 +1,4 @@
+/* קובץ מלא: games.js */
 (() => {
   "use strict";
 
@@ -5,7 +6,7 @@
   const CONTROL_API =
     "https://script.google.com/macros/s/AKfycbxM-6ewqaHZ_UrUrXuQyPA9ETGR2_U_wgqIY9gTsIdXmvJN8QImhVHxDmc35wyg2kVcaQ/exec";
 
-    // version for cache busting (also used when loading game modules)
+  // version for cache busting (also used when loading game modules)
   const BUILD_VERSION = (() => {
     // 1) prefer loader-provided version
     if (window.PARASHA_GAMES_BUILD_VERSION) return String(window.PARASHA_GAMES_BUILD_VERSION);
@@ -23,7 +24,6 @@
     // 3) last resort: stable string
     return "no-version";
   })();
-
 
   const GAMES_DEFINITION = [
     { id: "memory", title: "🧠 זיכרון", js: "memory.js", css: "memory.css" },
@@ -202,8 +202,15 @@
   margin: 10px 0 !important;
 }
 
+/* default body padding for legacy games */
 [data-parasha-games][data-pg-tabs="1"] .game-body{
   padding: 12px !important;
+}
+
+/* ✅ Fix wrapper inconsistency: "מגירון" manages its own padding/cardbox,
+   so we remove the outer panel padding only for classify */
+[data-parasha-games][data-pg-tabs="1"] .game-body.game-body--classify{
+  padding: 0 !important;
 }
     `.trim();
   }
@@ -249,6 +256,7 @@
 
         const body = document.createElement("div");
         body.className = "game-body";
+        body.classList.add("game-body--" + game.id); // ✅ per-game wrapper hook
         body.style.display = "none";
 
         panel.appendChild(body);
