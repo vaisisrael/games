@@ -50,6 +50,9 @@
   window.ParashaGames = window.ParashaGames || {};
   window.ParashaGames.registry = window.ParashaGames.registry || new Map();
 
+  // Accept either:
+  // 1) object: { init(rootEl, ctx) {...} }
+  // 2) function: (ctx) => ({ init(rootEl, ctx){...} })
   window.ParashaGamesRegister = function (id, factoryOrModule) {
     window.ParashaGames.registry.set(id, factoryOrModule);
   };
@@ -133,11 +136,18 @@
   display:block !important;
   direction: rtl !important;
 
-  /* ✅ critical: don't get squeezed by floated media above/beside */
+  /* ✅ MAKE ALL GAMES BEHAVE LIKE בלילון:
+     Break below the floated post image and use full available width */
   clear: both !important;
   width: 100% !important;
   max-width: none !important;
   box-sizing: border-box !important;
+}
+
+/* also clear on the panel itself (some themes float siblings) */
+[data-parasha-games][data-pg-tabs="1"] .pg-tabbar,
+[data-parasha-games][data-pg-tabs="1"] .game{
+  clear: both !important;
 }
 
 [data-parasha-games][data-pg-tabs="1"] .pg-panels,
@@ -216,11 +226,6 @@
 [data-parasha-games][data-pg-tabs="1"] .game-body{
   padding: 12px !important;
 }
-
-/* "מגירון" מנהל padding פנימי משלו */
-[data-parasha-games][data-pg-tabs="1"] .game-body.game-body--classify{
-  padding: 0 !important;
-}
     `.trim();
   }
 
@@ -265,7 +270,6 @@
 
         const body = document.createElement("div");
         body.className = "game-body";
-        body.classList.add("game-body--" + game.id);
         body.style.display = "none";
 
         panel.appendChild(body);
@@ -287,7 +291,7 @@
     let activeTab = null;
 
     function findBodyByGameId(gameId) {
-      const gameEl = root.querySelector(`.game[data-game="${CSS.escape(gameId)}"]`);
+      const gameEl = root.querySelector(\`.game[data-game="\${CSS.escape(gameId)}"]\`);
       return gameEl ? gameEl.querySelector(".game-body") : null;
     }
 
@@ -321,6 +325,8 @@
         activateTab(tab);
       });
     });
+
+    // No auto-selection on first entry (user chooses)
   }
 
   // ====== Resolve module from registry ======
@@ -336,6 +342,12 @@
 
     const root = document.querySelector("[data-parasha-games]");
     if (!root) return;
+
+    // ✅ Inline safety: some themes apply floats/width via inline or higher specificity
+    root.style.clear = "both";
+    root.style.width = "100%";
+    root.style.maxWidth = "none";
+    root.style.boxSizing = "border-box";
 
     const parashaLabel = extractParashaLabel();
     if (!parashaLabel) return;
