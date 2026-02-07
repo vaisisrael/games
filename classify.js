@@ -1,4 +1,4 @@
-/* classify.js – Parasha "מגירון" (classification drawers game)
+/* קובץ מלא: classify.js – Parasha "מגירון" (classification drawers game)
    Data expected from Apps Script:
    ?mode=classify&parasha=...
    returns:
@@ -7,9 +7,11 @@
      row:{
        parasha,
        classify_title,
-       classify_type,
        classify_drawers, // "יום א|🌓,יום ב|💧,..."
-       classify_items    // "אור|1,חושך|1,רקיע|2,..."
+       level1_items,     // "אור|1,חושך|1,..."
+       level2_items      // "..." (optional)
+       // (optional legacy) classify_items // "אור|1,חושך|1,..."
+       // (optional legacy) classify_type  // text only
      }
    }
 
@@ -23,7 +25,7 @@
 (() => {
   "use strict";
 
-  const MODE = "classify";       // Apps Script mode
+  const MODE = "classify";        // Apps Script mode
   const GAME_ID = "classify";     // module id used by games.js registration
 
   // ---------- helpers ----------
@@ -112,12 +114,24 @@
 
     const row = data.row || {};
     const title = String(row.classify_title || "מגירון").trim();
-    const type = String(row.classify_type || "").trim();
+    const type = String(row.classify_type || "").trim(); // legacy/optional (UI only)
     const drawers = parseDrawers_(row.classify_drawers || "");
-    const items = parseItems_(row.classify_items || "", drawers.length);
+
+    // ✅ levels support (your style): prefer level1_items/level2_items, fallback to legacy classify_items
+    const rawL1 = (row.level1_items != null && String(row.level1_items).trim() !== "")
+      ? row.level1_items
+      : row.classify_items;
+
+    const rawL2 = row.level2_items;
+
+    const itemsL1 = parseItems_(rawL1 || "", drawers.length);
+    const itemsL2 = parseItems_(rawL2 || "", drawers.length);
+
+    // current behavior uses one deck (no UI changes): use level1 if exists, else level2 if exists
+    const items = itemsL1.length ? itemsL1 : itemsL2;
 
     if (!drawers.length || !items.length) {
-      rootEl.innerHTML = `<div>חסרים נתונים: ודא שיש classify_drawers ו־classify_items עבור הפרשה.</div>`;
+      rootEl.innerHTML = `<div>חסרים נתונים: ודא שיש classify_drawers ו־level1_items (או classify_items) עבור הפרשה.</div>`;
       return { reset: () => {} };
     }
 
@@ -548,7 +562,7 @@
   (function registerWhenReady_() {
     if (window.ParashaGamesRegister) {
       window.ParashaGamesRegister(GAME_ID, {
-        init: async (rootEl, ctx) => initclassify(rootEl, ctx)
+        init: async (rootEl, ctx) => init(rootEl, ctx)
       });
       return;
     }
