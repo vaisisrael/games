@@ -3,7 +3,7 @@
 
   // ====== CONFIG ======
   const CONTROL_API =
-    "https://script.google.com/macros/s/AKfycbxKixtL5oXjw5PkSm-FlBOI5jVeoC6Q548_mGbuP9OHy5VH9seQfiWgg56RaQGfksmKwA/exec";
+    "https://script.google.com/macros/s/AKfycbxM-6ewqaHZ_UrUrXuQyPA9ETGR2_U_wgqIY9gTsIdXmvJN8QImhVHxDmc35wyg2kVcaQ/exec";
 
     // version for cache busting (also used when loading game modules)
   const BUILD_VERSION = (() => {
