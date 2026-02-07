@@ -50,9 +50,6 @@
   window.ParashaGames = window.ParashaGames || {};
   window.ParashaGames.registry = window.ParashaGames.registry || new Map();
 
-  // Accept either:
-  // 1) object: { init(rootEl, ctx) {...} }
-  // 2) function: (ctx) => ({ init(rootEl, ctx){...} })
   window.ParashaGamesRegister = function (id, factoryOrModule) {
     window.ParashaGames.registry.set(id, factoryOrModule);
   };
@@ -135,6 +132,20 @@
   color: var(--pg-text) !important;
   display:block !important;
   direction: rtl !important;
+
+  /* ✅ critical: don't get squeezed by floated media above/beside */
+  clear: both !important;
+  width: 100% !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
+}
+
+[data-parasha-games][data-pg-tabs="1"] .pg-panels,
+[data-parasha-games][data-pg-tabs="1"] .game,
+[data-parasha-games][data-pg-tabs="1"] .game-body{
+  width: 100% !important;
+  max-width: none !important;
+  box-sizing: border-box !important;
 }
 
 [data-parasha-games][data-pg-tabs="1"] .pg-tabbar{
@@ -157,7 +168,7 @@
 [data-parasha-games][data-pg-tabs="1"] .pg-tab{
   all: unset !important;
 
-  flex: 0 0 auto !important;      /* no stretch */
+  flex: 0 0 auto !important;
   width: auto !important;
 
   display: inline-flex !important;
@@ -165,16 +176,16 @@
   justify-content: center !important;
   gap: 6px !important;
 
-  padding: 7px 10px !important;   /* smaller */
+  padding: 7px 10px !important;
   border-radius: 12px !important;
 
   font-weight: 900 !important;
-  font-size: 14px !important;     /* smaller */
+  font-size: 14px !important;
   line-height: 1.2 !important;
 
   cursor: pointer !important;
   user-select: none !important;
-  border: 1px solid rgba(0,0,0,.08) !important; /* visible even when not active */
+  border: 1px solid rgba(0,0,0,.08) !important;
   background: transparent !important;
 }
 
@@ -202,13 +213,11 @@
   margin: 10px 0 !important;
 }
 
-/* default body padding for legacy games */
 [data-parasha-games][data-pg-tabs="1"] .game-body{
   padding: 12px !important;
 }
 
-/* ✅ Fix wrapper inconsistency: "מגירון" manages its own padding/cardbox,
-   so we remove the outer panel padding only for classify */
+/* "מגירון" מנהל padding פנימי משלו */
 [data-parasha-games][data-pg-tabs="1"] .game-body.game-body--classify{
   padding: 0 !important;
 }
@@ -256,7 +265,7 @@
 
         const body = document.createElement("div");
         body.className = "game-body";
-        body.classList.add("game-body--" + game.id); // ✅ per-game wrapper hook
+        body.classList.add("game-body--" + game.id);
         body.style.display = "none";
 
         panel.appendChild(body);
@@ -312,25 +321,17 @@
         activateTab(tab);
       });
     });
-
-    // No auto-selection on first entry (user chooses)
   }
 
   // ====== Resolve module from registry ======
   function resolveModule(regValue, ctx) {
-    // if function: call with ctx
-    if (typeof regValue === "function") {
-      return regValue(ctx);
-    }
-    // if object: use as-is
+    if (typeof regValue === "function") return regValue(ctx);
     return regValue;
   }
 
   // ====== INIT ======
   async function init() {
-    // ✅ Added: load Rubik without touching Blogger theme
     ensureRubikFontLoaded();
-
     enforceTabsCssForAWhile();
 
     const root = document.querySelector("[data-parasha-games]");
