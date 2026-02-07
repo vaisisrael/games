@@ -136,8 +136,7 @@
   display:block !important;
   direction: rtl !important;
 
-  /* ✅ MAKE ALL GAMES BEHAVE LIKE בלילון:
-     Break below the floated post image and use full available width */
+  /* ✅ behave like בלילון: break below floated post image */
   clear: both !important;
   width: 100% !important;
   max-width: none !important;
@@ -291,7 +290,8 @@
     let activeTab = null;
 
     function findBodyByGameId(gameId) {
-      const gameEl = root.querySelector(\`.game[data-game="\${CSS.escape(gameId)}"]\`);
+      // ✅ FIXED: proper template literal (no escaping!)
+      const gameEl = root.querySelector(`.game[data-game="${CSS.escape(gameId)}"]`);
       return gameEl ? gameEl.querySelector(".game-body") : null;
     }
 
@@ -343,7 +343,7 @@
     const root = document.querySelector("[data-parasha-games]");
     if (!root) return;
 
-    // ✅ Inline safety: some themes apply floats/width via inline or higher specificity
+    // Inline safety against theme floats/width rules
     root.style.clear = "both";
     root.style.width = "100%";
     root.style.maxWidth = "none";
