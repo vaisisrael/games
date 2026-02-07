@@ -28,10 +28,8 @@
   const GAMES_DEFINITION = [
     { id: "memory", title: "🧠 זיכרון", js: "memory.js", css: "memory.css" },
     { id: "puzzle", title: "🧩 פאזל", js: "puzzle.js", css: "puzzle.css" },
-    { id: "truefalse", title: "✅ נכון / ❌ לא נכון" },
-    { id: "dragmatch", title: "🔗 גרור והתאם" },
-    { id: "emoji", title: "😄 חידת אימוג'ים" },
-    { id: "wordstack", title: "🔤 בְּלִילוֹן", js: "wordstack.js", css: "wordstack.css" }
+    { id: "wordstack", title: "🔤 בְּלִילוֹן", js: "wordstack.js", css: "wordstack.css" },
+    { id: "classify", title: "🗄️ מגירון", js: "classify.js", css: "classify.css" }
   ];
 
   // ====== LOAD RUBIK FONT (no Blogger theme changes) ======
