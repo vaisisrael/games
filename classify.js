@@ -111,8 +111,7 @@
 
     // ✅ instruction comes from sheet (with fallback)
     const prompt = String(
-      (row.classify_prompt != null && String(row.classify_prompt).trim() !== "") ? row.classify_prompt :
-      (row.classify_hint != null && String(row.classify_hint).trim() !== "") ? row.classify_hint :
+      (row.classify_title != null && String(row.classify_title).trim() !== "") ? row.classify_title :
       "לאיזו מגירה זה שייך?"
     ).trim();
 
