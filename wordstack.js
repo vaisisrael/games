@@ -341,9 +341,8 @@
     }
 
     async function resetAll_() {
-         const currentLevel = state.level; 
       state = {
-        level: currentLevel,
+        level: 1,
         likes: 0,
         dislikes: 0,
         remaining: 0,
