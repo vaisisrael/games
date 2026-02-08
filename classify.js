@@ -483,7 +483,7 @@
     }
 
     // init
-    state.level = 1;
+//  state.level = 1;
     resetAll_();
 
     return { reset: () => resetAll_() };
