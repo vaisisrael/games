@@ -6,12 +6,10 @@
      ok:true,
      row:{
        parasha,
-       classify_title,
+       classify_title,   // used as ONE instruction line (shown ONLY inside white card, above note)
        classify_drawers, // "יום א|🌓,יום ב|💧,..."
        level1_items,     // "אור|1,חושך|1,..."
        level2_items      // "..." (optional)
-       // optional:
-       classify_prompt OR classify_hint // instruction line shown ABOVE the note
        // (optional legacy) classify_items // "אור|1,חושך|1,..."
        // (optional legacy) classify_type  // text only
      }
@@ -58,8 +56,7 @@
     return arr;
   }
 
-  // KEEP nikud/cantillation and KEEP spaces between words (2–3 words etc).
-  // Only trim and collapse whitespace sequences to a single space.
+  // KEEP nikud/cantillation and KEEP spaces between words.
   function sanitizeWord_(w) {
     let s = String(w || "").trim();
     s = s.replace(/\s+/g, " ");
@@ -106,13 +103,13 @@
     }
 
     const row = data.row || {};
-    const title = String(row.classify_title || "מגירון").trim();
-    const type = String(row.classify_type || "").trim();
 
-    // ✅ instruction comes from sheet (with fallback)
+    // ✅ ONE source of instruction (and "name"): classify_title.
+    // ✅ Must appear ONLY inside white card, above the note.
     const prompt = String(
-      (row.classify_title != null && String(row.classify_title).trim() !== "") ? row.classify_title :
-      "לאיזו מגירה זה שייך?"
+      (row.classify_title != null && String(row.classify_title).trim() !== "")
+        ? row.classify_title
+        : "לאיזו מגירה זה שייך?"
     ).trim();
 
     const drawers = parseDrawers_(row.classify_drawers || "");
@@ -131,7 +128,7 @@
       return { reset: () => {} };
     }
 
-    return render(rootEl, { title, type, prompt, drawers, itemsL1, itemsL2 });
+    return render(rootEl, { prompt, drawers, itemsL1, itemsL2 });
   }
 
   // ---------- UI ----------
@@ -153,10 +150,7 @@
             <span class="mg-banner-text"></span>
           </div>
 
-          <div class="mg-titleRow">
-            <div class="mg-title"></div>
-            <p class="mg-subtitle"></p>
-          </div>
+          <!-- ✅ No title/subtitle row here (so nothing appears in the grey area) -->
 
           <div class="mg-currentFrame">
             <div class="mg-prompt" aria-label="הנחיה"></div>
@@ -172,8 +166,6 @@
       </div>
     `.trim();
 
-    const elTitle = rootEl.querySelector(".mg-title");
-    const elSubtitle = rootEl.querySelector(".mg-subtitle");
     const elGrid = rootEl.querySelector(".mg-grid");
     const elStatus = rootEl.querySelector(".mg-status");
     const banner = rootEl.querySelector(".mg-banner");
@@ -187,8 +179,6 @@
     const elCurrentNote = rootEl.querySelector(".mg-currentNote");
     const elCurrentWord = rootEl.querySelector(".mg-currentWord");
 
-    elTitle.textContent = model.title || "מגירון";
-    elSubtitle.textContent = model.type ? `מה המגירות מייצגות: ${model.type}` : "";
     elPrompt.textContent = model.prompt || "לאיזו מגירה זה שייך?";
 
     // state
@@ -197,7 +187,6 @@
       correct: 0,
       wrong: 0,
       total: 0,
-      remaining: 0,
       deck: [],
       current: null,
       drawerCounts: new Array(model.drawers.length).fill(0),
@@ -216,7 +205,7 @@
     }
 
     function showBanner_(text, durationMs = 900) {
-      const dur = Math.max(0, Number(durationMs || 0)) + 1000; // +1s
+      const dur = Math.max(0, Number(durationMs || 0)) + 1000; // +1s as requested earlier
 
       showBanner_._token = (showBanner_._token || 0) + 1;
       const token = showBanner_._token;
@@ -294,7 +283,6 @@
     function next_() {
       hideBanner_();
       const item = state.deck.pop() || null;
-      state.remaining = state.deck.length;
       setCurrent_(item);
       updateStatus_();
 
@@ -310,7 +298,6 @@
       state.drawerCounts.fill(0);
 
       state.deck = buildDeckForLevel_(state.level);
-      state.remaining = state.deck.length;
 
       for (let i = 0; i < state.drawerNotesEls.length; i++) {
         const slot = state.drawerNotesEls[i];
@@ -342,7 +329,7 @@
         btnLevel1.setAttribute("aria-pressed", "false");
       }
 
-      resetAll_(); // full reset
+      resetAll_();
     }
 
     btnLevel1.addEventListener("click", () => setLevel_(1));
@@ -388,7 +375,7 @@
       state.drawerNotesEls[i] = slot;
       state.drawerRootEls[i] = dw;
 
-      // approach "open" feel: stronger (CSS makes it noticeable)
+      // approach "open" feel (as already implemented)
       slot.addEventListener("pointerenter", () => dw.classList.add("is-peek"));
       slot.addEventListener("pointerleave", () => dw.classList.remove("is-peek"));
       slot.addEventListener("focus", () => dw.classList.add("is-peek"));
@@ -399,7 +386,6 @@
       });
 
       slot.addEventListener("click", () => attemptDropOnDrawer_(i + 1));
-
       slot.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
           e.preventDefault();
