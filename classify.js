@@ -10,24 +10,19 @@
        classify_drawers, // "יום א|🌓,יום ב|💧,..."
        level1_items,     // "אור|1,חושך|1,..."
        level2_items      // "..." (optional)
+       // optional:
+       classify_prompt OR classify_hint // instruction line shown ABOVE the note
        // (optional legacy) classify_items // "אור|1,חושך|1,..."
        // (optional legacy) classify_type  // text only
      }
    }
-
-   Behavior (updated per request):
-   - No drag: child clicks a drawer and the note goes in with animation.
-   - Levels: Level 1 default; can switch to Level 2 (full reset).
-   - UI: remove drawer number + per-drawer counter from view (moved to comment).
-   - Score: attempts, matches out of total, timer.
-   - Support phrases with spaces (2–3 words).
 */
 
 (() => {
   "use strict";
 
-  const MODE = "classify";        // Apps Script mode
-  const GAME_ID = "classify";     // module id used by games.js registration
+  const MODE = "classify";
+  const GAME_ID = "classify";
 
   // ---------- helpers ----------
   function parseCsvList(s) {
@@ -63,7 +58,7 @@
     return arr;
   }
 
-  // ✅ Requested: KEEP nikud/cantillation and KEEP spaces between words.
+  // KEEP nikud/cantillation and KEEP spaces between words (2–3 words etc).
   // Only trim and collapse whitespace sequences to a single space.
   function sanitizeWord_(w) {
     let s = String(w || "").trim();
@@ -72,7 +67,6 @@
   }
 
   function parseDrawers_(raw) {
-    // "יום א|🌓,יום ב|💧"
     const parts = parseCsvList(raw);
     const out = [];
     for (const p of parts) {
@@ -86,7 +80,6 @@
   }
 
   function parseItems_(raw, drawersCount) {
-    // "אור|1,חושך|1"
     const parts = parseCsvList(raw);
     const out = [];
     for (const p of parts) {
@@ -114,10 +107,17 @@
 
     const row = data.row || {};
     const title = String(row.classify_title || "מגירון").trim();
-    const type = String(row.classify_type || "").trim(); // legacy/optional (UI only)
+    const type = String(row.classify_type || "").trim();
+
+    // ✅ instruction comes from sheet (with fallback)
+    const prompt = String(
+      (row.classify_prompt != null && String(row.classify_prompt).trim() !== "") ? row.classify_prompt :
+      (row.classify_hint != null && String(row.classify_hint).trim() !== "") ? row.classify_hint :
+      "לאיזו מגירה זה שייך?"
+    ).trim();
+
     const drawers = parseDrawers_(row.classify_drawers || "");
 
-    // ✅ levels support: prefer level1_items/level2_items, fallback to legacy classify_items
     const rawL1 = (row.level1_items != null && String(row.level1_items).trim() !== "")
       ? row.level1_items
       : row.classify_items;
@@ -132,7 +132,7 @@
       return { reset: () => {} };
     }
 
-    return render(rootEl, { title, type, drawers, itemsL1, itemsL2 });
+    return render(rootEl, { title, type, prompt, drawers, itemsL1, itemsL2 });
   }
 
   // ---------- UI ----------
@@ -143,7 +143,6 @@
 
           <div class="mg-topbar">
             <div class="mg-actions">
-              <!-- ✅ Requested: Reset should be LEFT of level buttons (in RTL row, put it LAST) -->
               <button type="button" class="mg-btn mg-level is-on" data-level="1" aria-pressed="true">רמה 1</button>
               <button type="button" class="mg-btn mg-level" data-level="2" aria-pressed="false">רמה 2</button>
               <button type="button" class="mg-btn mg-reset">איפוס</button>
@@ -161,12 +160,11 @@
           </div>
 
           <div class="mg-currentFrame">
-            <!-- ✅ Requested: remove "הפתק הנוכחי" label entirely -->
+            <div class="mg-prompt" aria-label="הנחיה"></div>
+
             <div class="mg-note mg-currentNote" role="button" tabindex="0" aria-label="פתק נוכחי">
               <span class="mg-currentWord"></span>
             </div>
-
-            <div class="mg-currentHint">לאיזו מגירה זה שייך?</div>
           </div>
 
           <div class="mg-grid" aria-label="מגירות סיווג"></div>
@@ -186,27 +184,27 @@
     const btnLevel2 = rootEl.querySelector('.mg-level[data-level="2"]');
 
     const elCurrentFrame = rootEl.querySelector(".mg-currentFrame");
+    const elPrompt = rootEl.querySelector(".mg-prompt");
     const elCurrentNote = rootEl.querySelector(".mg-currentNote");
     const elCurrentWord = rootEl.querySelector(".mg-currentWord");
 
     elTitle.textContent = model.title || "מגירון";
     elSubtitle.textContent = model.type ? `מה המגירות מייצגות: ${model.type}` : "";
+    elPrompt.textContent = model.prompt || "לאיזו מגירה זה שייך?";
 
     // state
     let state = {
-      level: 1,              // ✅ default
+      level: 1,
       correct: 0,
       wrong: 0,
       total: 0,
       remaining: 0,
       deck: [],
       current: null,
-      // per drawer stacks (visual)
       drawerCounts: new Array(model.drawers.length).fill(0),
       drawerNotesEls: new Array(model.drawers.length).fill(null),
       drawerRootEls: new Array(model.drawers.length).fill(null),
       locked: false,
-      // timer
       startTs: 0,
       timerId: null
     };
@@ -219,8 +217,7 @@
     }
 
     function showBanner_(text, durationMs = 900) {
-      // +1000ms requested
-      const dur = Math.max(0, Number(durationMs || 0)) + 1000;
+      const dur = Math.max(0, Number(durationMs || 0)) + 1000; // +1s
 
       showBanner_._token = (showBanner_._token || 0) + 1;
       const token = showBanner_._token;
@@ -242,7 +239,7 @@
       });
     }
 
-    // ----- timer + status -----
+    // ----- status -----
     function fmtTime_(sec) {
       sec = Math.max(0, Math.trunc(sec));
       const mm = String(Math.floor(sec / 60)).padStart(2, "0");
@@ -269,7 +266,7 @@
       updateStatus_();
     }
 
-    // ----- deck management by level -----
+    // ----- deck -----
     function buildDeckForLevel_(level) {
       const src = (level === 2) ? model.itemsL2 : model.itemsL1;
       const deck = (src || []).map(x => ({ word: x.word, target: x.target }));
@@ -282,9 +279,8 @@
       state.current = item || null;
 
       if (!state.current) {
-        // ✅ Requested: hide the whole "current" area (including hint) at end
         elCurrentWord.textContent = "";
-        elCurrentFrame.style.display = "none";
+        elCurrentFrame.style.display = "none"; // hides prompt too
         elCurrentNote.classList.add("is-disabled");
         elCurrentNote.setAttribute("aria-disabled", "true");
         return;
@@ -309,7 +305,6 @@
       }
     }
 
-    // ----- full reset (requested) -----
     function resetAll_() {
       state.correct = 0;
       state.wrong = 0;
@@ -318,7 +313,6 @@
       state.deck = buildDeckForLevel_(state.level);
       state.remaining = state.deck.length;
 
-      // clear drawer stacks
       for (let i = 0; i < state.drawerNotesEls.length; i++) {
         const slot = state.drawerNotesEls[i];
         const notes = slot.querySelectorAll(".mg-note.mg-mini");
@@ -337,7 +331,6 @@
       lvl = (lvl === 2) ? 2 : 1;
       state.level = lvl;
 
-      // toggle UI
       if (lvl === 1) {
         btnLevel1.classList.add("is-on");
         btnLevel1.setAttribute("aria-pressed", "true");
@@ -350,14 +343,13 @@
         btnLevel1.setAttribute("aria-pressed", "false");
       }
 
-      // ✅ requested: switching levels does FULL reset
-      resetAll_();
+      resetAll_(); // full reset
     }
 
     btnLevel1.addEventListener("click", () => setLevel_(1));
     btnLevel2.addEventListener("click", () => setLevel_(2));
 
-    // ----- build drawers -----
+    // ----- drawers -----
     for (let i = 0; i < model.drawers.length; i++) {
       const d = model.drawers[i];
       const accent = accentForIndex_(i + 1);
@@ -367,8 +359,6 @@
       dw.style.setProperty("--accent", accent);
       dw.setAttribute("data-drawer-idx", String(i + 1));
 
-      // ✅ Requested: remove drawer number + drawer counter from view
-      // by moving those UI chunks into a comment in the template.
       dw.innerHTML = `
         <div class="mg-dwHead">
           <!--
@@ -399,21 +389,18 @@
       state.drawerNotesEls[i] = slot;
       state.drawerRootEls[i] = dw;
 
-      // ✅ Requested: "approach" animation (peek/open feel) when hovering / focusing
+      // approach "open" feel: stronger (CSS makes it noticeable)
       slot.addEventListener("pointerenter", () => dw.classList.add("is-peek"));
       slot.addEventListener("pointerleave", () => dw.classList.remove("is-peek"));
       slot.addEventListener("focus", () => dw.classList.add("is-peek"));
       slot.addEventListener("blur", () => dw.classList.remove("is-peek"));
-      // on touch, give a short peek so it feels alive
       slot.addEventListener("pointerdown", () => {
         dw.classList.add("is-peek");
-        setTimeout(() => dw.classList.remove("is-peek"), 240);
+        setTimeout(() => dw.classList.remove("is-peek"), 320);
       });
 
-      // click-to-drop (requested)
       slot.addEventListener("click", () => attemptDropOnDrawer_(i + 1));
 
-      // keyboard: Enter acts like click
       slot.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
           e.preventDefault();
@@ -424,7 +411,7 @@
       elGrid.appendChild(dw);
     }
 
-    // ----- click animation: note flies into drawer -----
+    // fly animation
     function animateNoteToDrawer_(drawerIdx) {
       if (!state.current) return Promise.resolve();
 
@@ -451,12 +438,12 @@
       document.body.appendChild(fly);
 
       const dx = (to.left + to.width * 0.5) - (from.left + from.width * 0.5);
-      const dy = (to.top + Math.min(40, to.height * 0.5)) - (from.top + from.height * 0.5);
+      const dy = (to.top + Math.min(46, to.height * 0.5)) - (from.top + from.height * 0.5);
 
       return new Promise((resolve) => {
         requestAnimationFrame(() => {
-          fly.style.transform = `translate(${dx}px, ${dy}px) scale(0.92)`;
-          fly.style.opacity = "0.15";
+          fly.style.transform = `translate(${dx}px, ${dy}px) scale(0.90)`;
+          fly.style.opacity = "0.12";
         });
 
         setTimeout(() => {
@@ -466,7 +453,6 @@
       });
     }
 
-    // ----- drop logic -----
     async function attemptDropOnDrawer_(drawerIdx) {
       if (state.locked) return;
       if (!state.current) return;
@@ -476,41 +462,36 @@
 
       state.locked = true;
 
-      // small visual feedback on tapped drawer
       const dw = state.drawerRootEls[idx - 1];
       if (dw) {
         dw.classList.add("is-over");
-        setTimeout(() => dw.classList.remove("is-over"), 220);
+        setTimeout(() => dw.classList.remove("is-over"), 240);
       }
 
       if (!isCorrect) {
         state.wrong += 1;
         updateStatus_();
-        await showBanner_("לא כאן 🙂 נסה מגירה אחרת", 850); // +1s inside showBanner_
+        await showBanner_("לא כאן 🙂 נסה מגירה אחרת", 850);
         state.locked = false;
         return;
       }
 
-      // correct
       state.correct += 1;
       updateStatus_();
 
-      // animate note flying in
       await animateNoteToDrawer_(idx);
 
-      // add mini note into drawer slot (visual stack)
       const slot = state.drawerNotesEls[idx - 1];
       const countBefore = state.drawerCounts[idx - 1];
-      const countAfter = countBefore + 1;
-      state.drawerCounts[idx - 1] = countAfter;
+      state.drawerCounts[idx - 1] = countBefore + 1;
 
       const mini = document.createElement("div");
       mini.className = "mg-note mg-mini";
-      mini.style.setProperty("--i", String(Math.min(5, countBefore))); // stack tilt limited
+      mini.style.setProperty("--i", String(Math.min(5, countBefore)));
       mini.textContent = state.current.word;
       slot.appendChild(mini);
 
-      await showBanner_("יפה! ✅", 550); // +1s inside showBanner_
+      await showBanner_("יפה! ✅", 550);
 
       next_();
       state.locked = false;
@@ -520,25 +501,12 @@
     state.level = 1;
     resetAll_();
 
-    return {
-      reset: () => resetAll_()
-    };
+    return { reset: () => resetAll_() };
   }
 
-  // accent palette by drawer index (soft)
   function accentForIndex_(n) {
-    const palette = [
-      "#7aa3ff", // blue
-      "#4fd1c5", // teal
-      "#b388ff", // purple
-      "#ffcc66", // amber
-      "#ff7a7a", // red
-      "#5ad1ff", // light blue
-      "#7bd389",
-      "#fda4af"
-    ];
-    const i = (Number(n) - 1) % palette.length;
-    return palette[i];
+    const palette = ["#7aa3ff","#4fd1c5","#b388ff","#ffcc66","#ff7a7a","#5ad1ff","#7bd389","#fda4af"];
+    return palette[(Number(n) - 1) % palette.length];
   }
 
   function escapeHtml_(s) {
@@ -550,7 +518,6 @@
       .replace(/'/g, "&#039;");
   }
 
-  // ---------- register ----------
   (function registerWhenReady_() {
     if (window.ParashaGamesRegister) {
       window.ParashaGamesRegister(GAME_ID, {
