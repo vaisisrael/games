@@ -1,12 +1,8 @@
-/* קובץ מלא: classify.css – "מגירון" (classify drawers + yellow notes)
-   עדכונים לפי התיקונים האחרונים:
-   - כפתור איפוס משמאל לרמות (JS)
-   - אנימציית "פתיחה" קלה בהתקרבות למגירה: .mg-dw.is-peek
-   - מרכז כותרות מגירות
-   - צמצום רווחים באזור העליון (הכיתוב "לאיזו מגירה זה שייך?")
-   - פתקים בתוך מגירה: גופן קטן יותר מהפתק העליון
-   - תמיכה בפתק עם 2–3 מילים (wrap עדין)
-   - הסרת "הפתק הנוכחי" (JS) + אין לו CSS
+/* קובץ מלא: classify.css – "מגירון"
+   עדכון:
+   - הנחיה אחת בלבד: .mg-prompt מעל הפתק
+   - מחיקת ההנחיה התחתונה (אין .mg-currentHint)
+   - אנימציית התקרבות למגירה יותר מורגשת: .mg-dw.is-peek
 */
 
 [data-parasha-games] .mg-wrap{
@@ -23,11 +19,8 @@
   font-family: "Rubik", system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans Hebrew", "Heebo", sans-serif !important;
   color: var(--mg-text);
 }
-
 [data-parasha-games] .mg-wrap,
-[data-parasha-games] .mg-wrap *{
-  font-family: inherit !important;
-}
+[data-parasha-games] .mg-wrap *{ font-family: inherit !important; }
 
 [data-parasha-games] .mg-cardbox{
   background: linear-gradient(180deg, var(--mg-bg), #fff);
@@ -45,7 +38,6 @@
   flex-wrap: wrap;
   margin-bottom: 8px;
 }
-
 [data-parasha-games] .mg-actions{
   display:flex;
   align-items:center;
@@ -53,7 +45,6 @@
   flex-wrap: wrap;
   direction: rtl;
 }
-
 [data-parasha-games] .mg-status{
   margin-inline-start: auto;
   display:flex;
@@ -64,8 +55,6 @@
   white-space: nowrap;
   font-size: 13px;
 }
-
-/* Buttons */
 [data-parasha-games] .mg-btn{
   border: 1px solid var(--mg-border);
   background: #eef2ff;
@@ -78,16 +67,7 @@
   -webkit-appearance: none;
   appearance: none;
 }
-
-[data-parasha-games] .mg-btn:hover{
-  box-shadow: 0 6px 14px rgba(0,0,0,.06);
-}
-
-[data-parasha-games] .mg-btn:disabled{
-  opacity: .55;
-  cursor: default;
-}
-
+[data-parasha-games] .mg-btn:hover{ box-shadow: 0 6px 14px rgba(0,0,0,.06); }
 [data-parasha-games] .mg-level.is-on{
   background: #dbeafe;
   border-color: #93c5fd;
@@ -100,7 +80,6 @@
   border: 1px solid rgba(0,0,0,.08);
   background: rgba(250,204,21,.14);
   padding: 7px 10px;
-  font-weight: 400;
   text-align: center;
 
   min-height: 26px;
@@ -112,81 +91,62 @@
   transform: translateY(-2px);
   transition: opacity .14s ease, transform .14s ease;
 }
-[data-parasha-games] .mg-banner.is-on{
-  opacity: 1;
-  transform: translateY(0);
-}
-[data-parasha-games] .mg-banner[hidden]{
-  display:flex !important;
-  visibility:hidden !important;
-}
-
-[data-parasha-games] .mg-banner-text{
-  font-size: 13px;
-  line-height: 1.35;
-}
+[data-parasha-games] .mg-banner.is-on{ opacity: 1; transform: translateY(0); }
+[data-parasha-games] .mg-banner[hidden]{ display:flex !important; visibility:hidden !important; }
+[data-parasha-games] .mg-banner-text{ font-size: 13px; line-height: 1.35; }
 
 /* ===== Title row ===== */
-[data-parasha-games] .mg-titleRow{
-  margin: 2px 2px 10px;
-}
-[data-parasha-games] .mg-title{
-  font-weight: 950;
-  font-size: 18px;
-  margin: 0 0 2px;
-}
-[data-parasha-games] .mg-subtitle{
-  color: var(--mg-muted);
-  font-weight: 750;
-  font-size: 13px;
-  margin: 0;
-}
+[data-parasha-games] .mg-titleRow{ margin: 2px 2px 10px; }
+[data-parasha-games] .mg-title{ font-weight: 950; font-size: 18px; margin: 0 0 2px; }
+[data-parasha-games] .mg-subtitle{ color: var(--mg-muted); font-weight: 750; font-size: 13px; margin: 0; }
 
 /* ===== Current area ===== */
 [data-parasha-games] .mg-currentFrame{
   width: min(720px, 100%);
-  margin: 0 auto 10px;           /* צמצום */
+  margin: 0 auto 10px;
   background:#fff;
   border:1px solid rgba(0,0,0,.10);
   border-radius: 18px;
   box-shadow: 0 12px 28px rgba(0,0,0,.10);
-  padding: 10px 12px 10px;       /* היה גדול יותר */
+  padding: 8px 12px 10px;
   text-align:center;
 }
 
-/* Note (top) - supports 2–3 words */
+/* instruction ABOVE the note */
+[data-parasha-games] .mg-prompt{
+  font-weight: 950;
+  color: var(--mg-text);
+  font-size: 15px;
+  margin: 0 0 8px;
+}
+
+/* Note (top) supports 2–3 words */
 [data-parasha-games] .mg-note{
   position: relative;
   display: inline-flex;
   align-items:center;
   justify-content:center;
-  gap:10px;
   padding: 10px 14px;
   min-width: 240px;
   height: 54px;
   border-radius: 16px;
   background: var(--mg-note);
   border: 1px solid rgba(0,0,0,.12);
-  box-shadow:
-    0 12px 22px rgba(0,0,0,.12),
-    inset 0 1px 0 rgba(255,255,255,.85);
+  box-shadow: 0 12px 22px rgba(0,0,0,.12), inset 0 1px 0 rgba(255,255,255,.85);
   font-weight: 950;
   font-size: 20px;
   letter-spacing:.2px;
   transform: rotate(-0.35deg);
   user-select: none;
   touch-action: manipulation;
-  white-space: normal;           /* ✅ allow wrapping */
+  white-space: normal;
   text-align: center;
 }
-
 [data-parasha-games] .mg-currentWord{
   display:block;
   line-height: 1.12;
   padding: 0 4px;
 }
-
-/* shine */
 [data-parasha-games] .mg-note::before{
   content:"";
   position:absolute;
@@ -195,8 +155,6 @@
   background: linear-gradient(to bottom, rgba(255,255,255,.55), transparent 42%);
   pointer-events:none;
 }
-
-/* TOP-LEFT fold */
 [data-parasha-games] .mg-note::after{
   content:"";
   position:absolute;
@@ -211,20 +169,7 @@
   opacity:.7;
   pointer-events:none;
 }
-
-/* hint - moved up slightly */
-[data-parasha-games] .mg-currentHint{
-  margin-top: 6px; /* היה גבוה יותר */
-  font-weight: 900;
-  color: var(--mg-muted);
-  font-size: 13px;
-}
-
-/* states */
-[data-parasha-games] .mg-note.is-disabled{
-  opacity: .65;
-  cursor: default;
-}
+[data-parasha-games] .mg-note.is-disabled{ opacity: .65; cursor: default; }
 [data-parasha-games] .mg-note.is-ghost{
   position: fixed !important;
   z-index: 9999 !important;
@@ -238,7 +183,6 @@
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 14px;
 }
-
 @media (max-width: 880px){
   [data-parasha-games] .mg-grid{ grid-template-columns: repeat(2, minmax(0,1fr)); }
   [data-parasha-games] .mg-note{ min-width: min(520px, 100%); font-size: 20px; }
@@ -256,8 +200,6 @@
   border-radius: 18px;
   filter: drop-shadow(0 10px 20px rgba(0,0,0,.10));
 }
-
-/* colored ring */
 [data-parasha-games] .mg-dw::before{
   content:"";
   position:absolute;
@@ -266,8 +208,6 @@
   box-shadow: inset 0 0 0 3px color-mix(in oklab, var(--accent) 35%, transparent);
   pointer-events:none;
 }
-
-/* header bar */
 [data-parasha-games] .mg-dwHead{
   position:absolute;
   top:0;
@@ -280,16 +220,15 @@
   box-shadow: 0 10px 20px rgba(0,0,0,.10);
   display:flex;
   align-items:center;
-  justify-content:center; /* ✅ center header content */
+  justify-content:center;
   padding: 0 10px;
   gap: 10px;
   z-index: 3;
 }
-
 [data-parasha-games] .mg-dwTitle{
   display:flex;
   align-items:center;
-  justify-content:center; /* ✅ center title row */
+  justify-content:center;
   gap: 8px;
   font-weight: 950;
   font-size: 16px;
@@ -297,8 +236,6 @@
   width: 100%;
   text-align: center;
 }
-
-/* body */
 [data-parasha-games] .mg-dwBody{
   border-radius: 18px;
   background: linear-gradient(to bottom, #ffffff, #f6f7fb 70%, #eef2f7);
@@ -308,8 +245,6 @@
   padding-top: 28px;
   overflow: hidden;
 }
-
-/* cavity */
 [data-parasha-games] .mg-slot{
   height: 108px;
   border-radius: 18px;
@@ -320,22 +255,22 @@
   box-shadow: inset 0 20px 28px rgba(0,0,0,.22);
   position: relative;
   padding: 10px;
-  transition: transform .16s ease, box-shadow .16s ease, background .16s ease;
+  transition: transform .18s ease, box-shadow .18s ease, filter .18s ease;
 }
-
-/* active tap feedback */
 [data-parasha-games] .mg-dw.is-over .mg-slot{
   outline: 3px solid color-mix(in oklab, var(--accent) 35%, transparent);
   outline-offset: 2px;
 }
 
-/* ✅ Requested: subtle "opening" feel on approach */
-[data-parasha-games] .mg-dw.is-peek .mg-slot{
-  transform: translateY(-2px);
-  box-shadow: inset 0 18px 26px rgba(0,0,0,.20);
+/* ✅ stronger "opening" feel */
+[data-parasha-games] .mg-dw.is-peek{
+  transform: translateY(-4px);
 }
-
-/* front face */
+[data-parasha-games] .mg-dw.is-peek .mg-slot{
+  transform: translateY(-6px);
+  box-shadow: inset 0 12px 20px rgba(0,0,0,.18), 0 18px 30px rgba(0,0,0,.10);
+  filter: saturate(1.04) contrast(1.02);
+}
 [data-parasha-games] .mg-front{
   margin-top: 10px;
   height: 34px;
@@ -344,14 +279,12 @@
   border: 1px solid rgba(0,0,0,.10);
   box-shadow: 0 10px 18px rgba(0,0,0,.10);
   position: relative;
-  transition: transform .16s ease;
+  transition: transform .18s ease, box-shadow .18s ease;
 }
-
-/* a tiny slide to suggest drawer movement */
 [data-parasha-games] .mg-dw.is-peek .mg-front{
-  transform: translateY(1px);
+  transform: translateY(6px);
+  box-shadow: 0 14px 22px rgba(0,0,0,.14);
 }
-
 [data-parasha-games] .mg-handle{
   position:absolute;
   left:50%;
@@ -361,19 +294,17 @@
   height: 10px;
   border-radius: 999px;
   background: linear-gradient(to bottom, #e5e7eb, #cfd4da);
-  box-shadow:
-    inset 0 2px 3px rgba(255,255,255,.85),
-    0 2px 8px rgba(0,0,0,.12);
+  box-shadow: inset 0 2px 3px rgba(255,255,255,.85), 0 2px 8px rgba(0,0,0,.12);
 }
 
-/* ===== notes inside drawers ===== */
+/* notes inside drawers (slightly smaller than top note) */
 [data-parasha-games] .mg-mini{
   position:absolute;
   right: 14px;
   bottom: 14px;
   width: min(280px, 92%);
-  height: 54px;          /* מעט קטן יותר */
-  font-size: 17px;       /* ✅ smaller than top note */
+  height: 54px;
+  font-size: 17px;
   min-width: 0;
   transform:
     translate(calc(var(--i)*-7px), calc(var(--i)*-7px))
@@ -381,9 +312,4 @@
   white-space: normal;
   text-align: center;
   line-height: 1.12;
-}
-
-@media (max-width: 520px){
-  [data-parasha-games] .mg-currentFrame{ padding: 10px 10px 10px; }
-  [data-parasha-games] .mg-note{ height: 52px; }
 }
