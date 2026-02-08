@@ -1,4 +1,4 @@
-/* memory.css – Memory game UI (Rubik enforced inside memory area) */
+/* קובץ מלא: memory.css – Memory game UI (Rubik enforced inside memory area) */
 
 [data-parasha-games] .mem-wrap{
   --m-bg: #f6f7fb;
@@ -161,4 +161,12 @@
 [data-parasha-games] .mem-card[aria-disabled="true"]{
   opacity: .80;
   cursor: default;
+}
+
+/* ===== Mobile fix: prevent 4-cards row from overflowing ===== */
+@media (max-width: 420px){
+  [data-parasha-games] .mem-grid{
+    --gap: 8px;
+    --cell: 72px;
+  }
 }
