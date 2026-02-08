@@ -20,6 +20,7 @@
    - Levels: Level 1 default; can switch to Level 2 (full reset).
    - UI: remove drawer number + per-drawer counter from view (moved to comment).
    - Score: attempts, matches out of total, timer.
+   - Support phrases with spaces (2–3 words).
 */
 
 (() => {
@@ -62,11 +63,11 @@
     return arr;
   }
 
-  // ✅ Requested: KEEP nikud/cantillation in display (do not strip \u0591-\u05C7).
-  // Only trim and remove inner spaces.
+  // ✅ Requested: KEEP nikud/cantillation and KEEP spaces between words.
+  // Only trim and collapse whitespace sequences to a single space.
   function sanitizeWord_(w) {
     let s = String(w || "").trim();
-    s = s.replace(/\s+/g, "");
+    s = s.replace(/\s+/g, " ");
     return s;
   }
 
@@ -142,9 +143,10 @@
 
           <div class="mg-topbar">
             <div class="mg-actions">
-              <button type="button" class="mg-btn mg-reset">איפוס</button>
+              <!-- ✅ Requested: Reset should be LEFT of level buttons (in RTL row, put it LAST) -->
               <button type="button" class="mg-btn mg-level is-on" data-level="1" aria-pressed="true">רמה 1</button>
               <button type="button" class="mg-btn mg-level" data-level="2" aria-pressed="false">רמה 2</button>
+              <button type="button" class="mg-btn mg-reset">איפוס</button>
             </div>
             <div class="mg-status" aria-live="polite"></div>
           </div>
@@ -159,13 +161,12 @@
           </div>
 
           <div class="mg-currentFrame">
-            <div class="mg-currentLabel">הפתק הנוכחי</div>
-
+            <!-- ✅ Requested: remove "הפתק הנוכחי" label entirely -->
             <div class="mg-note mg-currentNote" role="button" tabindex="0" aria-label="פתק נוכחי">
               <span class="mg-currentWord"></span>
             </div>
 
-            <div class="mg-currentHint">הצבע על המגירה המתאימה</div>
+            <div class="mg-currentHint">לאיזו מגירה זה שייך?</div>
           </div>
 
           <div class="mg-grid" aria-label="מגירות סיווג"></div>
@@ -218,7 +219,7 @@
     }
 
     function showBanner_(text, durationMs = 900) {
-      // +1000ms requested (we add it here universally; per-call base remains as before)
+      // +1000ms requested
       const dur = Math.max(0, Number(durationMs || 0)) + 1000;
 
       showBanner_._token = (showBanner_._token || 0) + 1;
@@ -281,7 +282,7 @@
       state.current = item || null;
 
       if (!state.current) {
-        // ✅ requested: when finished, hide the whole "current note" section (no empty yellow note)
+        // ✅ Requested: hide the whole "current" area (including hint) at end
         elCurrentWord.textContent = "";
         elCurrentFrame.style.display = "none";
         elCurrentNote.classList.add("is-disabled");
@@ -322,7 +323,7 @@
         const slot = state.drawerNotesEls[i];
         const notes = slot.querySelectorAll(".mg-note.mg-mini");
         notes.forEach(n => n.remove());
-        state.drawerRootEls[i].classList.remove("is-over");
+        state.drawerRootEls[i].classList.remove("is-over", "is-peek");
       }
 
       setCurrent_(null);
@@ -397,6 +398,17 @@
 
       state.drawerNotesEls[i] = slot;
       state.drawerRootEls[i] = dw;
+
+      // ✅ Requested: "approach" animation (peek/open feel) when hovering / focusing
+      slot.addEventListener("pointerenter", () => dw.classList.add("is-peek"));
+      slot.addEventListener("pointerleave", () => dw.classList.remove("is-peek"));
+      slot.addEventListener("focus", () => dw.classList.add("is-peek"));
+      slot.addEventListener("blur", () => dw.classList.remove("is-peek"));
+      // on touch, give a short peek so it feels alive
+      slot.addEventListener("pointerdown", () => {
+        dw.classList.add("is-peek");
+        setTimeout(() => dw.classList.remove("is-peek"), 240);
+      });
 
       // click-to-drop (requested)
       slot.addEventListener("click", () => attemptDropOnDrawer_(i + 1));
@@ -474,7 +486,7 @@
       if (!isCorrect) {
         state.wrong += 1;
         updateStatus_();
-        await showBanner_("לא כאן 🙂 נסה מגירה אחרת", 850); // +1s added in showBanner_
+        await showBanner_("לא כאן 🙂 נסה מגירה אחרת", 850); // +1s inside showBanner_
         state.locked = false;
         return;
       }
@@ -498,14 +510,13 @@
       mini.textContent = state.current.word;
       slot.appendChild(mini);
 
-      await showBanner_("יפה! ✅", 550); // +1s added in showBanner_
+      await showBanner_("יפה! ✅", 550); // +1s inside showBanner_
 
       next_();
       state.locked = false;
     }
 
     // init
-    // ✅ requested: level 1 active by default, but can switch to 2
     state.level = 1;
     resetAll_();
 
