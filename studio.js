@@ -1,20 +1,11 @@
 /* קובץ מלא: studio.js – Parasha "סטודיו" (studio / Studio)
-   מקור הנתונים: controlRow מגיע מ-games.js דרך ctx.
+   מקור הנתונים:
+     - גיליון 1: controlRow.studio = yes/no (הדלקה בלבד)
+     - גיליון "studio" דרך Apps Script: mode=studio → row.studio_slugs (רשימת slugs)
 
-   פורמט:
-   - בעמודה "studio_slugs" (מומלץ): "menorah,choshen"
-   - או בעמודה "studio" (fallback):  "menorah,choshen"
-   - אם בעמודה "studio" יש רק yes/no להדלקה – עדיין צריך את studio_slugs לרשימה.
-
-   קבצי SVG/PNG ב-GitHub (לפי החלטתך):
+   קבצי SVG ב-GitHub (כפי שביקשת):
      /games/studio/<slug>_l1.svg
      /games/studio/<slug>_l2.svg
-     /games/studio/<slug>_inspire_1.png  (בהמשך)
-
-   דרישות SVG:
-     - אין טקסט
-     - אזורי צביעה עם data-id ייחודי ו-data-name בעברית
-     - fill="none" כברירת מחדל
 */
 
 (() => {
@@ -72,20 +63,9 @@
     }
   }
 
-  // Decide studio assets directory:
-  // If BASE_URL already points to ".../games/" then use "studio/".
-  // Otherwise use "games/studio/".
-  function studioDirFromBase_(baseUrl) {
-    const b = String(baseUrl || "");
-    // normalize: treat ".../games" as ".../games/"
-    const b2 = b.endsWith("/games") ? (b + "/") : b;
-    if (b2.endsWith("/games/")) return "studio/";
-    return "games/studio/";
-  }
-
   async function fetchSvgText_(baseUrl, buildVersion, slug, level) {
-    const dir = studioDirFromBase_(baseUrl);
-    const file = `${dir}${slug}_l${level}.svg`;
+    // נתיב לפי בקשתך: games/studio/
+    const file = `games/studio/${slug}_l${level}.svg`;
     const url = withVersion_(String(baseUrl || "") + file, buildVersion);
     const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) throw new Error("Failed to load SVG: " + url);
@@ -98,11 +78,11 @@
     const svg = tmp.querySelector("svg");
     if (!svg) return null;
 
-    // ensure no scripts
+    // remove scripts if any
     const scripts = svg.querySelectorAll("script");
     scripts.forEach(s => s.remove());
 
-    // enforce sane defaults: keep strokes as-is; ensure fill="none" if missing
+    // ensure fill="none" default
     svg.querySelectorAll("[data-id]").forEach(el => {
       if (!el.getAttribute("fill")) el.setAttribute("fill", "none");
     });
@@ -165,13 +145,28 @@
     const baseUrl = ctx?.BASE_URL || "";
     const buildVersion = ctx?.BUILD_VERSION || "";
 
-    // ✅ Prefer studio_slugs (list), fallback to studio (list).
-    // If studio is just yes/no, it won't produce slugs – that's why studio_slugs exists.
-    const rawList = (controlRow?.studio_slugs != null && safeText_(controlRow?.studio_slugs))
-      ? controlRow.studio_slugs
-      : controlRow?.studio;
+    // הדלקה בלבד מגיליון 1
+    const enabled = String(controlRow?.studio || "").toLowerCase() === "yes";
+    if (!enabled) {
+      rootEl.innerHTML = `<div>סטודיו אינו פעיל לפרשה זו.</div>`;
+      return { reset: () => {} };
+    }
 
-    const cell = parsestudioCell_(rawList);
+    // --- משיכת DATA מגיליון "studio" דרך Apps Script ---
+    let cell = { parashaName: "", slugs: [] };
+    try {
+      const apiUrl = withVersion_(
+        `${baseUrl}?mode=studio&parasha=${encodeURIComponent(parashaLabel)}`,
+        buildVersion
+      );
+      const res = await fetch(apiUrl, { cache: "no-store" });
+      const data = await res.json();
+      const raw = data?.row?.studio_slugs || "";
+      cell = parsestudioCell_(raw);
+    } catch (e) {
+      rootEl.innerHTML = `<div>שגיאה בקבלת נתוני סטודיו.</div>`;
+      return { reset: () => {} };
+    }
 
     const slugs = (cell.slugs || []).filter(Boolean);
     if (!slugs.length) {
@@ -359,8 +354,11 @@
         const id = region.getAttribute("data-id");
         if (!id) return;
 
-        if (state.eraseMode) region.setAttribute("fill", "none");
-        else region.setAttribute("fill", state.currentColor);
+        if (state.eraseMode) {
+          region.setAttribute("fill", "none");
+        } else {
+          region.setAttribute("fill", state.currentColor);
+        }
 
         const obj = readStateFromSvg_(svgEl);
         saveState_(model.parashaLabel, state.currentSlug, state.level, obj);
