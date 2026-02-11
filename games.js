@@ -29,7 +29,8 @@
     { id: "memory", title: "🧠 זיכרון", js: "memory.js", css: "memory.css" },
     { id: "puzzle", title: "🧩 פאזל", js: "puzzle.js", css: "puzzle.css" },
     { id: "wordstack", title: "🔤 בְּלִילוֹן", js: "wordstack.js", css: "wordstack.css" },
-    { id: "classify", title: "🗄️ מגירון", js: "classify.js", css: "classify.css" }
+    { id: "classify", title: "🗄️ מגירון", js: "classify.js", css: "classify.css" },
+    { id: "studio", title: "🎨 סטודיו", js: "studio.js", css: "studio.css" }
   ];
 
   // ====== LOAD RUBIK FONT (no Blogger theme changes) ======
