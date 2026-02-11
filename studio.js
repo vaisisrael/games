@@ -1,13 +1,16 @@
 /* קובץ מלא: studio.js – Parasha "סטודיו" (studio / Studio)
-   מקור הנתונים (שלב זה): controlRow.studio שמגיע מ-games.js דרך ctx.
-   פורמט column "studio" (תואם תקציר עוגן):
-     "פרשת תצווה | menorah,choshen"
-   או גם:
-     "menorah,choshen"
+   מקור הנתונים: controlRow מגיע מ-games.js דרך ctx.
 
-   קבצי SVG ב-GitHub:
-     /studio/<slug>_l1.svg
-     /studio/<slug>_l2.svg
+   פורמט:
+   - בעמודה "studio_slugs" (מומלץ): "menorah,choshen"
+   - או בעמודה "studio" (fallback):  "menorah,choshen"
+   - אם בעמודה "studio" יש רק yes/no להדלקה – עדיין צריך את studio_slugs לרשימה.
+
+   קבצי SVG/PNG ב-GitHub (לפי החלטתך):
+     /games/studio/<slug>_l1.svg
+     /games/studio/<slug>_l2.svg
+     /games/studio/<slug>_inspire_1.png  (בהמשך)
+
    דרישות SVG:
      - אין טקסט
      - אזורי צביעה עם data-id ייחודי ו-data-name בעברית
@@ -30,12 +33,6 @@
 
   function safeText_(s) {
     return String(s == null ? "" : s).trim();
-  }
-
-  function clampInt(n, min, max) {
-    const x = Number(n);
-    if (!Number.isFinite(x)) return min;
-    return Math.max(min, Math.min(max, Math.trunc(x)));
   }
 
   function escapeHtml_(s) {
@@ -75,8 +72,20 @@
     }
   }
 
+  // Decide studio assets directory:
+  // If BASE_URL already points to ".../games/" then use "studio/".
+  // Otherwise use "games/studio/".
+  function studioDirFromBase_(baseUrl) {
+    const b = String(baseUrl || "");
+    // normalize: treat ".../games" as ".../games/"
+    const b2 = b.endsWith("/games") ? (b + "/") : b;
+    if (b2.endsWith("/games/")) return "studio/";
+    return "games/studio/";
+  }
+
   async function fetchSvgText_(baseUrl, buildVersion, slug, level) {
-    const file = `studio/${slug}_l${level}.svg`;
+    const dir = studioDirFromBase_(baseUrl);
+    const file = `${dir}${slug}_l${level}.svg`;
     const url = withVersion_(String(baseUrl || "") + file, buildVersion);
     const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) throw new Error("Failed to load SVG: " + url);
@@ -107,7 +116,6 @@
       const id = el.getAttribute("data-id");
       if (!id) return;
       const fill = el.getAttribute("fill");
-      // store null/empty as null
       out[id] = (fill && fill !== "none") ? String(fill) : null;
     });
     return out;
@@ -157,7 +165,13 @@
     const baseUrl = ctx?.BASE_URL || "";
     const buildVersion = ctx?.BUILD_VERSION || "";
 
-    const cell = parsestudioCell_(controlRow?.studio);
+    // ✅ Prefer studio_slugs (list), fallback to studio (list).
+    // If studio is just yes/no, it won't produce slugs – that's why studio_slugs exists.
+    const rawList = (controlRow?.studio_slugs != null && safeText_(controlRow?.studio_slugs))
+      ? controlRow.studio_slugs
+      : controlRow?.studio;
+
+    const cell = parsestudioCell_(rawList);
 
     const slugs = (cell.slugs || []).filter(Boolean);
     if (!slugs.length) {
@@ -241,25 +255,25 @@
     // state
     const state = {
       level: 1,
-      index: 0,              // slug index
+      index: 0,
       currentSlug: model.slugs[0],
       currentSvg: null,
       eraseMode: false,
-      currentColor: "#60a5fa", // default pleasant blue
+      currentColor: "#60a5fa",
       ready: false
     };
 
     const palette = [
-      "#111827", // black-ish
-      "#94a3b8", // slate
-      "#ef4444", // red
-      "#f97316", // orange
-      "#facc15", // yellow
-      "#22c55e", // green
-      "#14b8a6", // teal
-      "#60a5fa", // blue
-      "#a78bfa", // purple
-      "#f472b6"  // pink
+      "#111827",
+      "#94a3b8",
+      "#ef4444",
+      "#f97316",
+      "#facc15",
+      "#22c55e",
+      "#14b8a6",
+      "#60a5fa",
+      "#a78bfa",
+      "#f472b6"
     ];
 
     function updateHeader_() {
@@ -345,13 +359,9 @@
         const id = region.getAttribute("data-id");
         if (!id) return;
 
-        if (state.eraseMode) {
-          region.setAttribute("fill", "none");
-        } else {
-          region.setAttribute("fill", state.currentColor);
-        }
+        if (state.eraseMode) region.setAttribute("fill", "none");
+        else region.setAttribute("fill", state.currentColor);
 
-        // persist
         const obj = readStateFromSvg_(svgEl);
         saveState_(model.parashaLabel, state.currentSlug, state.level, obj);
       });
@@ -374,7 +384,6 @@
         btnLevel1.setAttribute("aria-pressed", "false");
       }
 
-      // level switch keeps per-level state, so just reload
       loadAndShow_().catch(() => {});
     }
 
@@ -391,7 +400,6 @@
 
     btnReset.addEventListener("click", () => {
       if (!state.currentSvg) return;
-      // reset current drawing + current level only
       state.currentSvg.querySelectorAll("[data-id]").forEach(el => el.setAttribute("fill", "none"));
       clearState_(model.parashaLabel, state.currentSlug, state.level);
       setStatus_("אופס… איפסנו את הציור הנוכחי 🙂");
@@ -452,22 +460,16 @@
         return;
       }
 
-      // apply saved state
       const saved = loadSavedState_(model.parashaLabel, slug, lvl);
       if (saved) applyStateToSvg_(svg, saved);
 
-      // ensure SVG is interactive, and keep aspect ratio
       svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
 
-      // mount canvas
       elCanvas.innerHTML = "";
       elCanvas.appendChild(svg);
 
-      // thumbnail (same SVG but always uncolored? spec says thumbnail is inspiration mechanism.
-      // here we show the current version lightly (as "preview") without extra logic.
       const thumbSvg = svg.cloneNode(true);
       thumbSvg.querySelectorAll("[data-id]").forEach(el => {
-        // keep strokes, but fade fills a bit
         const f = el.getAttribute("fill");
         if (f && f !== "none") el.setAttribute("fill-opacity", "0.55");
       });
@@ -480,20 +482,16 @@
       state.ready = true;
     }
 
-    // first build
     buildPalette_();
     buildDots_();
     updateHeader_();
 
-    // initial load
     loadAndShow_().catch(() => {
       elCanvas.innerHTML = "שגיאה בטעינת הציור.";
     });
 
     return {
       reset: () => {
-        // reset behavior when tab closes: nothing destructive.
-        // keep user progress; just clear status + exit erase mode.
         state.eraseMode = false;
         btnErase.classList.remove("is-on");
         btnErase.setAttribute("aria-pressed", "false");
