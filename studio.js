@@ -1,13 +1,13 @@
-/* קובץ מלא: studio.js – Parasha "סטודיו" (Coloring / Studio)
-   מקור הנתונים (שלב זה): controlRow.coloring שמגיע מ-games.js דרך ctx.
-   פורמט column "coloring" (תואם תקציר עוגן):
+/* קובץ מלא: studio.js – Parasha "סטודיו" (studio / Studio)
+   מקור הנתונים (שלב זה): controlRow.studio שמגיע מ-games.js דרך ctx.
+   פורמט column "studio" (תואם תקציר עוגן):
      "פרשת תצווה | menorah,choshen"
    או גם:
      "menorah,choshen"
 
    קבצי SVG ב-GitHub:
-     /coloring/<slug>_l1.svg
-     /coloring/<slug>_l2.svg
+     /studio/<slug>_l1.svg
+     /studio/<slug>_l2.svg
    דרישות SVG:
      - אין טקסט
      - אזורי צביעה עם data-id ייחודי ו-data-name בעברית
@@ -47,7 +47,7 @@
       .replace(/'/g, "&#039;");
   }
 
-  function parseColoringCell_(raw) {
+  function parsestudioCell_(raw) {
     const s = safeText_(raw);
     if (!s) return { parashaName: "", slugs: [] };
 
@@ -76,7 +76,7 @@
   }
 
   async function fetchSvgText_(baseUrl, buildVersion, slug, level) {
-    const file = `coloring/${slug}_l${level}.svg`;
+    const file = `studio/${slug}_l${level}.svg`;
     const url = withVersion_(String(baseUrl || "") + file, buildVersion);
     const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) throw new Error("Failed to load SVG: " + url);
@@ -157,7 +157,7 @@
     const baseUrl = ctx?.BASE_URL || "";
     const buildVersion = ctx?.BUILD_VERSION || "";
 
-    const cell = parseColoringCell_(controlRow?.coloring);
+    const cell = parsestudioCell_(controlRow?.studio);
 
     const slugs = (cell.slugs || []).filter(Boolean);
     if (!slugs.length) {
