@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" width="860" height="520">
+  <g>
+  <rect fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" data-id="l_strap" data-name="רצועה שמאל" x="260.0" y="80.0" width="120" height="70" rx="18" ry="18"/>
+  <rect fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" data-id="r_strap" data-name="רצועה ימין" x="480.0" y="80.0" width="120" height="70" rx="18" ry="18"/>
+  <path fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" data-id="chain_left" data-name="שרשרת שמאל" d="M 350.0,150.0 C 310.0,205.0 315.0,190.0 275.0,135.0"/>
+  <path fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" data-id="chain_right" data-name="שרשרת ימין" d="M 510.0,150.0 C 550.0,205.0 545.0,190.0 585.0,135.0"/>
+  <circle fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" data-id="ring_left" data-name="טבעת שמאל" cx="275.0" cy="135.0" r="12"/>
+  <circle fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" data-id="ring_right" data-name="טבעת ימין" cx="585.0" cy="135.0" r="12"/>
+  <rect fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" data-id="frame_outer" data-name="מסגרת חיצונית" x="220.0" y="125.0" width="420" height="320" rx="28" ry="28"/>
+  <rect fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" data-id="panel_inner" data-name="לוח פנימי" x="246.0" y="151.0" width="368" height="268" rx="20" ry="20"/>
+  <rect fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" data-id="stone_1" data-name="אבן 1" x="264.0" y="169.0" width="98.66666666666667" height="44.5" rx="14" ry="14"/>
+  <rect fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" data-id="stone_2" data-name="אבן 2" x="380.6666666666667" y="169.0" width="98.66666666666667" height="44.5" rx="14" ry="14"/>
+  <rect fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" data-id="stone_3" data-name="אבן 3" x="497.33333333333337" y="169.0" width="98.66666666666667" height="44.5" rx="14" ry="14"/>
+  <rect fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" data-id="stone_4" data-name="אבן 4" x="264.0" y="231.5" width="98.66666666666667" height="44.5" rx="14" ry="14"/>
+  <rect fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" data-id="stone_5" data-name="אבן 5" x="380.6666666666667" y="231.5" width="98.66666666666667" height="44.5" rx="14" ry="14"/>
+  <rect fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" data-id="stone_6" data-name="אבן 6" x="497.33333333333337" y="231.5" width="98.66666666666667" height="44.5" rx="14" ry="14"/>
+  <rect fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" data-id="stone_7" data-name="אבן 7" x="264.0" y="294.0" width="98.66666666666667" height="44.5" rx="14" ry="14"/>
+  <rect fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" data-id="stone_8" data-name="אבן 8" x="380.6666666666667" y="294.0" width="98.66666666666667" height="44.5" rx="14" ry="14"/>
+  <rect fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" data-id="stone_9" data-name="אבן 9" x="497.33333333333337" y="294.0" width="98.66666666666667" height="44.5" rx="14" ry="14"/>
+  <rect fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" data-id="stone_10" data-name="אבן 10" x="264.0" y="356.5" width="98.66666666666667" height="44.5" rx="14" ry="14"/>
+  <rect fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" data-id="stone_11" data-name="אבן 11" x="380.6666666666667" y="356.5" width="98.66666666666667" height="44.5" rx="14" ry="14"/>
+  <rect fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" data-id="stone_12" data-name="אבן 12" x="497.33333333333337" y="356.5" width="98.66666666666667" height="44.5" rx="14" ry="14"/>
+  <path fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" data-id="cord_1" data-name="פתיל שמאל" d="M 310,440.0 C 300,465.0 320,485.0 310,515.0"/>
+  <circle fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" data-id="knot_1" data-name="קשר שמאל" cx="310" cy="470.0" r="10"/>
+  <path fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" data-id="cord_2" data-name="פתיל ימין" d="M 550,440.0 C 540,465.0 560,485.0 550,515.0"/>
+  <circle fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" data-id="knot_2" data-name="קשר ימין" cx="550" cy="470.0" r="10"/>
+  </g>
+</svg>
