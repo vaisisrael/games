@@ -1,11 +1,11 @@
 /* קובץ מלא: studio.js – Parasha "סטודיו" (studio / Studio)
    מקור הנתונים:
-     - גיליון 1: controlRow.studio = yes/no (הדלקה בלבד)
+     - גיליון 1: controlRow.studio = yes/no או true/false (הדלקה בלבד)
      - גיליון "studio" דרך Apps Script: mode=studio → row.studio_slugs (רשימת slugs)
 
-   קבצי SVG ב-GitHub (כפי שביקשת):
-     /games/studio/<slug>_l1.svg
-     /games/studio/<slug>_l2.svg
+   קבצי SVG ב-GitHub (תיקיית סטודיו בתוך /games):
+     BASE_URL הוא .../games/
+     ולכן הנתיב כאן הוא: /studio/<slug>_l1.svg  (וגם l2)
 */
 
 (() => {
@@ -64,8 +64,8 @@
   }
 
   async function fetchSvgText_(baseUrl, buildVersion, slug, level) {
-    // נתיב לפי בקשתך: games/studio/
-    const file = `games/studio/${slug}_l${level}.svg`;
+    // BASE_URL כבר מסתיים ב-/games/ ולכן כאן רק studio/...
+    const file = `studio/${slug}_l${level}.svg`;
     const url = withVersion_(String(baseUrl || "") + file, buildVersion);
     const res = await fetch(url, { cache: "no-store" });
     if (!res.ok) throw new Error("Failed to load SVG: " + url);
@@ -144,19 +144,23 @@
     const controlRow = ctx?.controlRow || {};
     const baseUrl = ctx?.BASE_URL || "";
     const buildVersion = ctx?.BUILD_VERSION || "";
+    const CONTROL_API = ctx?.CONTROL_API || "";
 
-    // הדלקה בלבד מגיליון 1
-    const enabled = String(controlRow?.studio || "").toLowerCase() === "yes";
+    // ✅ תיקון 1: הדלקה תומכת גם true וגם yes
+    const enabled =
+      controlRow?.studio === true ||
+      String(controlRow?.studio || "").toLowerCase() === "yes";
+
     if (!enabled) {
       rootEl.innerHTML = `<div>סטודיו אינו פעיל לפרשה זו.</div>`;
       return { reset: () => {} };
     }
 
-    // --- משיכת DATA מגיליון "studio" דרך Apps Script ---
+    // ✅ תיקון 2: DATA נמשך מה-Apps Script דרך CONTROL_API (ולא דרך BASE_URL)
     let cell = { parashaName: "", slugs: [] };
     try {
       const apiUrl = withVersion_(
-        `${baseUrl}?mode=studio&parasha=${encodeURIComponent(parashaLabel)}`,
+        `${CONTROL_API}?mode=studio&parasha=${encodeURIComponent(parashaLabel)}`,
         buildVersion
       );
       const res = await fetch(apiUrl, { cache: "no-store" });
