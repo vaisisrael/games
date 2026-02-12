@@ -146,14 +146,6 @@
     const buildVersion = ctx?.BUILD_VERSION || "";
     const CONTROL_API = ctx?.CONTROL_API || "";
 
-    // ✅ תיקון 1: הדלקה תומכת גם true וגם yes
-    const enabled =
-      controlRow?.studio === true ||
-      String(controlRow?.studio || "").toLowerCase() === "yes";
-
-    if (!enabled) {
-      rootEl.innerHTML = `<div>סטודיו אינו פעיל לפרשה זו.</div>`;
-      return { reset: () => {} };
     }
 
     // ✅ תיקון 2: DATA נמשך מה-Apps Script דרך CONTROL_API (ולא דרך BASE_URL)
