@@ -12,7 +12,6 @@
   "use strict";
 
   const GAME_ID = "studio";
-  const STORAGE_PREFIX = "pg_studio_v1";
 
   // ---------- helpers ----------
   function parseCsvList(s) {
@@ -49,10 +48,6 @@
     return { parashaName: "", slugs: parseCsvList(s) };
   }
 
-  function storageKey_(parashaLabel, slug, level) {
-    return `${STORAGE_PREFIX}::${safeText_(parashaLabel)}::${safeText_(slug)}::L${level}`;
-  }
-
   function withVersion_(url, buildVersion) {
     try {
       const u = new URL(url, window.location.href);
@@ -82,7 +77,7 @@
     const scripts = svg.querySelectorAll("script");
     scripts.forEach(s => s.remove());
 
-    // ✅ improve click clarity: default transparent fill (still visually "no fill")
+    // default transparent fill for tappable regions
     svg.querySelectorAll("[data-id]").forEach(el => {
       const f = el.getAttribute("fill");
       if (!f || f === "none") el.setAttribute("fill", "transparent");
@@ -91,57 +86,21 @@
     return svg;
   }
 
-  function isEmptyFill_(fill) {
-    const f = String(fill || "").trim().toLowerCase();
-    return !f || f === "none" || f === "transparent";
-  }
-
-  function readStateFromSvg_(svgEl) {
-    const out = {};
-    svgEl.querySelectorAll("[data-id]").forEach(el => {
-      const id = el.getAttribute("data-id");
-      if (!id) return;
-      const fill = el.getAttribute("fill");
-      out[id] = isEmptyFill_(fill) ? null : String(fill);
-    });
-    return out;
-  }
-
-  function applyStateToSvg_(svgEl, stateObj) {
-    const state = stateObj || {};
-    svgEl.querySelectorAll("[data-id]").forEach(el => {
-      const id = el.getAttribute("data-id");
-      if (!id) return;
-      const val = state[id];
-      if (val) el.setAttribute("fill", String(val));
-      else el.setAttribute("fill", "transparent");
-    });
-  }
-
-  function loadSavedState_(parashaLabel, slug, level) {
+  function isTouchLike_(e) {
     try {
-      const key = storageKey_(parashaLabel, slug, level);
-      const raw = localStorage.getItem(key);
-      if (!raw) return null;
-      const obj = JSON.parse(raw);
-      return (obj && typeof obj === "object") ? obj : null;
+      return (e && e.pointerType === "touch") || (navigator.maxTouchPoints > 0);
     } catch (_) {
-      return null;
+      return false;
     }
   }
 
-  function saveState_(parashaLabel, slug, level, stateObj) {
-    try {
-      const key = storageKey_(parashaLabel, slug, level);
-      localStorage.setItem(key, JSON.stringify(stateObj || {}));
-    } catch (_) {}
+  function getFill_(el) {
+    const f = el.getAttribute("fill");
+    return (f == null ? "transparent" : String(f));
   }
 
-  function clearState_(parashaLabel, slug, level) {
-    try {
-      const key = storageKey_(parashaLabel, slug, level);
-      localStorage.removeItem(key);
-    } catch (_) {}
+  function setFill_(el, fill) {
+    el.setAttribute("fill", fill == null ? "transparent" : String(fill));
   }
 
   // ---------- init ----------
@@ -151,7 +110,7 @@
     const buildVersion = ctx?.BUILD_VERSION || "";
     const CONTROL_API = ctx?.CONTROL_API || "";
 
-    // ✅ DATA נמשך מה-Apps Script דרך CONTROL_API
+    // DATA נמשך מה-Apps Script דרך CONTROL_API
     let cell = { parashaName: "", slugs: [] };
     try {
       const apiUrl = withVersion_(
@@ -162,7 +121,7 @@
       const data = await res.json();
       const raw = data?.row?.studio_slugs || "";
       cell = parsestudioCell_(raw);
-    } catch (e) {
+    } catch (_) {
       rootEl.innerHTML = `<div>שגיאה בקבלת נתוני סטודיו.</div>`;
       return { reset: () => {} };
     }
@@ -192,7 +151,6 @@
             <div class="st-actions">
               <button type="button" class="st-btn st-level is-on" data-level="1" aria-pressed="true">מתחיל</button>
               <button type="button" class="st-btn st-level" data-level="2" aria-pressed="false">מקצוען</button>
-
               <button type="button" class="st-btn st-reset">איפוס</button>
               <button type="button" class="st-btn st-print">הדפסה</button>
             </div>
@@ -213,9 +171,13 @@
               <div class="st-dots" role="tablist" aria-label="מעבר בין ציורים"></div>
 
               <div class="st-palette">
-                <p class="st-paletteTitle">פלטת צבעים</p>
                 <div class="st-selected">חלק נבחר: <b class="st-selName">לא נבחר</b></div>
+
                 <div class="st-colors" aria-label="פלטת צבעים"></div>
+
+                <div class="st-paletteActions">
+                  <button type="button" class="st-btn st-undo" disabled aria-disabled="true" title="בטל פעולה אחרונה" aria-label="בטל פעולה אחרונה">↶</button>
+                </div>
               </div>
             </aside>
           </div>
@@ -234,9 +196,18 @@
     const btnLevel2 = rootEl.querySelector('.st-level[data-level="2"]');
     const btnReset = rootEl.querySelector(".st-reset");
     const btnPrint = rootEl.querySelector(".st-print");
+    const btnUndo = rootEl.querySelector(".st-undo");
 
     const elColors = rootEl.querySelector(".st-colors");
     const elSelName = rootEl.querySelector(".st-selName");
+
+    const palette = [
+      "#facc15", "#f59e0b", "#fb923c", "#ef4444", "#fb7185",
+      "#ec4899", "#f472b6", "#a78bfa", "#8b5cf6", "#7c3aed",
+      "#60a5fa", "#3b82f6", "#2563eb", "#0ea5e9", "#06b6d4",
+      "#14b8a6", "#22c55e", "#16a34a", "#84cc16", "#a16207",
+      "#7c2d12", "#e2e8f0", "#94a3b8", "#64748b", "#334155", "#111827"
+    ];
 
     // state
     const state = {
@@ -244,20 +215,18 @@
       index: 0,
       currentSlug: model.slugs[0],
       currentSvg: null,
-      currentColor: "#60a5fa",
-      selectedRegion: null,
-      ready: false
-    };
 
-    // ✅ larger palette
-    const palette = [
-      "#111827", "#334155", "#64748b", "#94a3b8", "#e2e8f0",
-      "#ef4444", "#f97316", "#f59e0b", "#facc15", "#fde047",
-      "#22c55e", "#16a34a", "#14b8a6", "#06b6d4", "#0ea5e9",
-      "#60a5fa", "#3b82f6", "#2563eb", "#1d4ed8",
-      "#a78bfa", "#8b5cf6", "#7c3aed", "#f472b6", "#ec4899",
-      "#a16207", "#7c2d12"
-    ];
+      currentColor: palette[0],
+
+      // UI hover/touch indicator (only for display + outline)
+      hoverRegion: null,
+      touchRegion: null,
+
+      // Paint target (persists briefly so you can move from SVG to palette)
+      targetRegion: null,
+
+      undoStack: [] // { id, prevFill, nextFill }
+    };
 
     let statusTimer = null;
     function setStatus_(text) {
@@ -276,36 +245,99 @@
       statusTimer = setTimeout(() => {
         setStatus_("");
         statusTimer = null;
-      }, Math.max(250, Number(ms || 1800)));
+      }, Math.max(250, Number(ms || 1600)));
     }
 
-    function clearSelection_() {
-      if (state.selectedRegion) {
-        state.selectedRegion.classList.remove("is-selected");
-      }
-      state.selectedRegion = null;
-      elSelName.textContent = "לא נבחר";
+    function setUndoEnabled_(on) {
+      const enabled = !!on;
+      btnUndo.disabled = !enabled;
+      btnUndo.setAttribute("aria-disabled", enabled ? "false" : "true");
     }
 
-    function selectRegion_(regionEl) {
-      if (!regionEl) return;
-      if (state.selectedRegion && state.selectedRegion !== regionEl) {
-        state.selectedRegion.classList.remove("is-selected");
+    function clearUndo_() {
+      state.undoStack = [];
+      setUndoEnabled_(false);
+    }
+
+    function clearHover_() {
+      if (state.hoverRegion) state.hoverRegion.classList.remove("is-selected");
+      state.hoverRegion = null;
+    }
+
+    function clearTouchSel_() {
+      if (state.touchRegion) state.touchRegion.classList.remove("is-selected");
+      state.touchRegion = null;
+    }
+
+    function renderSelectedName_() {
+      const el = state.hoverRegion || state.touchRegion;
+      if (!el) {
+        elSelName.textContent = "לא נבחר";
+        return;
       }
-      state.selectedRegion = regionEl;
-      regionEl.classList.add("is-selected");
       elSelName.textContent =
-        regionEl.getAttribute("data-name") ||
-        regionEl.getAttribute("aria-label") ||
-        regionEl.getAttribute("data-id") ||
+        el.getAttribute("data-name") ||
+        el.getAttribute("aria-label") ||
+        el.getAttribute("data-id") ||
         "חלק";
     }
 
-    function paintRegion_(regionEl, color) {
-      if (!regionEl || !state.currentSvg) return;
-      regionEl.setAttribute("fill", String(color));
-      const obj = readStateFromSvg_(state.currentSvg);
-      saveState_(model.parashaLabel, state.currentSlug, state.level, obj);
+    function clearSelectionAll_() {
+      clearHover_();
+      clearTouchSel_();
+      renderSelectedName_();
+    }
+
+    function setTarget_(regionEl) {
+      state.targetRegion = regionEl || null;
+    }
+
+    function clearTarget_() {
+      state.targetRegion = null;
+    }
+
+    function paintTargetWithColor_(color) {
+      const el = state.targetRegion;
+      if (!state.currentSvg || !el) return;
+
+      const prev = getFill_(el);
+      const next = String(color);
+      if (prev === next) return;
+
+      setFill_(el, next);
+
+      const id = el.getAttribute("data-id") || "";
+      state.undoStack.push({ id, prevFill: prev, nextFill: next });
+      setUndoEnabled_(state.undoStack.length > 0);
+
+      // ✅ כדי שלא "החלפת צבע" תצבע אחורה בלי בחירת חלק חדש
+      clearTarget_();
+
+      // במובייל נרצה גם לנקות בחירה אחרי צביעה
+      clearTouchSel_();
+      renderSelectedName_();
+
+      clearStatus_();
+    }
+
+    function undoLast_() {
+      if (!state.currentSvg) return;
+      const rec = state.undoStack.pop();
+      if (!rec) {
+        setUndoEnabled_(false);
+        return;
+      }
+
+      const el = state.currentSvg.querySelector(`[data-id="${CSS.escape(rec.id)}"]`);
+      if (el) setFill_(el, rec.prevFill);
+
+      setUndoEnabled_(state.undoStack.length > 0);
+
+      // keep clean
+      clearTarget_();
+      clearTouchSel_();
+      renderSelectedName_();
+      clearStatus_();
     }
 
     // palette UI
@@ -321,10 +353,9 @@
         b.style.background = c;
         b.setAttribute("aria-label", "בחר צבע");
         b.addEventListener("click", () => {
-          // ✅ בחירת צבע לא צובעת אחורה שום חלק
-          clearStatus_();
           state.currentColor = c;
           updatePaletteOn_();
+          paintTargetWithColor_(c);
         });
         elColors.appendChild(b);
         colorButtons.push(b);
@@ -341,7 +372,6 @@
 
     // dots UI
     function buildDots_() {
-      // ✅ אם יש רק ציור אחד — לא מציגים נקודות
       if ((model.slugs || []).length <= 1) {
         elDots.innerHTML = "";
         elDots.style.display = "none";
@@ -360,6 +390,9 @@
         d.addEventListener("click", () => {
           if (i === state.index) return;
           clearStatus_();
+          clearSelectionAll_();
+          clearTarget_();
+          clearUndo_();
           state.index = i;
           state.currentSlug = model.slugs[i];
           refreshDots_();
@@ -378,12 +411,25 @@
       });
     }
 
+    function hardResetUiState_({ resetColor } = {}) {
+      clearStatus_();
+      clearSelectionAll_();
+      clearTarget_();
+      clearUndo_();
+      if (resetColor) {
+        state.currentColor = palette[0];
+        updatePaletteOn_();
+      }
+    }
+
     function setLevel_(lvl) {
       lvl = (lvl === 2) ? 2 : 1;
       if (state.level === lvl) return;
 
-      clearStatus_();
       state.level = lvl;
+
+      // ✅ במעבר רמה: איפוס מלא (כולל target + undo + צבע חוזר לראשון)
+      hardResetUiState_({ resetColor: true });
 
       if (lvl === 1) {
         btnLevel1.classList.add("is-on");
@@ -403,12 +449,20 @@
     btnLevel1.addEventListener("click", () => setLevel_(1));
     btnLevel2.addEventListener("click", () => setLevel_(2));
 
+    btnUndo.addEventListener("click", () => {
+      if (btnUndo.disabled) return;
+      undoLast_();
+    });
+
     btnReset.addEventListener("click", () => {
       if (!state.currentSvg) return;
-      state.currentSvg.querySelectorAll("[data-id]").forEach(el => el.setAttribute("fill", "transparent"));
-      clearState_(model.parashaLabel, state.currentSlug, state.level);
-      clearSelection_();
-      setStatusAutoClear_("אופס… איפסנו את הציור הנוכחי 🙂", 1800);
+      state.currentSvg.querySelectorAll("[data-id]").forEach(el => setFill_(el, "transparent"));
+      // איפוס לא משנה צבע נבחר (רק ציור)
+      clearStatus_();
+      clearSelectionAll_();
+      clearTarget_();
+      clearUndo_();
+      setStatusAutoClear_("אופס… איפסנו את הציור הנוכחי 🙂", 1500);
     });
 
     btnPrint.addEventListener("click", () => {
@@ -436,121 +490,4 @@
 </head>
 <body>
   <div class="wrap">
-    <p class="cap">סטודיו לצביעה – ${escapeHtml_(model.parashaLabel)} – ${escapeHtml_(state.currentSlug)} – רמה ${state.level}</p>
-    ${svgOuter}
-  </div>
-</body>
-</html>
-        `.trim());
-        w.document.close();
-        w.focus();
-        w.print();
-      } catch (_) {}
-    });
-
-    // ---- event wiring (avoid duplicates across reloads) ----
-    let globalBound = false;
-
-    function bindGlobalOnce_() {
-      if (globalBound) return;
-      globalBound = true;
-
-      // click outside: deselect
-      rootEl.addEventListener("pointerdown", (e) => {
-        const inSvg = e.target && e.target.closest && e.target.closest(".st-canvas svg");
-        const inPanel = e.target && e.target.closest && e.target.closest(".st-side");
-        if (!inSvg && !inPanel) {
-          clearStatus_();
-          clearSelection_();
-        }
-      }, { passive: true });
-    }
-
-    // painting / selecting
-    function attachPaintHandlers_(svgEl) {
-      // remove selection mark from any previous svg (just in case)
-      clearSelection_();
-
-      // ✅ behavior: click part selects it AND paints immediately with currentColor
-      svgEl.addEventListener("pointerdown", (e) => {
-        const target = e.target;
-        if (!target || !(target instanceof Element)) return;
-
-        const region = target.closest("[data-id]");
-        if (!region) return;
-
-        clearStatus_();
-        selectRegion_(region);
-        paintRegion_(region, state.currentColor);
-      }, { passive: true });
-    }
-
-    async function loadAndShow_() {
-      state.ready = false;
-      elCanvas.innerHTML = "טוען ציור...";
-      elThumb.innerHTML = "";
-
-      clearStatus_();
-      clearSelection_();
-
-      const slug = state.currentSlug;
-      const lvl = state.level;
-
-      const svgText = await fetchSvgText_(model.baseUrl, model.buildVersion, slug, lvl);
-      const svg = extractInlineSvg_(svgText);
-      if (!svg) {
-        elCanvas.innerHTML = "שגיאה: SVG לא תקין.";
-        return;
-      }
-
-      const saved = loadSavedState_(model.parashaLabel, slug, lvl);
-      if (saved) applyStateToSvg_(svg, saved);
-
-      svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
-
-      // ✅ hard clear before append (prevents any accidental stacking)
-      elCanvas.innerHTML = "";
-      elCanvas.appendChild(svg);
-
-      // thumb
-      const thumbSvg = svg.cloneNode(true);
-      thumbSvg.querySelectorAll("[data-id]").forEach(el => {
-        const f = el.getAttribute("fill");
-        if (!isEmptyFill_(f)) el.setAttribute("fill-opacity", "0.55");
-      });
-      elThumb.innerHTML = "";
-      elThumb.appendChild(thumbSvg);
-
-      state.currentSvg = svg;
-
-      bindGlobalOnce_();
-      attachPaintHandlers_(svg);
-
-      state.ready = true;
-    }
-
-    buildPalette_();
-    buildDots_();
-
-    loadAndShow_().catch(() => {
-      elCanvas.innerHTML = "שגיאה בטעינת הציור.";
-    });
-
-    return {
-      reset: () => {
-        clearStatus_();
-        clearSelection_();
-      }
-    };
-  }
-
-  (function registerWhenReady_() {
-    if (window.ParashaGamesRegister) {
-      window.ParashaGamesRegister(GAME_ID, {
-        init: async (rootEl, ctx) => init(rootEl, ctx)
-      });
-      return;
-    }
-    setTimeout(registerWhenReady_, 30);
-  })();
-})();
+    <p c
