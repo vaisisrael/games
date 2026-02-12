@@ -134,12 +134,12 @@
   transition: filter .12s ease, opacity .12s ease;
 }
 
-/* hover gives clear "this is the part" */
-[data-parasha-games] .st-canvas [data-id]:hover{
+/* ✅ Hover = חיווי קל בלבד (לא בחירה) */
+[data-parasha-games] .st-canvas [data-id].is-hover{
   filter: drop-shadow(0 0 8px rgba(37,99,235,.22));
 }
 
-/* selected region (hover/touch) */
+/* ✅ Selected (נעול) */
 [data-parasha-games] .st-canvas [data-id].is-selected{
   filter: drop-shadow(0 0 12px rgba(37,99,235,.38));
 }
