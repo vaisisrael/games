@@ -82,12 +82,18 @@
     const scripts = svg.querySelectorAll("script");
     scripts.forEach(s => s.remove());
 
-    // ensure fill="none" default
+    // ✅ improve click clarity: default transparent fill (still visually "no fill")
     svg.querySelectorAll("[data-id]").forEach(el => {
-      if (!el.getAttribute("fill")) el.setAttribute("fill", "none");
+      const f = el.getAttribute("fill");
+      if (!f || f === "none") el.setAttribute("fill", "transparent");
     });
 
     return svg;
+  }
+
+  function isEmptyFill_(fill) {
+    const f = String(fill || "").trim().toLowerCase();
+    return !f || f === "none" || f === "transparent";
   }
 
   function readStateFromSvg_(svgEl) {
@@ -96,7 +102,7 @@
       const id = el.getAttribute("data-id");
       if (!id) return;
       const fill = el.getAttribute("fill");
-      out[id] = (fill && fill !== "none") ? String(fill) : null;
+      out[id] = isEmptyFill_(fill) ? null : String(fill);
     });
     return out;
   }
@@ -108,7 +114,7 @@
       if (!id) return;
       const val = state[id];
       if (val) el.setAttribute("fill", String(val));
-      else el.setAttribute("fill", "none");
+      else el.setAttribute("fill", "transparent");
     });
   }
 
@@ -141,12 +147,11 @@
   // ---------- init ----------
   async function init(rootEl, ctx) {
     const parashaLabel = ctx?.parashaLabel || "";
-    const controlRow = ctx?.controlRow || {};
     const baseUrl = ctx?.BASE_URL || "";
     const buildVersion = ctx?.BUILD_VERSION || "";
     const CONTROL_API = ctx?.CONTROL_API || "";
 
-    // ✅ תיקון 2: DATA נמשך מה-Apps Script דרך CONTROL_API (ולא דרך BASE_URL)
+    // ✅ DATA נמשך מה-Apps Script דרך CONTROL_API
     let cell = { parashaName: "", slugs: [] };
     try {
       const apiUrl = withVersion_(
@@ -188,8 +193,7 @@
               <button type="button" class="st-btn st-level is-on" data-level="1" aria-pressed="true">מתחיל</button>
               <button type="button" class="st-btn st-level" data-level="2" aria-pressed="false">מקצוען</button>
 
-              <button type="button" class="st-btn st-erase" aria-pressed="false">מחק צבע לחלק</button>
-              <button type="button" class="st-btn st-reset">איפוס הכל</button>
+              <button type="button" class="st-btn st-reset">איפוס</button>
               <button type="button" class="st-btn st-print">הדפסה</button>
             </div>
 
@@ -198,11 +202,6 @@
 
           <div class="st-layout">
             <div class="st-main">
-              <div class="st-header">
-                <p class="st-title"></p>
-                <p class="st-sub"></p>
-              </div>
-
               <div class="st-canvas" aria-label="ציור לצביעה"></div>
             </div>
 
@@ -214,9 +213,10 @@
               <div class="st-dots" role="tablist" aria-label="מעבר בין ציורים"></div>
 
               <div class="st-palette">
-                <p class="st-paletteTitle">בחר צבע</p>
+                <p class="st-paletteTitle">פלטת צבעים</p>
+                <div class="st-selected">חלק נבחר: <b class="st-selName">לא נבחר</b></div>
                 <div class="st-colors" aria-label="פלטת צבעים"></div>
-                <div class="st-hint">לחץ על אזור כדי לצבוע. במצב מחיקה — לחץ כדי להחזיר לשקוף.</div>
+                <div class="st-hint">טיפ: בחר צבע ואז לחץ על חלק כדי לצבוע 🙂</div>
               </div>
             </aside>
           </div>
@@ -225,8 +225,6 @@
       </div>
     `.trim();
 
-    const elTitle = rootEl.querySelector(".st-title");
-    const elSub = rootEl.querySelector(".st-sub");
     const elStatus = rootEl.querySelector(".st-status");
 
     const elCanvas = rootEl.querySelector(".st-canvas");
@@ -235,11 +233,11 @@
 
     const btnLevel1 = rootEl.querySelector('.st-level[data-level="1"]');
     const btnLevel2 = rootEl.querySelector('.st-level[data-level="2"]');
-    const btnErase = rootEl.querySelector(".st-erase");
     const btnReset = rootEl.querySelector(".st-reset");
     const btnPrint = rootEl.querySelector(".st-print");
 
     const elColors = rootEl.querySelector(".st-colors");
+    const elSelName = rootEl.querySelector(".st-selName");
 
     // state
     const state = {
@@ -247,8 +245,8 @@
       index: 0,
       currentSlug: model.slugs[0],
       currentSvg: null,
-      eraseMode: false,
       currentColor: "#60a5fa",
+      selectedRegion: null,
       ready: false
     };
 
@@ -265,39 +263,64 @@
       "#f472b6"
     ];
 
-    function updateHeader_() {
-      const pName = model.parashaName ? `(${model.parashaName})` : "";
-      elTitle.textContent = `🎨 סטודיו לצביעה ${pName}`.trim();
-
-      const human = `ציור ${state.index + 1} מתוך ${model.slugs.length}`;
-      const lvl = state.level === 2 ? "מקצוען" : "מתחיל";
-      elSub.textContent = `${human} | רמה: ${lvl}`;
-    }
-
     function setStatus_(text) {
       elStatus.textContent = text || "";
+    }
+
+    function clearSelection_() {
+      if (state.selectedRegion) {
+        state.selectedRegion.classList.remove("is-selected");
+      }
+      state.selectedRegion = null;
+      elSelName.textContent = "לא נבחר";
+    }
+
+    function selectRegion_(regionEl) {
+      if (!regionEl) return;
+      if (state.selectedRegion && state.selectedRegion !== regionEl) {
+        state.selectedRegion.classList.remove("is-selected");
+      }
+      state.selectedRegion = regionEl;
+      regionEl.classList.add("is-selected");
+      elSelName.textContent =
+        regionEl.getAttribute("data-name") ||
+        regionEl.getAttribute("aria-label") ||
+        regionEl.getAttribute("data-id") ||
+        "חלק";
+    }
+
+    function paintRegion_(regionEl, color) {
+      if (!regionEl || !state.currentSvg) return;
+      regionEl.setAttribute("fill", String(color));
+      const obj = readStateFromSvg_(state.currentSvg);
+      saveState_(model.parashaLabel, state.currentSlug, state.level, obj);
     }
 
     // palette UI
     const colorButtons = [];
     function buildPalette_() {
       elColors.innerHTML = "";
+      colorButtons.length = 0;
+
       palette.forEach((c) => {
         const b = document.createElement("button");
         b.type = "button";
         b.className = "st-color";
         b.style.background = c;
-        b.setAttribute("aria-label", "צבע");
+        b.setAttribute("aria-label", "בחר צבע");
         b.addEventListener("click", () => {
           state.currentColor = c;
-          state.eraseMode = false;
-          btnErase.classList.remove("is-on");
-          btnErase.setAttribute("aria-pressed", "false");
           updatePaletteOn_();
+
+          // אם יש חלק נבחר — צובעים מיד (כמו בדמו, רק בלי להפוך את זה לחובה)
+          if (state.selectedRegion) {
+            paintRegion_(state.selectedRegion, state.currentColor);
+          }
         });
         elColors.appendChild(b);
         colorButtons.push(b);
       });
+
       updatePaletteOn_();
     }
 
@@ -309,6 +332,14 @@
 
     // dots UI
     function buildDots_() {
+      // ✅ אם יש רק ציור אחד — לא מציגים נקודות
+      if ((model.slugs || []).length <= 1) {
+        elDots.innerHTML = "";
+        elDots.style.display = "none";
+        return;
+      }
+
+      elDots.style.display = "";
       elDots.innerHTML = "";
       model.slugs.forEach((slug, i) => {
         const d = document.createElement("button");
@@ -337,28 +368,6 @@
       });
     }
 
-    // painting
-    function attachPaintHandlers_(svgEl) {
-      svgEl.addEventListener("click", (e) => {
-        const target = e.target;
-        if (!target || !(target instanceof Element)) return;
-        const region = target.closest("[data-id]");
-        if (!region) return;
-
-        const id = region.getAttribute("data-id");
-        if (!id) return;
-
-        if (state.eraseMode) {
-          region.setAttribute("fill", "none");
-        } else {
-          region.setAttribute("fill", state.currentColor);
-        }
-
-        const obj = readStateFromSvg_(svgEl);
-        saveState_(model.parashaLabel, state.currentSlug, state.level, obj);
-      });
-    }
-
     function setLevel_(lvl) {
       lvl = (lvl === 2) ? 2 : 1;
       if (state.level === lvl) return;
@@ -382,18 +391,11 @@
     btnLevel1.addEventListener("click", () => setLevel_(1));
     btnLevel2.addEventListener("click", () => setLevel_(2));
 
-    btnErase.addEventListener("click", () => {
-      state.eraseMode = !state.eraseMode;
-      btnErase.classList.toggle("is-on", state.eraseMode);
-      btnErase.setAttribute("aria-pressed", state.eraseMode ? "true" : "false");
-      if (state.eraseMode) setStatus_("מצב מחיקה: לחץ על אזור כדי להחזיר לשקוף");
-      else setStatus_("");
-    });
-
     btnReset.addEventListener("click", () => {
       if (!state.currentSvg) return;
-      state.currentSvg.querySelectorAll("[data-id]").forEach(el => el.setAttribute("fill", "none"));
+      state.currentSvg.querySelectorAll("[data-id]").forEach(el => el.setAttribute("fill", "transparent"));
       clearState_(model.parashaLabel, state.currentSlug, state.level);
+      clearSelection_();
       setStatus_("אופס… איפסנו את הציור הנוכחי 🙂");
     });
 
@@ -434,12 +436,33 @@
       } catch (_) {}
     });
 
+    // painting / selecting
+    function attachPaintHandlers_(svgEl) {
+      // קליק/טאץ׳: בחירה + צביעה (אם כבר נבחר צבע)
+      svgEl.addEventListener("pointerdown", (e) => {
+        const target = e.target;
+        if (!target || !(target instanceof Element)) return;
+
+        const region = target.closest("[data-id]");
+        if (!region) return;
+
+        selectRegion_(region);
+        paintRegion_(region, state.currentColor);
+      }, { passive: true });
+
+      // קליק מחוץ לציור: ביטול בחירה
+      rootEl.addEventListener("pointerdown", (e) => {
+        const inSvg = e.target && e.target.closest && e.target.closest(".st-canvas svg");
+        const inPanel = e.target && e.target.closest && e.target.closest(".st-side");
+        if (!inSvg && !inPanel) clearSelection_();
+      }, { passive: true });
+    }
+
     async function loadAndShow_() {
       state.ready = false;
       elCanvas.innerHTML = "טוען ציור...";
       elThumb.innerHTML = "";
-
-      updateHeader_();
+      clearSelection_();
       setStatus_("");
 
       const slug = state.currentSlug;
@@ -463,7 +486,7 @@
       const thumbSvg = svg.cloneNode(true);
       thumbSvg.querySelectorAll("[data-id]").forEach(el => {
         const f = el.getAttribute("fill");
-        if (f && f !== "none") el.setAttribute("fill-opacity", "0.55");
+        if (!isEmptyFill_(f)) el.setAttribute("fill-opacity", "0.55");
       });
       elThumb.innerHTML = "";
       elThumb.appendChild(thumbSvg);
@@ -476,7 +499,6 @@
 
     buildPalette_();
     buildDots_();
-    updateHeader_();
 
     loadAndShow_().catch(() => {
       elCanvas.innerHTML = "שגיאה בטעינת הציור.";
@@ -484,9 +506,7 @@
 
     return {
       reset: () => {
-        state.eraseMode = false;
-        btnErase.classList.remove("is-on");
-        btnErase.setAttribute("aria-pressed", "false");
+        clearSelection_();
         setStatus_("");
       }
     };
