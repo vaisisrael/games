@@ -10,8 +10,6 @@
   --st-muted: #64748b;
   --st-shadow: 0 10px 25px rgba(0,0,0,.08);
 
-  --st-accent: #2563eb;
-
   font-family: "Rubik", system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans Hebrew", "Heebo", sans-serif !important;
   color: var(--st-text);
 }
@@ -103,7 +101,7 @@
   border-radius: 18px;
   background: #fff;
   box-shadow: 0 12px 28px rgba(0,0,0,.10);
-  padding: 8px; /* slightly tighter */
+  padding: 6px; /* tighter to maximize canvas */
 }
 
 /* ===== SVG canvas ===== */
@@ -111,7 +109,7 @@
   width: 100%;
   border: 1px solid rgba(0,0,0,.10);
   border-radius: 16px;
-  background: #fff;
+  background: #fff;          /* remove heavy grey feeling */
   overflow: hidden;
   touch-action: manipulation;
 
@@ -119,12 +117,13 @@
   display:flex;
   align-items:center;
   justify-content:center;
-  padding: 6px; /* thin strip around */
+  padding: 4px;              /* thin strip only */
+  min-height: 460px;
 }
 
 [data-parasha-games] .st-canvas svg{
   width: 100%;
-  height: 100%;
+  height: auto;
   display:block;
   user-select: none;
 }
@@ -134,13 +133,15 @@
   cursor: pointer;
   transition: filter .12s ease, opacity .12s ease;
 }
+
+/* hover gives clear "this is the part" */
 [data-parasha-games] .st-canvas [data-id]:hover{
-  filter: drop-shadow(0 0 6px rgba(37,99,235,.18));
+  filter: drop-shadow(0 0 8px rgba(37,99,235,.22));
 }
 
-/* selected region (clear) */
+/* selected region (hover/touch) */
 [data-parasha-games] .st-canvas [data-id].is-selected{
-  filter: drop-shadow(0 0 10px rgba(37,99,235,.35));
+  filter: drop-shadow(0 0 12px rgba(37,99,235,.38));
 }
 
 /* ===== Side panel ===== */
