@@ -122,7 +122,7 @@
   filter: drop-shadow(0 0 6px rgba(37,99,235,.18));
 }
 
-/* selected region (demo-like clarity) */
+/* selected region (clear) */
 [data-parasha-games] .st-canvas [data-id].is-selected{
   filter: drop-shadow(0 0 10px rgba(37,99,235,.35));
 }
@@ -133,7 +133,7 @@
   border-radius: 18px;
   background: #fff;
   box-shadow: 0 12px 28px rgba(0,0,0,.10);
-  padding: 8px; /* tighter */
+  padding: 8px;
 }
 
 [data-parasha-games] .st-thumbBox{
@@ -149,7 +149,7 @@
   display:flex;
   align-items:center;
   justify-content:center;
-  background: transparent; /* remove big white feel */
+  background: transparent;
 }
 [data-parasha-games] .st-thumb svg{
   width: 100%;
@@ -211,17 +211,18 @@
   gap: 8px;
   justify-content: center;
 }
+
 [data-parasha-games] .st-color{
   width: 26px;
   height: 26px;
-  border-radius: 12px; /* clearer than circles */
+  border-radius: 12px;
   border: 2px solid rgba(0,0,0,.18);
   cursor: pointer;
   position: relative;
   box-shadow: 0 4px 12px rgba(0,0,0,.06);
 }
 
-/* ✅ stronger selected color indicator (demo-like checkmark) */
+/* stronger selected color indicator */
 [data-parasha-games] .st-color.is-on{
   border-color: rgba(37,99,235,.85);
   box-shadow: 0 0 0 3px rgba(37,99,235,.18), 0 8px 18px rgba(37,99,235,.18);
@@ -243,13 +244,4 @@
 [data-parasha-games] .st-color:focus-visible{
   outline: 3px solid rgba(37,99,235,.22);
   outline-offset: 2px;
-}
-
-/* ===== Small hint line ===== */
-[data-parasha-games] .st-hint{
-  margin-top: 10px;
-  text-align: center;
-  font-weight: 900;
-  font-size: 12px;
-  color: var(--st-muted);
 }
