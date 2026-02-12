@@ -109,73 +109,26 @@
   width: 100%;
   border: 1px solid rgba(0,0,0,.10);
   border-radius: 16px;
-  background: #fff;          /* remove heavy grey feeling */
+  background: #fff;
   overflow: hidden;
   touch-action: manipulation;
 
-  /* maximize drawing area */
   display:flex;
   align-items:center;
   justify-content:center;
-  padding: 4px;              /* thin strip only */
-  min-height: 460px;
+
+  padding: 4px;
+  height: clamp(420px, 62vh, 740px); /* ✅ קנבס גבוה ונוח */
 }
 
 [data-parasha-games] .st-canvas svg{
   width: 100%;
-  height: auto;
+  height: 100%;              /* ✅ ימלא גם גובה */
   display:block;
   user-select: none;
 }
 
-/* Make regions feel tappable + clearer selection */
-[data-parasha-games] .st-canvas [data-id]{
-  cursor: pointer;
-  transition: filter .12s ease, opacity .12s ease;
-}
-
-/* ✅ Hover = חיווי קל בלבד (לא בחירה) */
-[data-parasha-games] .st-canvas [data-id].is-hover{
-  filter: drop-shadow(0 0 8px rgba(37,99,235,.22));
-}
-
-/* ✅ Selected (נעול) */
-[data-parasha-games] .st-canvas [data-id].is-selected{
-  filter: drop-shadow(0 0 12px rgba(37,99,235,.38));
-}
-
-/* ===== Side panel ===== */
-[data-parasha-games] .st-side{
-  border: 1px solid rgba(0,0,0,.10);
-  border-radius: 18px;
-  background: #fff;
-  box-shadow: 0 12px 28px rgba(0,0,0,.10);
-  padding: 10px;
-}
-
-[data-parasha-games] .st-thumbBox{
-  border: 1px solid rgba(0,0,0,.10);
-  border-radius: 16px;
-  background: #fff;
-  overflow: hidden;
-  box-shadow: 0 10px 18px rgba(0,0,0,.08);
-}
-[data-parasha-games] .st-thumb{
-  width: 100%;
-  aspect-ratio: 860 / 520;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background: linear-gradient(180deg, #fff, #f6f7fb);
-}
-[data-parasha-games] .st-thumb svg{
-  width: 92%;
-  height: auto;
-  display:block;
-  opacity: .9;
-}
-
-/* dots (only shown when there are multiple) */
+/* dots moved under the big canvas */
 [data-parasha-games] .st-dots{
   margin-top: 10px;
   display:flex;
@@ -196,11 +149,38 @@
   background: rgba(0,0,0,.22);
 }
 
+/* Make regions feel tappable + clearer selection */
+[data-parasha-games] .st-canvas [data-id]{
+  cursor: pointer;
+  transition: filter .12s ease, opacity .12s ease, stroke .12s ease, stroke-width .12s ease;
+  vector-effect: non-scaling-stroke;
+}
+
+/* ✅ Hover = חיווי קל בלבד */
+[data-parasha-games] .st-canvas [data-id].is-hover{
+  filter: drop-shadow(0 0 8px rgba(37,99,235,.22));
+}
+
+/* ✅ Selected (נעול) – הדגשה חזקה וברורה */
+[data-parasha-games] .st-canvas [data-id].is-selected{
+  filter: drop-shadow(0 0 14px rgba(245,158,11,.55));
+  stroke: #f59e0b;
+  stroke-width: 3.2;
+}
+
+/* ===== Side panel ===== */
+[data-parasha-games] .st-side{
+  border: 1px solid rgba(0,0,0,.10);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 12px 28px rgba(0,0,0,.10);
+  padding: 10px;
+}
+
 /* ===== Palette ===== */
 [data-parasha-games] .st-palette{
-  margin-top: 12px;
-  border-top: 1px dashed rgba(0,0,0,.12);
-  padding-top: 10px;
+  border-top: none;
+  padding-top: 0;
 }
 
 [data-parasha-games] .st-selected{
@@ -231,12 +211,12 @@
   box-shadow: 0 4px 12px rgba(0,0,0,.06);
 }
 
-/* stronger selected color indicator */
+/* stronger selected color indicator (no ✓ unless user picked a color) */
 [data-parasha-games] .st-color.is-on{
   border-color: rgba(37,99,235,.85);
   box-shadow: 0 0 0 3px rgba(37,99,235,.18), 0 8px 18px rgba(37,99,235,.18);
 }
-[data-parasha-games] .st-color.is-on::after{
+[data-parasha-games] .st-color.is-on.is-picked::after{
   content:"✓";
   position:absolute;
   inset:0;
