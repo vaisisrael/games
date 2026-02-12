@@ -83,16 +83,7 @@
 
 /* ===== Layout ===== */
 [data-parasha-games] .st-layout{
-  display:grid;
-  grid-template-columns: 1fr 240px; /* main + side */
-  gap: 12px;
-  align-items: start;
-}
-
-@media (max-width: 880px){
-  [data-parasha-games] .st-layout{
-    grid-template-columns: 1fr;
-  }
+  display:block; /* ✅ אין יותר עמודה צדדית */
 }
 
 /* ===== Main panel ===== */
@@ -101,7 +92,7 @@
   border-radius: 18px;
   background: #fff;
   box-shadow: 0 12px 28px rgba(0,0,0,.10);
-  padding: 6px; /* tighter to maximize canvas */
+  padding: 6px;
 }
 
 /* ===== SVG canvas ===== */
@@ -118,17 +109,17 @@
   justify-content:center;
 
   padding: 4px;
-  height: clamp(420px, 62vh, 740px); /* ✅ קנבס גבוה ונוח */
+  height: clamp(420px, 66vh, 780px);
 }
 
 [data-parasha-games] .st-canvas svg{
   width: 100%;
-  height: 100%;              /* ✅ ימלא גם גובה */
+  height: 100%;
   display:block;
   user-select: none;
 }
 
-/* dots moved under the big canvas */
+/* dots under the big canvas */
 [data-parasha-games] .st-dots{
   margin-top: 10px;
   display:flex;
@@ -149,7 +140,7 @@
   background: rgba(0,0,0,.22);
 }
 
-/* Make regions feel tappable + clearer selection */
+/* Regions */
 [data-parasha-games] .st-canvas [data-id]{
   cursor: pointer;
   transition: filter .12s ease, opacity .12s ease, stroke .12s ease, stroke-width .12s ease;
@@ -168,19 +159,14 @@
   stroke-width: 3.2;
 }
 
-/* ===== Side panel ===== */
-[data-parasha-games] .st-side{
+/* ===== Palette (moved under the canvas, full width) ===== */
+[data-parasha-games] .st-palette{
+  margin-top: 12px;
   border: 1px solid rgba(0,0,0,.10);
   border-radius: 18px;
   background: #fff;
   box-shadow: 0 12px 28px rgba(0,0,0,.10);
   padding: 10px;
-}
-
-/* ===== Palette ===== */
-[data-parasha-games] .st-palette{
-  border-top: none;
-  padding-top: 0;
 }
 
 [data-parasha-games] .st-selected{
@@ -194,16 +180,18 @@
   color: var(--st-text);
 }
 
+/* full-width palette */
 [data-parasha-games] .st-colors{
   display:flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 10px;
   justify-content: center;
 }
 
+/* slightly bigger when full width */
 [data-parasha-games] .st-color{
-  width: 26px;
-  height: 26px;
+  width: 30px;
+  height: 30px;
   border-radius: 12px;
   border: 2px solid rgba(0,0,0,.18);
   cursor: pointer;
@@ -211,7 +199,7 @@
   box-shadow: 0 4px 12px rgba(0,0,0,.06);
 }
 
-/* stronger selected color indicator (no ✓ unless user picked a color) */
+/* selected color indicator – only AFTER user picked a color */
 [data-parasha-games] .st-color.is-on{
   border-color: rgba(37,99,235,.85);
   box-shadow: 0 0 0 3px rgba(37,99,235,.18), 0 8px 18px rgba(37,99,235,.18);
