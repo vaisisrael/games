@@ -161,15 +161,10 @@
           <div class="st-layout">
             <div class="st-main">
               <div class="st-canvas" aria-label="ציור לצביעה"></div>
+              <div class="st-dots" role="tablist" aria-label="מעבר בין ציורים"></div>
             </div>
 
-            <aside class="st-side" aria-label="בחירת ציור וצבעים">
-              <div class="st-thumbBox">
-                <div class="st-thumb" aria-label="תמונה ממוזערת"></div>
-              </div>
-
-              <div class="st-dots" role="tablist" aria-label="מעבר בין ציורים"></div>
-
+            <aside class="st-side" aria-label="בחירת צבעים">
               <div class="st-palette">
                 <div class="st-selected">חלק נבחר: <b class="st-selName">לא נבחר</b></div>
 
@@ -189,7 +184,6 @@
     const elStatus = rootEl.querySelector(".st-status");
 
     const elCanvas = rootEl.querySelector(".st-canvas");
-    const elThumb = rootEl.querySelector(".st-thumb");
     const elDots = rootEl.querySelector(".st-dots");
 
     const btnLevel1 = rootEl.querySelector('.st-level[data-level="1"]');
@@ -217,12 +211,10 @@
       currentSvg: null,
 
       currentColor: palette[0],
+      userPickedColor: false,  // ✅ בתחילה אין ✓
 
-      // ✅ Hover (desktop only, light hint)
-      hoverRegion: null,
-
-      // ✅ Locked selection (click/tap)
-      selectedRegion: null,
+      hoverRegion: null,       // desktop hint only
+      selectedRegion: null,    // locked selection
 
       undoStack: [] // { id, prevFill, nextFill }
     };
@@ -339,9 +331,10 @@
         b.setAttribute("aria-label", "בחר צבע");
         b.addEventListener("click", () => {
           state.currentColor = c;
+          state.userPickedColor = true; // ✅ רק מרגע זה מתחילים להציג ✓
           updatePaletteOn_();
 
-          // ✅ כמו בדמו: צובעים רק בלחיצה על צבע, ורק אם יש חלק נבחר
+          // כמו בדמו: צובעים רק בלחיצה על צבע, ורק אם יש חלק נבחר
           if (state.selectedRegion) paintSelectedWithColor_(c);
         });
         elColors.appendChild(b);
@@ -352,9 +345,19 @@
     }
 
     function updatePaletteOn_() {
-      colorButtons.forEach((b) => b.classList.remove("is-on"));
+      colorButtons.forEach((b) => {
+        b.classList.remove("is-on");
+        b.classList.remove("is-picked");
+      });
+
+      // בתחילת המשחק לא מסמנים כלום
+      if (!state.userPickedColor) return;
+
       const idx = palette.indexOf(state.currentColor);
-      if (idx >= 0 && colorButtons[idx]) colorButtons[idx].classList.add("is-on");
+      if (idx >= 0 && colorButtons[idx]) {
+        colorButtons[idx].classList.add("is-on");
+        colorButtons[idx].classList.add("is-picked"); // ✓ דרך CSS
+      }
     }
 
     // dots UI
@@ -403,10 +406,14 @@
       clearHover_();
       clearSelected_();
       clearUndo_();
+
+      // ✅ לא מחזירים ✓ בתחילת משחק / אחרי מעבר רמה
+      state.userPickedColor = false;
+
       if (resetColor) {
         state.currentColor = palette[0];
-        updatePaletteOn_();
       }
+      updatePaletteOn_();
     }
 
     function setLevel_(lvl) {
@@ -415,7 +422,7 @@
 
       state.level = lvl;
 
-      // ✅ במעבר רמה: איפוס מלא (כולל צבע חוזר לראשון)
+      // במעבר רמה: איפוס מלא
       hardResetUiState_({ resetColor: true });
 
       if (lvl === 1) {
@@ -495,7 +502,7 @@
       if (globalBound) return;
       globalBound = true;
 
-      // tap/click outside: clear selection + status + hover
+      // click outside: deselect + clear status + clear hover
       rootEl.addEventListener("pointerdown", (e) => {
         const inSvg = e.target && e.target.closest && e.target.closest(".st-canvas svg");
         const inPanel = e.target && e.target.closest && e.target.closest(".st-side");
@@ -508,7 +515,7 @@
     }
 
     function attachRegionHandlers_(svgEl) {
-      // ✅ Desktop: hover hint only (not target, not locked)
+      // Desktop: hover hint only
       svgEl.addEventListener("pointermove", (e) => {
         if (isTouchLike_(e)) return;
         const t = e.target;
@@ -532,7 +539,7 @@
         clearHover_();
       });
 
-      // ✅ Click/tap selects ONLY (no immediate paint)
+      // Click/tap selects ONLY (no immediate paint)
       svgEl.addEventListener("pointerdown", (e) => {
         const t = e.target;
         if (!t || !(t instanceof Element)) return;
@@ -550,7 +557,6 @@
 
     async function loadAndShow_() {
       elCanvas.innerHTML = "טוען ציור...";
-      elThumb.innerHTML = "";
 
       clearStatus_();
       clearHover_();
@@ -569,19 +575,8 @@
 
       svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
 
-      // append
       elCanvas.innerHTML = "";
       elCanvas.appendChild(svg);
-
-      // ✅ thumb תמיד נקי/לא צבוע
-      const thumbSvg = svg.cloneNode(true);
-      thumbSvg.querySelectorAll("[data-id]").forEach(el => {
-        setFill_(el, "transparent");
-        el.classList.remove("is-selected");
-        el.classList.remove("is-hover");
-      });
-      elThumb.innerHTML = "";
-      elThumb.appendChild(thumbSvg);
 
       state.currentSvg = svg;
 
