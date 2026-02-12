@@ -369,7 +369,14 @@
       if (controllers.has(gameId)) return;
 
       const def = GAMES_DEFINITION.find(g => g.id === gameId);
-      const ctx = { CONTROL_API, parashaLabel };
+      const ctx = {
+  CONTROL_API,
+  parashaLabel,
+  controlRow: data.row,
+  BASE_URL,
+  BUILD_VERSION
+};
+
 
       if (def && def.js && def.css) {
         bodyEl.innerHTML = "טוען...";
