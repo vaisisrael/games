@@ -146,8 +146,6 @@
     const buildVersion = ctx?.BUILD_VERSION || "";
     const CONTROL_API = ctx?.CONTROL_API || "";
 
-    }
-
     // ✅ תיקון 2: DATA נמשך מה-Apps Script דרך CONTROL_API (ולא דרך BASE_URL)
     let cell = { parashaName: "", slugs: [] };
     try {
