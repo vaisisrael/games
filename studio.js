@@ -490,4 +490,167 @@
 </head>
 <body>
   <div class="wrap">
-    <p c
+    <p class="cap">סטודיו לצביעה – ${escapeHtml_(model.parashaLabel)} – ${escapeHtml_(state.currentSlug)} – רמה ${state.level}</p>
+    ${svgOuter}
+  </div>
+</body>
+</html>
+        `.trim());
+        w.document.close();
+        w.focus();
+        w.print();
+      } catch (_) {}
+    });
+
+    // ---- global wiring ----
+    let globalBound = false;
+    function bindGlobalOnce_() {
+      if (globalBound) return;
+      globalBound = true;
+
+      // tap/click outside: clear selection + status + target
+      rootEl.addEventListener("pointerdown", (e) => {
+        const inSvg = e.target && e.target.closest && e.target.closest(".st-canvas svg");
+        const inPanel = e.target && e.target.closest && e.target.closest(".st-side");
+        if (!inSvg && !inPanel) {
+          clearStatus_();
+          clearSelectionAll_();
+          clearTarget_();
+        }
+      }, { passive: true });
+    }
+
+    function attachRegionHandlers_(svgEl) {
+      // Desktop: hover indicates selected; also sets paint target.
+      svgEl.addEventListener("pointerover", (e) => {
+        const t = e.target;
+        if (!t || !(t instanceof Element)) return;
+        if (isTouchLike_(e)) return;
+
+        const region = t.closest("[data-id]");
+        if (!region) return;
+
+        clearStatus_();
+
+        if (state.hoverRegion && state.hoverRegion !== region) {
+          state.hoverRegion.classList.remove("is-selected");
+        }
+        state.hoverRegion = region;
+        region.classList.add("is-selected");
+
+        renderSelectedName_();
+
+        // ✅ remember as paint target so user can move to palette
+        setTarget_(region);
+      });
+
+      // on leaving a region: remove visual selection + label back to "לא נבחר"
+      svgEl.addEventListener("pointerout", (e) => {
+        const t = e.target;
+        if (!t || !(t instanceof Element)) return;
+        if (isTouchLike_(e)) return;
+
+        const region = t.closest("[data-id]");
+        if (!region) return;
+
+        if (state.hoverRegion === region) {
+          region.classList.remove("is-selected");
+          state.hoverRegion = null;
+          renderSelectedName_(); // becomes "לא נבחר"
+        }
+        // NOTE: targetRegion stays (to allow coloring via palette),
+        // and is cleared after a paint action.
+      });
+
+      // Touch: tap selects (visual + label) and sets target
+      svgEl.addEventListener("pointerdown", (e) => {
+        const t = e.target;
+        if (!t || !(t instanceof Element)) return;
+
+        const region = t.closest("[data-id]");
+        if (!region) return;
+
+        clearStatus_();
+
+        if (isTouchLike_(e)) {
+          // visual select on touch
+          if (state.touchRegion && state.touchRegion !== region) {
+            state.touchRegion.classList.remove("is-selected");
+          }
+          state.touchRegion = region;
+          region.classList.add("is-selected");
+          renderSelectedName_();
+
+          // set paint target
+          setTarget_(region);
+        }
+      }, { passive: true });
+    }
+
+    async function loadAndShow_() {
+      elCanvas.innerHTML = "טוען ציור...";
+      elThumb.innerHTML = "";
+
+      clearStatus_();
+      clearSelectionAll_();
+      clearTarget_();
+      clearUndo_();
+
+      const slug = state.currentSlug;
+      const lvl = state.level;
+
+      const svgText = await fetchSvgText_(model.baseUrl, model.buildVersion, slug, lvl);
+      const svg = extractInlineSvg_(svgText);
+      if (!svg) {
+        elCanvas.innerHTML = "שגיאה: SVG לא תקין.";
+        return;
+      }
+
+      svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+
+      // append
+      elCanvas.innerHTML = "";
+      elCanvas.appendChild(svg);
+
+      // ✅ thumb תמיד נקי/לא צבוע
+      const thumbSvg = svg.cloneNode(true);
+      thumbSvg.querySelectorAll("[data-id]").forEach(el => {
+        setFill_(el, "transparent");
+        el.classList.remove("is-selected");
+      });
+      elThumb.innerHTML = "";
+      elThumb.appendChild(thumbSvg);
+
+      state.currentSvg = svg;
+
+      bindGlobalOnce_();
+      attachRegionHandlers_(svg);
+    }
+
+    buildPalette_();
+    buildDots_();
+    setUndoEnabled_(false);
+
+    loadAndShow_().catch(() => {
+      elCanvas.innerHTML = "שגיאה בטעינת הציור.";
+    });
+
+    return {
+      reset: () => {
+        clearStatus_();
+        clearSelectionAll_();
+        clearTarget_();
+      }
+    };
+  }
+
+  (function registerWhenReady_() {
+    if (window.ParashaGamesRegister) {
+      window.ParashaGamesRegister(GAME_ID, {
+        init: async (rootEl, ctx) => init(rootEl, ctx)
+      });
+      return;
+    }
+    setTimeout(registerWhenReady_, 30);
+  })();
+})();
