@@ -69,15 +69,11 @@
   background: #dbeafe;
   border-color: #93c5fd;
 }
-[data-parasha-games] .st-erase.is-on{
-  background: rgba(250,204,21,.22);
-  border-color: rgba(250,204,21,.55);
-}
 
 /* ===== Layout ===== */
 [data-parasha-games] .st-layout{
   display:grid;
-  grid-template-columns: 1fr 240px; /* main + side */
+  grid-template-columns: 1fr 200px; /* main + side (narrower) */
   gap: 12px;
   align-items: start;
 }
@@ -95,25 +91,6 @@
   background: #fff;
   box-shadow: 0 12px 28px rgba(0,0,0,.10);
   padding: 10px;
-}
-
-[data-parasha-games] .st-header{
-  display:flex;
-  align-items: baseline;
-  justify-content: space-between;
-  gap: 10px;
-  margin: 0 0 8px;
-}
-[data-parasha-games] .st-title{
-  font-weight: 950;
-  font-size: 15px;
-  margin: 0;
-}
-[data-parasha-games] .st-sub{
-  font-weight: 900;
-  font-size: 13px;
-  color: var(--st-muted);
-  margin: 0;
 }
 
 /* ===== SVG canvas ===== */
@@ -136,109 +113,5 @@
   user-select: none;
 }
 
-/* Make regions feel tappable */
-[data-parasha-games] .st-canvas [data-id]{
-  cursor: pointer;
-  transition: filter .12s ease, opacity .12s ease;
-}
-[data-parasha-games] .st-canvas [data-id]:hover{
-  filter: brightness(1.02);
-}
-
-/* ===== Side panel ===== */
-[data-parasha-games] .st-side{
-  border: 1px solid rgba(0,0,0,.10);
-  border-radius: 18px;
-  background: #fff;
-  box-shadow: 0 12px 28px rgba(0,0,0,.10);
-  padding: 10px;
-}
-
-[data-parasha-games] .st-thumbBox{
-  border: 1px solid rgba(0,0,0,.10);
-  border-radius: 16px;
-  background: #fff;
-  overflow: hidden;
-  box-shadow: 0 10px 18px rgba(0,0,0,.08);
-}
-[data-parasha-games] .st-thumb{
-  width: 100%;
-  aspect-ratio: 860 / 520;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background: linear-gradient(180deg, #fff, #f6f7fb);
-}
-[data-parasha-games] .st-thumb svg{
-  width: 92%;
-  height: auto;
-  display:block;
-  opacity: .9;
-}
-
-[data-parasha-games] .st-dots{
-  margin-top: 10px;
-  display:flex;
-  gap: 8px;
-  justify-content: center;
-  flex-wrap: wrap;
-}
-[data-parasha-games] .st-dot{
-  width: 10px;
-  height: 10px;
-  border-radius: 999px;
-  border: 2px solid rgba(0,0,0,.22);
-  background: transparent;
-  padding: 0;
-  cursor: pointer;
-}
-[data-parasha-games] .st-dot.is-on{
-  background: rgba(0,0,0,.22);
-}
-
-/* ===== Palette ===== */
-[data-parasha-games] .st-palette{
-  margin-top: 12px;
-  border-top: 1px dashed rgba(0,0,0,.12);
-  padding-top: 10px;
-}
-
-[data-parasha-games] .st-paletteTitle{
-  font-weight: 950;
-  font-size: 13px;
-  color: var(--st-muted);
-  margin: 0 0 8px;
-  text-align: center;
-}
-
-[data-parasha-games] .st-colors{
-  display:flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  justify-content: center;
-}
-[data-parasha-games] .st-color{
-  width: 26px;
-  height: 26px;
-  border-radius: 999px;
-  border: 2px solid rgba(0,0,0,.18);
-  cursor: pointer;
-  position: relative;
-}
-[data-parasha-games] .st-color.is-on{
-  border-color: rgba(37,99,235,.70);
-  box-shadow: 0 8px 18px rgba(37,99,235,.18);
-}
-[data-parasha-games] .st-color:focus-visible{
-  outline: 3px solid rgba(37,99,235,.22);
-  outline-offset: 2px;
-}
-
-/* ===== Small hint line ===== */
-[data-parasha-games] .st-hint{
-  margin-top: 10px;
-  text-align: center;
-  font-weight: 900;
-  font-size: 12px;
-  color: var(--st-muted);
-}
+/* Make regions feel tappable + clearer selection */
+[data-parash]()
