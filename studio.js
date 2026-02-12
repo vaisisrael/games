@@ -218,12 +218,11 @@
 
       currentColor: palette[0],
 
-      // UI hover/touch indicator (only for display + outline)
+      // ✅ Hover (desktop only, light hint)
       hoverRegion: null,
-      touchRegion: null,
 
-      // Paint target (persists briefly so you can move from SVG to palette)
-      targetRegion: null,
+      // ✅ Locked selection (click/tap)
+      selectedRegion: null,
 
       undoStack: [] // { id, prevFill, nextFill }
     };
@@ -260,17 +259,29 @@
     }
 
     function clearHover_() {
-      if (state.hoverRegion) state.hoverRegion.classList.remove("is-selected");
+      if (state.hoverRegion && state.hoverRegion !== state.selectedRegion) {
+        state.hoverRegion.classList.remove("is-hover");
+      }
       state.hoverRegion = null;
     }
 
-    function clearTouchSel_() {
-      if (state.touchRegion) state.touchRegion.classList.remove("is-selected");
-      state.touchRegion = null;
+    function setSelected_(regionEl) {
+      if (state.selectedRegion && state.selectedRegion !== regionEl) {
+        state.selectedRegion.classList.remove("is-selected");
+      }
+      state.selectedRegion = regionEl || null;
+      if (state.selectedRegion) state.selectedRegion.classList.add("is-selected");
+      renderSelectedName_();
+    }
+
+    function clearSelected_() {
+      if (state.selectedRegion) state.selectedRegion.classList.remove("is-selected");
+      state.selectedRegion = null;
+      renderSelectedName_();
     }
 
     function renderSelectedName_() {
-      const el = state.hoverRegion || state.touchRegion;
+      const el = state.selectedRegion;
       if (!el) {
         elSelName.textContent = "לא נבחר";
         return;
@@ -282,22 +293,8 @@
         "חלק";
     }
 
-    function clearSelectionAll_() {
-      clearHover_();
-      clearTouchSel_();
-      renderSelectedName_();
-    }
-
-    function setTarget_(regionEl) {
-      state.targetRegion = regionEl || null;
-    }
-
-    function clearTarget_() {
-      state.targetRegion = null;
-    }
-
-    function paintTargetWithColor_(color) {
-      const el = state.targetRegion;
+    function paintSelectedWithColor_(color) {
+      const el = state.selectedRegion;
       if (!state.currentSvg || !el) return;
 
       const prev = getFill_(el);
@@ -309,13 +306,6 @@
       const id = el.getAttribute("data-id") || "";
       state.undoStack.push({ id, prevFill: prev, nextFill: next });
       setUndoEnabled_(state.undoStack.length > 0);
-
-      // ✅ כדי שלא "החלפת צבע" תצבע אחורה בלי בחירת חלק חדש
-      clearTarget_();
-
-      // במובייל נרצה גם לנקות בחירה אחרי צביעה
-      clearTouchSel_();
-      renderSelectedName_();
 
       clearStatus_();
     }
@@ -332,11 +322,6 @@
       if (el) setFill_(el, rec.prevFill);
 
       setUndoEnabled_(state.undoStack.length > 0);
-
-      // keep clean
-      clearTarget_();
-      clearTouchSel_();
-      renderSelectedName_();
       clearStatus_();
     }
 
@@ -355,7 +340,9 @@
         b.addEventListener("click", () => {
           state.currentColor = c;
           updatePaletteOn_();
-          paintTargetWithColor_(c);
+
+          // ✅ כמו בדמו: צובעים רק בלחיצה על צבע, ורק אם יש חלק נבחר
+          if (state.selectedRegion) paintSelectedWithColor_(c);
         });
         elColors.appendChild(b);
         colorButtons.push(b);
@@ -390,8 +377,8 @@
         d.addEventListener("click", () => {
           if (i === state.index) return;
           clearStatus_();
-          clearSelectionAll_();
-          clearTarget_();
+          clearHover_();
+          clearSelected_();
           clearUndo_();
           state.index = i;
           state.currentSlug = model.slugs[i];
@@ -413,8 +400,8 @@
 
     function hardResetUiState_({ resetColor } = {}) {
       clearStatus_();
-      clearSelectionAll_();
-      clearTarget_();
+      clearHover_();
+      clearSelected_();
       clearUndo_();
       if (resetColor) {
         state.currentColor = palette[0];
@@ -428,7 +415,7 @@
 
       state.level = lvl;
 
-      // ✅ במעבר רמה: איפוס מלא (כולל target + undo + צבע חוזר לראשון)
+      // ✅ במעבר רמה: איפוס מלא (כולל צבע חוזר לראשון)
       hardResetUiState_({ resetColor: true });
 
       if (lvl === 1) {
@@ -459,8 +446,8 @@
       state.currentSvg.querySelectorAll("[data-id]").forEach(el => setFill_(el, "transparent"));
       // איפוס לא משנה צבע נבחר (רק ציור)
       clearStatus_();
-      clearSelectionAll_();
-      clearTarget_();
+      clearHover_();
+      clearSelected_();
       clearUndo_();
       setStatusAutoClear_("אופס… איפסנו את הציור הנוכחי 🙂", 1500);
     });
@@ -508,61 +495,44 @@
       if (globalBound) return;
       globalBound = true;
 
-      // tap/click outside: clear selection + status + target
+      // tap/click outside: clear selection + status + hover
       rootEl.addEventListener("pointerdown", (e) => {
         const inSvg = e.target && e.target.closest && e.target.closest(".st-canvas svg");
         const inPanel = e.target && e.target.closest && e.target.closest(".st-side");
         if (!inSvg && !inPanel) {
           clearStatus_();
-          clearSelectionAll_();
-          clearTarget_();
+          clearHover_();
+          clearSelected_();
         }
       }, { passive: true });
     }
 
     function attachRegionHandlers_(svgEl) {
-      // Desktop: hover indicates selected; also sets paint target.
-      svgEl.addEventListener("pointerover", (e) => {
+      // ✅ Desktop: hover hint only (not target, not locked)
+      svgEl.addEventListener("pointermove", (e) => {
+        if (isTouchLike_(e)) return;
         const t = e.target;
         if (!t || !(t instanceof Element)) return;
-        if (isTouchLike_(e)) return;
 
         const region = t.closest("[data-id]");
-        if (!region) return;
-
-        clearStatus_();
+        if (!region) {
+          clearHover_();
+          return;
+        }
 
         if (state.hoverRegion && state.hoverRegion !== region) {
-          state.hoverRegion.classList.remove("is-selected");
+          if (state.hoverRegion !== state.selectedRegion) state.hoverRegion.classList.remove("is-hover");
         }
         state.hoverRegion = region;
-        region.classList.add("is-selected");
-
-        renderSelectedName_();
-
-        // ✅ remember as paint target so user can move to palette
-        setTarget_(region);
+        if (state.hoverRegion !== state.selectedRegion) region.classList.add("is-hover");
       });
 
-      // on leaving a region: remove visual selection + label back to "לא נבחר"
-      svgEl.addEventListener("pointerout", (e) => {
-        const t = e.target;
-        if (!t || !(t instanceof Element)) return;
+      svgEl.addEventListener("pointerleave", (e) => {
         if (isTouchLike_(e)) return;
-
-        const region = t.closest("[data-id]");
-        if (!region) return;
-
-        if (state.hoverRegion === region) {
-          region.classList.remove("is-selected");
-          state.hoverRegion = null;
-          renderSelectedName_(); // becomes "לא נבחר"
-        }
-        // NOTE: targetRegion stays (to allow coloring via palette),
-        // and is cleared after a paint action.
+        clearHover_();
       });
 
-      // Touch: tap selects (visual + label) and sets target
+      // ✅ Click/tap selects ONLY (no immediate paint)
       svgEl.addEventListener("pointerdown", (e) => {
         const t = e.target;
         if (!t || !(t instanceof Element)) return;
@@ -571,19 +541,10 @@
         if (!region) return;
 
         clearStatus_();
+        clearHover_();
 
-        if (isTouchLike_(e)) {
-          // visual select on touch
-          if (state.touchRegion && state.touchRegion !== region) {
-            state.touchRegion.classList.remove("is-selected");
-          }
-          state.touchRegion = region;
-          region.classList.add("is-selected");
-          renderSelectedName_();
-
-          // set paint target
-          setTarget_(region);
-        }
+        setSelected_(region);
+        // צביעה מתבצעת רק בלחיצה על צבע בפלטה
       }, { passive: true });
     }
 
@@ -592,8 +553,8 @@
       elThumb.innerHTML = "";
 
       clearStatus_();
-      clearSelectionAll_();
-      clearTarget_();
+      clearHover_();
+      clearSelected_();
       clearUndo_();
 
       const slug = state.currentSlug;
@@ -617,6 +578,7 @@
       thumbSvg.querySelectorAll("[data-id]").forEach(el => {
         setFill_(el, "transparent");
         el.classList.remove("is-selected");
+        el.classList.remove("is-hover");
       });
       elThumb.innerHTML = "";
       elThumb.appendChild(thumbSvg);
@@ -638,8 +600,8 @@
     return {
       reset: () => {
         clearStatus_();
-        clearSelectionAll_();
-        clearTarget_();
+        clearHover_();
+        clearSelected_();
       }
     };
   }
