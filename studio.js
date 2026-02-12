@@ -216,7 +216,6 @@
                 <p class="st-paletteTitle">פלטת צבעים</p>
                 <div class="st-selected">חלק נבחר: <b class="st-selName">לא נבחר</b></div>
                 <div class="st-colors" aria-label="פלטת צבעים"></div>
-                <div class="st-hint">טיפ: בחר צבע ואז לחץ על חלק כדי לצבוע 🙂</div>
               </div>
             </aside>
           </div>
@@ -250,21 +249,34 @@
       ready: false
     };
 
+    // ✅ larger palette
     const palette = [
-      "#111827",
-      "#94a3b8",
-      "#ef4444",
-      "#f97316",
-      "#facc15",
-      "#22c55e",
-      "#14b8a6",
-      "#60a5fa",
-      "#a78bfa",
-      "#f472b6"
+      "#111827", "#334155", "#64748b", "#94a3b8", "#e2e8f0",
+      "#ef4444", "#f97316", "#f59e0b", "#facc15", "#fde047",
+      "#22c55e", "#16a34a", "#14b8a6", "#06b6d4", "#0ea5e9",
+      "#60a5fa", "#3b82f6", "#2563eb", "#1d4ed8",
+      "#a78bfa", "#8b5cf6", "#7c3aed", "#f472b6", "#ec4899",
+      "#a16207", "#7c2d12"
     ];
 
+    let statusTimer = null;
     function setStatus_(text) {
       elStatus.textContent = text || "";
+    }
+    function clearStatus_() {
+      if (statusTimer) {
+        clearTimeout(statusTimer);
+        statusTimer = null;
+      }
+      setStatus_("");
+    }
+    function setStatusAutoClear_(text, ms) {
+      clearStatus_();
+      setStatus_(text);
+      statusTimer = setTimeout(() => {
+        setStatus_("");
+        statusTimer = null;
+      }, Math.max(250, Number(ms || 1800)));
     }
 
     function clearSelection_() {
@@ -309,13 +321,10 @@
         b.style.background = c;
         b.setAttribute("aria-label", "בחר צבע");
         b.addEventListener("click", () => {
+          // ✅ בחירת צבע לא צובעת אחורה שום חלק
+          clearStatus_();
           state.currentColor = c;
           updatePaletteOn_();
-
-          // אם יש חלק נבחר — צובעים מיד (כמו בדמו, רק בלי להפוך את זה לחובה)
-          if (state.selectedRegion) {
-            paintRegion_(state.selectedRegion, state.currentColor);
-          }
         });
         elColors.appendChild(b);
         colorButtons.push(b);
@@ -350,6 +359,7 @@
         d.setAttribute("aria-selected", i === state.index ? "true" : "false");
         d.addEventListener("click", () => {
           if (i === state.index) return;
+          clearStatus_();
           state.index = i;
           state.currentSlug = model.slugs[i];
           refreshDots_();
@@ -371,6 +381,8 @@
     function setLevel_(lvl) {
       lvl = (lvl === 2) ? 2 : 1;
       if (state.level === lvl) return;
+
+      clearStatus_();
       state.level = lvl;
 
       if (lvl === 1) {
@@ -396,7 +408,7 @@
       state.currentSvg.querySelectorAll("[data-id]").forEach(el => el.setAttribute("fill", "transparent"));
       clearState_(model.parashaLabel, state.currentSlug, state.level);
       clearSelection_();
-      setStatus_("אופס… איפסנו את הציור הנוכחי 🙂");
+      setStatusAutoClear_("אופס… איפסנו את הציור הנוכחי 🙂", 1800);
     });
 
     btnPrint.addEventListener("click", () => {
@@ -436,9 +448,30 @@
       } catch (_) {}
     });
 
+    // ---- event wiring (avoid duplicates across reloads) ----
+    let globalBound = false;
+
+    function bindGlobalOnce_() {
+      if (globalBound) return;
+      globalBound = true;
+
+      // click outside: deselect
+      rootEl.addEventListener("pointerdown", (e) => {
+        const inSvg = e.target && e.target.closest && e.target.closest(".st-canvas svg");
+        const inPanel = e.target && e.target.closest && e.target.closest(".st-side");
+        if (!inSvg && !inPanel) {
+          clearStatus_();
+          clearSelection_();
+        }
+      }, { passive: true });
+    }
+
     // painting / selecting
     function attachPaintHandlers_(svgEl) {
-      // קליק/טאץ׳: בחירה + צביעה (אם כבר נבחר צבע)
+      // remove selection mark from any previous svg (just in case)
+      clearSelection_();
+
+      // ✅ behavior: click part selects it AND paints immediately with currentColor
       svgEl.addEventListener("pointerdown", (e) => {
         const target = e.target;
         if (!target || !(target instanceof Element)) return;
@@ -446,15 +479,9 @@
         const region = target.closest("[data-id]");
         if (!region) return;
 
+        clearStatus_();
         selectRegion_(region);
         paintRegion_(region, state.currentColor);
-      }, { passive: true });
-
-      // קליק מחוץ לציור: ביטול בחירה
-      rootEl.addEventListener("pointerdown", (e) => {
-        const inSvg = e.target && e.target.closest && e.target.closest(".st-canvas svg");
-        const inPanel = e.target && e.target.closest && e.target.closest(".st-side");
-        if (!inSvg && !inPanel) clearSelection_();
       }, { passive: true });
     }
 
@@ -462,8 +489,9 @@
       state.ready = false;
       elCanvas.innerHTML = "טוען ציור...";
       elThumb.innerHTML = "";
+
+      clearStatus_();
       clearSelection_();
-      setStatus_("");
 
       const slug = state.currentSlug;
       const lvl = state.level;
@@ -480,9 +508,11 @@
 
       svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
 
+      // ✅ hard clear before append (prevents any accidental stacking)
       elCanvas.innerHTML = "";
       elCanvas.appendChild(svg);
 
+      // thumb
       const thumbSvg = svg.cloneNode(true);
       thumbSvg.querySelectorAll("[data-id]").forEach(el => {
         const f = el.getAttribute("fill");
@@ -492,6 +522,8 @@
       elThumb.appendChild(thumbSvg);
 
       state.currentSvg = svg;
+
+      bindGlobalOnce_();
       attachPaintHandlers_(svg);
 
       state.ready = true;
@@ -506,8 +538,8 @@
 
     return {
       reset: () => {
+        clearStatus_();
         clearSelection_();
-        setStatus_("");
       }
     };
   }
