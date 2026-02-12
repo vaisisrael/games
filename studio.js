@@ -59,7 +59,6 @@
   }
 
   async function fetchSvgText_(baseUrl, buildVersion, slug, level) {
-    // BASE_URL כבר מסתיים ב-/games/ ולכן כאן רק studio/...
     const file = `studio/${slug}_l${level}.svg`;
     const url = withVersion_(String(baseUrl || "") + file, buildVersion);
     const res = await fetch(url, { cache: "no-store" });
@@ -103,6 +102,82 @@
     el.setAttribute("fill", fill == null ? "transparent" : String(fill));
   }
 
+  function parseViewBox_(svg) {
+    const vb = (svg.getAttribute("viewBox") || "").trim();
+    if (!vb) return null;
+    const parts = vb.split(/[\s,]+/).map(Number).filter(n => Number.isFinite(n));
+    if (parts.length !== 4) return null;
+    return { x: parts[0], y: parts[1], w: parts[2], h: parts[3] };
+  }
+
+  function unionBBox_(a, b) {
+    if (!a) return b;
+    if (!b) return a;
+    const x1 = Math.min(a.x, b.x);
+    const y1 = Math.min(a.y, b.y);
+    const x2 = Math.max(a.x + a.w, b.x + b.w);
+    const y2 = Math.max(a.y + a.h, b.y + b.h);
+    return { x: x1, y: y1, w: x2 - x1, h: y2 - y1 };
+  }
+
+  function computeContentBBox_(svg) {
+    const nodes = Array.from(svg.querySelectorAll("[data-id]"));
+    const list = nodes.length ? nodes : Array.from(svg.children).filter(el => el.tagName && el.tagName.toLowerCase() !== "defs");
+    let box = null;
+
+    for (const el of list) {
+      try {
+        const b = el.getBBox();
+        if (!b || !Number.isFinite(b.width) || !Number.isFinite(b.height)) continue;
+        if (b.width <= 0 || b.height <= 0) continue;
+        box = unionBBox_(box, { x: b.x, y: b.y, w: b.width, h: b.height });
+      } catch (_) {
+        // ignore
+      }
+    }
+
+    if (!box) {
+      try {
+        const b = svg.getBBox();
+        if (b && b.width > 0 && b.height > 0) {
+          box = { x: b.x, y: b.y, w: b.width, h: b.height };
+        }
+      } catch (_) {}
+    }
+
+    return box;
+  }
+
+  function maybeTightenViewBox_(svg) {
+    // must be in DOM for getBBox to be reliable
+    const content = computeContentBBox_(svg);
+    if (!content || content.w <= 0 || content.h <= 0) return;
+
+    const vb = parseViewBox_(svg);
+
+    // dynamic padding: 3% of min side, clamped
+    const pad = Math.max(12, Math.min(32, Math.round(Math.min(content.w, content.h) * 0.03)));
+
+    // Decide whether to apply:
+    // If there is an existing viewBox and content occupies "most" of it, don't touch.
+    if (vb) {
+      const occW = content.w / vb.w;
+      const occH = content.h / vb.h;
+      const occ = Math.min(occW, occH);
+
+      // only tighten when content is clearly smaller than viewBox
+      if (occ >= 0.88) return;
+    }
+
+    const nx = content.x - pad;
+    const ny = content.y - pad;
+    const nw = content.w + pad * 2;
+    const nh = content.h + pad * 2;
+
+    if (!(nw > 0 && nh > 0)) return;
+    svg.setAttribute("viewBox", `${nx} ${ny} ${nw} ${nh}`);
+  }
+
   // ---------- init ----------
   async function init(rootEl, ctx) {
     const parashaLabel = ctx?.parashaLabel || "";
@@ -110,7 +185,6 @@
     const buildVersion = ctx?.BUILD_VERSION || "";
     const CONTROL_API = ctx?.CONTROL_API || "";
 
-    // DATA נמשך מה-Apps Script דרך CONTROL_API
     let cell = { parashaName: "", slugs: [] };
     try {
       const apiUrl = withVersion_(
@@ -164,17 +238,15 @@
               <div class="st-dots" role="tablist" aria-label="מעבר בין ציורים"></div>
             </div>
 
-            <aside class="st-side" aria-label="בחירת צבעים">
-              <div class="st-palette">
-                <div class="st-selected">חלק נבחר: <b class="st-selName">לא נבחר</b></div>
+            <div class="st-palette" aria-label="פלטת צבעים">
+              <div class="st-selected">חלק נבחר: <b class="st-selName">לא נבחר</b></div>
 
-                <div class="st-colors" aria-label="פלטת צבעים"></div>
+              <div class="st-colors" aria-label="פלטת צבעים"></div>
 
-                <div class="st-paletteActions">
-                  <button type="button" class="st-btn st-undo" disabled aria-disabled="true" title="בטל פעולה אחרונה" aria-label="בטל פעולה אחרונה">↶</button>
-                </div>
+              <div class="st-paletteActions">
+                <button type="button" class="st-btn st-undo" disabled aria-disabled="true" title="בטל פעולה אחרונה" aria-label="בטל פעולה אחרונה">↶</button>
               </div>
-            </aside>
+            </div>
           </div>
 
         </div>
@@ -182,7 +254,6 @@
     `.trim();
 
     const elStatus = rootEl.querySelector(".st-status");
-
     const elCanvas = rootEl.querySelector(".st-canvas");
     const elDots = rootEl.querySelector(".st-dots");
 
@@ -203,7 +274,6 @@
       "#7c2d12", "#e2e8f0", "#94a3b8", "#64748b", "#334155", "#111827"
     ];
 
-    // state
     const state = {
       level: 1,
       index: 0,
@@ -211,23 +281,18 @@
       currentSvg: null,
 
       currentColor: palette[0],
-      userPickedColor: false,  // ✅ בתחילה אין ✓
+      userPickedColor: false, // ✅ בתחילה אין ✓
 
-      hoverRegion: null,       // desktop hint only
-      selectedRegion: null,    // locked selection
+      hoverRegion: null,    // desktop hint only
+      selectedRegion: null, // locked selection
 
-      undoStack: [] // { id, prevFill, nextFill }
+      undoStack: []
     };
 
     let statusTimer = null;
-    function setStatus_(text) {
-      elStatus.textContent = text || "";
-    }
+    function setStatus_(text) { elStatus.textContent = text || ""; }
     function clearStatus_() {
-      if (statusTimer) {
-        clearTimeout(statusTimer);
-        statusTimer = null;
-      }
+      if (statusTimer) { clearTimeout(statusTimer); statusTimer = null; }
       setStatus_("");
     }
     function setStatusAutoClear_(text, ms) {
@@ -305,10 +370,7 @@
     function undoLast_() {
       if (!state.currentSvg) return;
       const rec = state.undoStack.pop();
-      if (!rec) {
-        setUndoEnabled_(false);
-        return;
-      }
+      if (!rec) { setUndoEnabled_(false); return; }
 
       const el = state.currentSvg.querySelector(`[data-id="${CSS.escape(rec.id)}"]`);
       if (el) setFill_(el, rec.prevFill);
@@ -331,10 +393,9 @@
         b.setAttribute("aria-label", "בחר צבע");
         b.addEventListener("click", () => {
           state.currentColor = c;
-          state.userPickedColor = true; // ✅ רק מרגע זה מתחילים להציג ✓
+          state.userPickedColor = true;
           updatePaletteOn_();
 
-          // כמו בדמו: צובעים רק בלחיצה על צבע, ורק אם יש חלק נבחר
           if (state.selectedRegion) paintSelectedWithColor_(c);
         });
         elColors.appendChild(b);
@@ -350,13 +411,12 @@
         b.classList.remove("is-picked");
       });
 
-      // בתחילת המשחק לא מסמנים כלום
       if (!state.userPickedColor) return;
 
       const idx = palette.indexOf(state.currentColor);
       if (idx >= 0 && colorButtons[idx]) {
         colorButtons[idx].classList.add("is-on");
-        colorButtons[idx].classList.add("is-picked"); // ✓ דרך CSS
+        colorButtons[idx].classList.add("is-picked");
       }
     }
 
@@ -407,12 +467,8 @@
       clearSelected_();
       clearUndo_();
 
-      // ✅ לא מחזירים ✓ בתחילת משחק / אחרי מעבר רמה
       state.userPickedColor = false;
-
-      if (resetColor) {
-        state.currentColor = palette[0];
-      }
+      if (resetColor) state.currentColor = palette[0];
       updatePaletteOn_();
     }
 
@@ -421,8 +477,6 @@
       if (state.level === lvl) return;
 
       state.level = lvl;
-
-      // במעבר רמה: איפוס מלא
       hardResetUiState_({ resetColor: true });
 
       if (lvl === 1) {
@@ -451,7 +505,6 @@
     btnReset.addEventListener("click", () => {
       if (!state.currentSvg) return;
       state.currentSvg.querySelectorAll("[data-id]").forEach(el => setFill_(el, "transparent"));
-      // איפוס לא משנה צבע נבחר (רק ציור)
       clearStatus_();
       clearHover_();
       clearSelected_();
@@ -502,11 +555,10 @@
       if (globalBound) return;
       globalBound = true;
 
-      // click outside: deselect + clear status + clear hover
       rootEl.addEventListener("pointerdown", (e) => {
         const inSvg = e.target && e.target.closest && e.target.closest(".st-canvas svg");
-        const inPanel = e.target && e.target.closest && e.target.closest(".st-side");
-        if (!inSvg && !inPanel) {
+        const inPalette = e.target && e.target.closest && e.target.closest(".st-palette");
+        if (!inSvg && !inPalette) {
           clearStatus_();
           clearHover_();
           clearSelected_();
@@ -549,9 +601,7 @@
 
         clearStatus_();
         clearHover_();
-
         setSelected_(region);
-        // צביעה מתבצעת רק בלחיצה על צבע בפלטה
       }, { passive: true });
     }
 
@@ -577,6 +627,10 @@
 
       elCanvas.innerHTML = "";
       elCanvas.appendChild(svg);
+
+      // ✅ תיקון אוטומטי לשוליים גדולים ב־SVG
+      // חייב להיות אחרי append (כדי ש־getBBox יעבוד בצורה אמינה)
+      try { maybeTightenViewBox_(svg); } catch (_) {}
 
       state.currentSvg = svg;
 
