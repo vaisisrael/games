@@ -1,644 +1,261 @@
-/* קובץ מלא: studio.js – Parasha "סטודיו" (studio / Studio)
-   מקור הנתונים:
-     - גיליון 1: controlRow.studio = yes/no או true/false (הדלקה בלבד)
-     - גיליון "studio" דרך Apps Script: mode=studio → row.studio_slugs (רשימת slugs)
-
-   קבצי SVG ב-GitHub (תיקיית סטודיו בתוך /games):
-     BASE_URL הוא .../games/
-     ולכן הנתיב כאן הוא: /studio/<slug>_l1.svg  (וגם l2)
+/* קובץ מלא: studio.css – "סטודיו" (Coloring / Studio)
+   עיצוב בשפה של המשחקים (Rubik, cardbox, topbar, כפתורים).
 */
 
-(() => {
-  "use strict";
+[data-parasha-games] .st-wrap{
+  --st-bg: #f6f7fb;
+  --st-surface: #ffffff;
+  --st-border: rgba(0,0,0,.10);
+  --st-text: #0f172a;
+  --st-muted: #64748b;
+  --st-shadow: 0 10px 25px rgba(0,0,0,.08);
 
-  const GAME_ID = "studio";
+  --st-accent: #2563eb;
 
-  // ---------- helpers ----------
-  function parseCsvList(s) {
-    return String(s || "")
-      .split(",")
-      .map(x => x.trim())
-      .filter(Boolean);
+  font-family: "Rubik", system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans Hebrew", "Heebo", sans-serif !important;
+  color: var(--st-text);
+}
+[data-parasha-games] .st-wrap,
+[data-parasha-games] .st-wrap *{ font-family: inherit !important; }
+
+[data-parasha-games] .st-cardbox{
+  background: linear-gradient(180deg, var(--st-bg), #fff);
+  border: 1px solid var(--st-border);
+  border-radius: 16px;
+  box-shadow: var(--st-shadow);
+  padding: 10px;
+}
+
+/* ===== Topbar ===== */
+[data-parasha-games] .st-topbar{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+[data-parasha-games] .st-actions{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap: wrap;
+  direction: rtl;
+}
+[data-parasha-games] .st-status{
+  margin-inline-start: auto;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight: 900;
+  color: var(--st-muted);
+  white-space: nowrap;
+  font-size: 13px;
+}
+[data-parasha-games] .st-btn{
+  border: 1px solid var(--st-border);
+  background: #eef2ff;
+  border-radius: 12px;
+  padding: 7px 10px;
+  cursor: pointer;
+  font-weight: 900;
+  font-size: 13px;
+  user-select:none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+[data-parasha-games] .st-btn:hover{ box-shadow: 0 6px 14px rgba(0,0,0,.06); }
+
+[data-parasha-games] .st-level.is-on{
+  background: #dbeafe;
+  border-color: #93c5fd;
+}
+
+/* Undo button (near palette) */
+[data-parasha-games] .st-undo{
+  padding: 6px 10px;
+  min-width: 44px;
+  text-align: center;
+  background: #fff;
+}
+[data-parasha-games] .st-undo[disabled]{
+  opacity: .45;
+  cursor: not-allowed;
+  box-shadow: none !important;
+}
+
+/* ===== Layout ===== */
+[data-parasha-games] .st-layout{
+  display:grid;
+  grid-template-columns: 1fr 240px; /* main + side */
+  gap: 12px;
+  align-items: start;
+}
+
+@media (max-width: 880px){
+  [data-parasha-games] .st-layout{
+    grid-template-columns: 1fr;
   }
-
-  function safeText_(s) {
-    return String(s == null ? "" : s).trim();
-  }
-
-  function escapeHtml_(s) {
-    return String(s || "")
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;")
-      .replace(/"/g, "&quot;")
-      .replace(/'/g, "&#039;");
-  }
-
-  function parsestudioCell_(raw) {
-    const s = safeText_(raw);
-    if (!s) return { parashaName: "", slugs: [] };
-
-    // allow "שם פרשה | a,b" OR "a,b"
-    const parts = s.split("|");
-    if (parts.length >= 2) {
-      const parashaName = safeText_(parts[0]);
-      const slugs = parseCsvList(parts.slice(1).join("|"));
-      return { parashaName, slugs };
-    }
-    return { parashaName: "", slugs: parseCsvList(s) };
-  }
-
-  function withVersion_(url, buildVersion) {
-    try {
-      const u = new URL(url, window.location.href);
-      if (buildVersion) u.searchParams.set("v", String(buildVersion));
-      return u.toString();
-    } catch (_) {
-      return url;
-    }
-  }
-
-  async function fetchSvgText_(baseUrl, buildVersion, slug, level) {
-    // BASE_URL כבר מסתיים ב-/games/ ולכן כאן רק studio/...
-    const file = `studio/${slug}_l${level}.svg`;
-    const url = withVersion_(String(baseUrl || "") + file, buildVersion);
-    const res = await fetch(url, { cache: "no-store" });
-    if (!res.ok) throw new Error("Failed to load SVG: " + url);
-    return await res.text();
-  }
-
-  function extractInlineSvg_(svgText) {
-    const tmp = document.createElement("div");
-    tmp.innerHTML = svgText;
-    const svg = tmp.querySelector("svg");
-    if (!svg) return null;
-
-    // remove scripts if any
-    const scripts = svg.querySelectorAll("script");
-    scripts.forEach(s => s.remove());
-
-    // default transparent fill for tappable regions
-    svg.querySelectorAll("[data-id]").forEach(el => {
-      const f = el.getAttribute("fill");
-      if (!f || f === "none") el.setAttribute("fill", "transparent");
-    });
-
-    return svg;
-  }
-
-  function isTouchLike_(e) {
-    try {
-      return (e && e.pointerType === "touch") || (navigator.maxTouchPoints > 0);
-    } catch (_) {
-      return false;
-    }
-  }
-
-  // ---------- init ----------
-  async function init(rootEl, ctx) {
-    const parashaLabel = ctx?.parashaLabel || "";
-    const baseUrl = ctx?.BASE_URL || "";
-    const buildVersion = ctx?.BUILD_VERSION || "";
-    const CONTROL_API = ctx?.CONTROL_API || "";
-
-    // DATA נמשך מה-Apps Script דרך CONTROL_API
-    let cell = { parashaName: "", slugs: [] };
-    try {
-      const apiUrl = withVersion_(
-        `${CONTROL_API}?mode=studio&parasha=${encodeURIComponent(parashaLabel)}`,
-        buildVersion
-      );
-      const res = await fetch(apiUrl, { cache: "no-store" });
-      const data = await res.json();
-      const raw = data?.row?.studio_slugs || "";
-      cell = parsestudioCell_(raw);
-    } catch (_) {
-      rootEl.innerHTML = `<div>שגיאה בקבלת נתוני סטודיו.</div>`;
-      return { reset: () => {} };
-    }
-
-    const slugs = (cell.slugs || []).filter(Boolean);
-    if (!slugs.length) {
-      rootEl.innerHTML = `<div>לא נמצאו ציורים ל"סטודיו" בפרשה זו.</div>`;
-      return { reset: () => {} };
-    }
-
-    return render(rootEl, {
-      parashaLabel,
-      parashaName: cell.parashaName,
-      slugs,
-      baseUrl,
-      buildVersion
-    });
-  }
-
-  // ---------- UI ----------
-  function render(rootEl, model) {
-    rootEl.innerHTML = `
-      <div class="st-wrap">
-        <div class="st-cardbox">
-
-          <div class="st-topbar">
-            <div class="st-actions">
-              <button type="button" class="st-btn st-level is-on" data-level="1" aria-pressed="true">מתחיל</button>
-              <button type="button" class="st-btn st-level" data-level="2" aria-pressed="false">מקצוען</button>
-
-              <button type="button" class="st-btn st-reset">איפוס</button>
-              <button type="button" class="st-btn st-print">הדפסה</button>
-            </div>
-
-            <div class="st-status" aria-live="polite"></div>
-          </div>
-
-          <div class="st-layout">
-            <div class="st-main">
-              <div class="st-canvas" aria-label="ציור לצביעה"></div>
-            </div>
-
-            <aside class="st-side" aria-label="בחירת ציור וצבעים">
-              <div class="st-thumbBox">
-                <div class="st-thumb" aria-label="תמונה ממוזערת"></div>
-              </div>
-
-              <div class="st-dots" role="tablist" aria-label="מעבר בין ציורים"></div>
-
-              <div class="st-palette">
-                <div class="st-selected">חלק נבחר: <b class="st-selName">לא נבחר</b></div>
-
-                <div class="st-colors" aria-label="פלטת צבעים"></div>
-
-                <div class="st-paletteActions">
-                  <button type="button" class="st-btn st-undo" disabled aria-disabled="true" title="בטל פעולה אחרונה" aria-label="בטל פעולה אחרונה">
-                    ↶
-                  </button>
-                </div>
-              </div>
-            </aside>
-          </div>
-
-        </div>
-      </div>
-    `.trim();
-
-    const elStatus = rootEl.querySelector(".st-status");
-
-    const elCanvas = rootEl.querySelector(".st-canvas");
-    const elThumb = rootEl.querySelector(".st-thumb");
-    const elDots = rootEl.querySelector(".st-dots");
-
-    const btnLevel1 = rootEl.querySelector('.st-level[data-level="1"]');
-    const btnLevel2 = rootEl.querySelector('.st-level[data-level="2"]');
-    const btnReset = rootEl.querySelector(".st-reset");
-    const btnPrint = rootEl.querySelector(".st-print");
-    const btnUndo = rootEl.querySelector(".st-undo");
-
-    const elColors = rootEl.querySelector(".st-colors");
-    const elSelName = rootEl.querySelector(".st-selName");
-
-    const palette = [
-      "#facc15", "#f59e0b", "#fb923c", "#ef4444", "#fb7185",
-      "#ec4899", "#f472b6", "#a78bfa", "#8b5cf6", "#7c3aed",
-      "#60a5fa", "#3b82f6", "#2563eb", "#0ea5e9", "#06b6d4",
-      "#14b8a6", "#22c55e", "#16a34a", "#a16207", "#7c2d12",
-      "#e2e8f0", "#94a3b8", "#64748b", "#334155", "#111827"
-    ];
-
-    // state
-    const state = {
-      level: 1,
-      index: 0,
-      currentSlug: model.slugs[0],
-      currentSvg: null,
-      currentColor: palette[0],
-      // selection model:
-      // - desktop: hoverRegion is "selected" while hovering
-      // - touch: touchRegion is "selected" after tapping
-      hoverRegion: null,
-      touchRegion: null,
-      ready: false,
-      undoStack: [] // { id, prevFill, nextFill }
-    };
-
-    let statusTimer = null;
-    function setStatus_(text) {
-      elStatus.textContent = text || "";
-    }
-    function clearStatus_() {
-      if (statusTimer) {
-        clearTimeout(statusTimer);
-        statusTimer = null;
-      }
-      setStatus_("");
-    }
-    function setStatusAutoClear_(text, ms) {
-      clearStatus_();
-      setStatus_(text);
-      statusTimer = setTimeout(() => {
-        setStatus_("");
-        statusTimer = null;
-      }, Math.max(250, Number(ms || 1600)));
-    }
-
-    function setUndoEnabled_(on) {
-      const enabled = !!on;
-      btnUndo.disabled = !enabled;
-      btnUndo.setAttribute("aria-disabled", enabled ? "false" : "true");
-    }
-
-    function clearUndo_() {
-      state.undoStack = [];
-      setUndoEnabled_(false);
-    }
-
-    function clearHover_() {
-      if (state.hoverRegion) state.hoverRegion.classList.remove("is-selected");
-      state.hoverRegion = null;
-    }
-
-    function clearTouchSel_() {
-      if (state.touchRegion) state.touchRegion.classList.remove("is-selected");
-      state.touchRegion = null;
-    }
-
-    function renderSelectedName_() {
-      const el = state.hoverRegion || state.touchRegion;
-      if (!el) {
-        elSelName.textContent = "לא נבחר";
-        return;
-      }
-      elSelName.textContent =
-        el.getAttribute("data-name") ||
-        el.getAttribute("aria-label") ||
-        el.getAttribute("data-id") ||
-        "חלק";
-    }
-
-    function clearSelectionAll_() {
-      clearHover_();
-      clearTouchSel_();
-      renderSelectedName_();
-    }
-
-    function pickRegion_(regionEl, mode /* "hover" | "touch" */) {
-      if (!regionEl) return;
-
-      if (mode === "hover") {
-        if (state.hoverRegion && state.hoverRegion !== regionEl) {
-          state.hoverRegion.classList.remove("is-selected");
-        }
-        state.hoverRegion = regionEl;
-        regionEl.classList.add("is-selected");
-      } else {
-        if (state.touchRegion && state.touchRegion !== regionEl) {
-          state.touchRegion.classList.remove("is-selected");
-        }
-        state.touchRegion = regionEl;
-        regionEl.classList.add("is-selected");
-      }
-      renderSelectedName_();
-    }
-
-    function getActiveTarget_() {
-      return state.hoverRegion || state.touchRegion || null;
-    }
-
-    function getFill_(el) {
-      const f = el.getAttribute("fill");
-      return (f == null ? "transparent" : String(f));
-    }
-
-    function setFill_(el, fill) {
-      el.setAttribute("fill", fill == null ? "transparent" : String(fill));
-    }
-
-    function paintActiveWithColor_(color) {
-      const el = getActiveTarget_();
-      if (!state.currentSvg || !el) return;
-
-      const prev = getFill_(el);
-      const next = String(color);
-
-      if (prev === next) {
-        // still counts as "no-op" for undo; do nothing
-        return;
-      }
-
-      setFill_(el, next);
-
-      // push undo record
-      const id = el.getAttribute("data-id") || "";
-      state.undoStack.push({ id, prevFill: prev, nextFill: next });
-      setUndoEnabled_(state.undoStack.length > 0);
-
-      // after painting:
-      // - desktop hover stays as long as cursor is over it
-      // - touch selection should clear (so "החלפת צבע" לא משנה אחורה)
-      clearTouchSel_();
-      renderSelectedName_();
-
-      clearStatus_();
-    }
-
-    function undoLast_() {
-      if (!state.currentSvg) return;
-      const rec = state.undoStack.pop();
-      if (!rec) {
-        setUndoEnabled_(false);
-        return;
-      }
-
-      const el = state.currentSvg.querySelector(`[data-id="${CSS.escape(rec.id)}"]`);
-      if (el) setFill_(el, rec.prevFill);
-
-      setUndoEnabled_(state.undoStack.length > 0);
-
-      // keep UI clean
-      clearTouchSel_();
-      renderSelectedName_();
-      clearStatus_();
-    }
-
-    // palette UI
-    const colorButtons = [];
-    function buildPalette_() {
-      elColors.innerHTML = "";
-      colorButtons.length = 0;
-
-      palette.forEach((c) => {
-        const b = document.createElement("button");
-        b.type = "button";
-        b.className = "st-color";
-        b.style.background = c;
-        b.setAttribute("aria-label", "בחר צבע");
-        b.addEventListener("click", () => {
-          state.currentColor = c;
-          updatePaletteOn_();
-          paintActiveWithColor_(c);
-        });
-        elColors.appendChild(b);
-        colorButtons.push(b);
-      });
-
-      updatePaletteOn_();
-    }
-
-    function updatePaletteOn_() {
-      colorButtons.forEach((b) => b.classList.remove("is-on"));
-      const idx = palette.indexOf(state.currentColor);
-      if (idx >= 0 && colorButtons[idx]) colorButtons[idx].classList.add("is-on");
-    }
-
-    // dots UI
-    function buildDots_() {
-      // אם יש רק ציור אחד — לא מציגים נקודות
-      if ((model.slugs || []).length <= 1) {
-        elDots.innerHTML = "";
-        elDots.style.display = "none";
-        return;
-      }
-
-      elDots.style.display = "";
-      elDots.innerHTML = "";
-      model.slugs.forEach((slug, i) => {
-        const d = document.createElement("button");
-        d.type = "button";
-        d.className = "st-dot" + (i === state.index ? " is-on" : "");
-        d.setAttribute("aria-label", "בחירת ציור");
-        d.setAttribute("role", "tab");
-        d.setAttribute("aria-selected", i === state.index ? "true" : "false");
-        d.addEventListener("click", () => {
-          if (i === state.index) return;
-          clearStatus_();
-          clearSelectionAll_();
-          clearUndo_();
-          state.index = i;
-          state.currentSlug = model.slugs[i];
-          refreshDots_();
-          loadAndShow_().catch(() => {});
-        });
-        elDots.appendChild(d);
-      });
-    }
-
-    function refreshDots_() {
-      const dots = Array.from(elDots.querySelectorAll(".st-dot"));
-      dots.forEach((d, i) => {
-        const on = (i === state.index);
-        d.classList.toggle("is-on", on);
-        d.setAttribute("aria-selected", on ? "true" : "false");
-      });
-    }
-
-    function hardResetUiState_({ resetColor } = {}) {
-      clearStatus_();
-      clearSelectionAll_();
-      clearUndo_();
-      if (resetColor) {
-        state.currentColor = palette[0];
-        updatePaletteOn_();
-      }
-    }
-
-    function setLevel_(lvl) {
-      lvl = (lvl === 2) ? 2 : 1;
-      if (state.level === lvl) return;
-
-      // ✅ במעבר רמה: איפוס הכל (כולל Undo)
-      state.level = lvl;
-      hardResetUiState_({ resetColor: true });
-
-      if (lvl === 1) {
-        btnLevel1.classList.add("is-on");
-        btnLevel1.setAttribute("aria-pressed", "true");
-        btnLevel2.classList.remove("is-on");
-        btnLevel2.setAttribute("aria-pressed", "false");
-      } else {
-        btnLevel2.classList.add("is-on");
-        btnLevel2.setAttribute("aria-pressed", "true");
-        btnLevel1.classList.remove("is-on");
-        btnLevel1.setAttribute("aria-pressed", "false");
-      }
-
-      loadAndShow_().catch(() => {});
-    }
-
-    btnLevel1.addEventListener("click", () => setLevel_(1));
-    btnLevel2.addEventListener("click", () => setLevel_(2));
-
-    btnUndo.addEventListener("click", () => {
-      if (btnUndo.disabled) return;
-      undoLast_();
-    });
-
-    btnReset.addEventListener("click", () => {
-      if (!state.currentSvg) return;
-      state.currentSvg.querySelectorAll("[data-id]").forEach(el => setFill_(el, "transparent"));
-      hardResetUiState_({ resetColor: false });
-      setStatusAutoClear_("אופס… איפסנו את הציור הנוכחי 🙂", 1500);
-    });
-
-    btnPrint.addEventListener("click", () => {
-      if (!state.currentSvg) return;
-      try {
-        const w = window.open("", "_blank");
-        if (!w) return;
-
-        const svgOuter = state.currentSvg.outerHTML;
-
-        w.document.open();
-        w.document.write(`
-<!doctype html>
-<html dir="rtl" lang="he">
-<head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>סטודיו – הדפסה</title>
-<style>
-  body{ margin: 0; padding: 24px; font-family: system-ui, -apple-system, "Segoe UI", Arial; }
-  .wrap{ max-width: 980px; margin: 0 auto; }
-  .cap{ font-weight: 900; margin: 0 0 12px; color:#111827; }
-  svg{ width: 100%; height: auto; display:block; }
-</style>
-</head>
-<body>
-  <div class="wrap">
-    <p class="cap">סטודיו לצביעה – ${escapeHtml_(model.parashaLabel)} – ${escapeHtml_(state.currentSlug)} – רמה ${state.level}</p>
-    ${svgOuter}
-  </div>
-</body>
-</html>
-        `.trim());
-        w.document.close();
-        w.focus();
-        w.print();
-      } catch (_) {}
-    });
-
-    // ---- global wiring ----
-    let globalBound = false;
-    function bindGlobalOnce_() {
-      if (globalBound) return;
-      globalBound = true;
-
-      // tap/click outside: clear selection + status
-      rootEl.addEventListener("pointerdown", (e) => {
-        const inSvg = e.target && e.target.closest && e.target.closest(".st-canvas svg");
-        const inPanel = e.target && e.target.closest && e.target.closest(".st-side");
-        if (!inSvg && !inPanel) {
-          clearStatus_();
-          clearSelectionAll_();
-        }
-      }, { passive: true });
-    }
-
-    function attachRegionHandlers_(svgEl) {
-      // Desktop hover selection + clear on leave
-      svgEl.addEventListener("pointerover", (e) => {
-        const t = e.target;
-        if (!t || !(t instanceof Element)) return;
-        if (isTouchLike_(e)) return; // ignore hover on touch
-        const region = t.closest("[data-id]");
-        if (!region) return;
-        pickRegion_(region, "hover");
-      });
-
-      svgEl.addEventListener("pointerout", (e) => {
-        const t = e.target;
-        if (!t || !(t instanceof Element)) return;
-        if (isTouchLike_(e)) return;
-        const region = t.closest("[data-id]");
-        if (!region) return;
-
-        // only clear if leaving the current hover region
-        if (state.hoverRegion === region) {
-          region.classList.remove("is-selected");
-          state.hoverRegion = null;
-          renderSelectedName_();
-        }
-      });
-
-      // Touch: tap selects (until paint / outside)
-      svgEl.addEventListener("pointerdown", (e) => {
-        const t = e.target;
-        if (!t || !(t instanceof Element)) return;
-        const region = t.closest("[data-id]");
-        if (!region) return;
-
-        clearStatus_();
-
-        if (isTouchLike_(e)) {
-          // tap selects on touch
-          clearTouchSel_();
-          pickRegion_(region, "touch");
-        }
-        // on desktop pointerdown does nothing special (hover already handles selection)
-      }, { passive: true });
-    }
-
-    async function loadAndShow_() {
-      state.ready = false;
-      elCanvas.innerHTML = "טוען ציור...";
-      elThumb.innerHTML = "";
-
-      clearStatus_();
-      clearSelectionAll_();
-      clearUndo_();
-
-      const slug = state.currentSlug;
-      const lvl = state.level;
-
-      const svgText = await fetchSvgText_(model.baseUrl, model.buildVersion, slug, lvl);
-      const svg = extractInlineSvg_(svgText);
-      if (!svg) {
-        elCanvas.innerHTML = "שגיאה: SVG לא תקין.";
-        return;
-      }
-
-      svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
-
-      // hard clear before append
-      elCanvas.innerHTML = "";
-      elCanvas.appendChild(svg);
-
-      // ✅ thumb תמיד נקי/לא צבוע
-      const thumbSvg = svg.cloneNode(true);
-      thumbSvg.querySelectorAll("[data-id]").forEach(el => {
-        setFill_(el, "transparent");
-        el.classList.remove("is-selected");
-      });
-      elThumb.innerHTML = "";
-      elThumb.appendChild(thumbSvg);
-
-      state.currentSvg = svg;
-
-      bindGlobalOnce_();
-      attachRegionHandlers_(svg);
-
-      state.ready = true;
-    }
-
-    buildPalette_();
-    buildDots_();
-    setUndoEnabled_(false);
-
-    loadAndShow_().catch(() => {
-      elCanvas.innerHTML = "שגיאה בטעינת הציור.";
-    });
-
-    return {
-      reset: () => {
-        hardResetUiState_({ resetColor: false });
-      }
-    };
-  }
-
-  (function registerWhenReady_() {
-    if (window.ParashaGamesRegister) {
-      window.ParashaGamesRegister(GAME_ID, {
-        init: async (rootEl, ctx) => init(rootEl, ctx)
-      });
-      return;
-    }
-    setTimeout(registerWhenReady_, 30);
-  })();
-})();
+}
+
+/* ===== Main panel ===== */
+[data-parasha-games] .st-main{
+  border: 1px solid rgba(0,0,0,.10);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 12px 28px rgba(0,0,0,.10);
+  padding: 8px; /* slightly tighter */
+}
+
+/* ===== SVG canvas ===== */
+[data-parasha-games] .st-canvas{
+  width: 100%;
+  border: 1px solid rgba(0,0,0,.10);
+  border-radius: 16px;
+  background: #fff;
+  overflow: hidden;
+  touch-action: manipulation;
+
+  /* maximize drawing area */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding: 6px; /* thin strip around */
+}
+
+[data-parasha-games] .st-canvas svg{
+  width: 100%;
+  height: 100%;
+  display:block;
+  user-select: none;
+}
+
+/* Make regions feel tappable + clearer selection */
+[data-parasha-games] .st-canvas [data-id]{
+  cursor: pointer;
+  transition: filter .12s ease, opacity .12s ease;
+}
+[data-parasha-games] .st-canvas [data-id]:hover{
+  filter: drop-shadow(0 0 6px rgba(37,99,235,.18));
+}
+
+/* selected region (clear) */
+[data-parasha-games] .st-canvas [data-id].is-selected{
+  filter: drop-shadow(0 0 10px rgba(37,99,235,.35));
+}
+
+/* ===== Side panel ===== */
+[data-parasha-games] .st-side{
+  border: 1px solid rgba(0,0,0,.10);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 12px 28px rgba(0,0,0,.10);
+  padding: 10px;
+}
+
+[data-parasha-games] .st-thumbBox{
+  border: 1px solid rgba(0,0,0,.10);
+  border-radius: 16px;
+  background: #fff;
+  overflow: hidden;
+  box-shadow: 0 10px 18px rgba(0,0,0,.08);
+}
+[data-parasha-games] .st-thumb{
+  width: 100%;
+  aspect-ratio: 860 / 520;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: linear-gradient(180deg, #fff, #f6f7fb);
+}
+[data-parasha-games] .st-thumb svg{
+  width: 92%;
+  height: auto;
+  display:block;
+  opacity: .9;
+}
+
+/* dots (only shown when there are multiple) */
+[data-parasha-games] .st-dots{
+  margin-top: 10px;
+  display:flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+[data-parasha-games] .st-dot{
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  border: 2px solid rgba(0,0,0,.22);
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+[data-parasha-games] .st-dot.is-on{
+  background: rgba(0,0,0,.22);
+}
+
+/* ===== Palette ===== */
+[data-parasha-games] .st-palette{
+  margin-top: 12px;
+  border-top: 1px dashed rgba(0,0,0,.12);
+  padding-top: 10px;
+}
+
+[data-parasha-games] .st-selected{
+  text-align: center;
+  font-weight: 900;
+  font-size: 12px;
+  color: var(--st-muted);
+  margin: 0 0 10px;
+}
+[data-parasha-games] .st-selected b{
+  color: var(--st-text);
+}
+
+[data-parasha-games] .st-colors{
+  display:flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+
+[data-parasha-games] .st-color{
+  width: 26px;
+  height: 26px;
+  border-radius: 12px;
+  border: 2px solid rgba(0,0,0,.18);
+  cursor: pointer;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0,0,0,.06);
+}
+
+/* stronger selected color indicator */
+[data-parasha-games] .st-color.is-on{
+  border-color: rgba(37,99,235,.85);
+  box-shadow: 0 0 0 3px rgba(37,99,235,.18), 0 8px 18px rgba(37,99,235,.18);
+}
+[data-parasha-games] .st-color.is-on::after{
+  content:"✓";
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight: 950;
+  color:#111827;
+  text-shadow: 0 1px 0 rgba(255,255,255,.75);
+  background: rgba(255,255,255,.16);
+  border-radius: 10px;
+}
+
+[data-parasha-games] .st-color:focus-visible{
+  outline: 3px solid rgba(37,99,235,.22);
+  outline-offset: 2px;
+}
+
+[data-parasha-games] .st-paletteActions{
+  margin-top: 10px;
+  display:flex;
+  justify-content: center;
+}
