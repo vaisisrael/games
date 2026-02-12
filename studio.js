@@ -1,3 +1,4 @@
+```js
 /* קובץ מלא: studio.js – Parasha "סטודיו" (studio / Studio)
    מקור הנתונים:
      - גיליון 1: controlRow.studio = yes/no או true/false (הדלקה בלבד)
@@ -350,7 +351,7 @@
           state.currentColor = c;
           updatePaletteOn_();
 
-          // If part is selected, recolor it immediately (demo behavior)
+          // ✅ כמו בדמו: צובעים רק בלחיצה על צבע (ואז רק אם יש חלק נבחר)
           if (state.selectedRegion) paintSelected_(c);
         });
         elColors.appendChild(b);
@@ -538,7 +539,7 @@
         clearHover_();
       });
 
-      // click/tap selects and immediately paints with current color
+      // ✅ כמו בדמו: לחיצה על חלק = בחירה בלבד (ללא צביעה מידית)
       svgEl.addEventListener("pointerdown", (e) => {
         const t = e.target;
         if (!t || !(t instanceof Element)) return;
@@ -549,7 +550,7 @@
         clearHover_();
 
         setSelected_(region);
-        paintSelected_(state.currentColor);
+        // אין paint כאן. הצביעה מתבצעת רק בלחיצה על צבע בפלטה.
       }, { passive: true });
     }
 
@@ -620,3 +621,4 @@
     setTimeout(registerWhenReady_, 30);
   })();
 })();
+```
