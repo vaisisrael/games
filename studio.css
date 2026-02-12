@@ -68,6 +68,19 @@
   border-color: #93c5fd;
 }
 
+/* Undo button (near palette) */
+[data-parasha-games] .st-undo{
+  padding: 6px 10px;
+  min-width: 44px;
+  text-align: center;
+  background: #fff;
+}
+[data-parasha-games] .st-undo[disabled]{
+  opacity: .45;
+  cursor: not-allowed;
+  box-shadow: none !important;
+}
+
 /* ===== Layout ===== */
 [data-parasha-games] .st-layout{
   display:grid;
@@ -91,46 +104,44 @@
   padding: 6px; /* tighter to maximize canvas */
 }
 
-/* ===== SVG canvas (fill the area) ===== */
+/* ===== SVG canvas ===== */
 [data-parasha-games] .st-canvas{
   width: 100%;
   border: 1px solid rgba(0,0,0,.10);
   border-radius: 16px;
-  background: #fff;
+  background: #fff;          /* remove heavy grey feeling */
   overflow: hidden;
   touch-action: manipulation;
 
+  /* maximize drawing area */
   display:flex;
   align-items:center;
   justify-content:center;
-  padding: 4px; /* thin strip only */
-
-  /* make canvas tall enough so svg can "fill" */
-  height: clamp(420px, 62vh, 740px);
+  padding: 4px;              /* thin strip only */
+  min-height: 460px;
 }
 
 [data-parasha-games] .st-canvas svg{
   width: 100%;
-  max-height: 100%;
-  height: 100%;
+  height: auto;
   display:block;
   user-select: none;
 }
 
-/* ===== Regions: hover hint + selected lock ===== */
+/* Make regions feel tappable + clearer selection */
 [data-parasha-games] .st-canvas [data-id]{
   cursor: pointer;
   transition: filter .12s ease, opacity .12s ease;
 }
 
-/* hover hint (not locking) */
-[data-parasha-games] .st-canvas [data-id].is-hover{
+/* hover gives clear "this is the part" */
+[data-parasha-games] .st-canvas [data-id]:hover{
   filter: drop-shadow(0 0 8px rgba(37,99,235,.22));
 }
 
-/* locked selection is stronger */
+/* selected region (hover/touch) */
 [data-parasha-games] .st-canvas [data-id].is-selected{
-  filter: drop-shadow(0 0 14px rgba(37,99,235,.40));
+  filter: drop-shadow(0 0 12px rgba(37,99,235,.38));
 }
 
 /* ===== Side panel ===== */
@@ -222,7 +233,7 @@
 
 /* stronger selected color indicator */
 [data-parasha-games] .st-color.is-on{
-  border-color: rgba(37,99,235,.90);
+  border-color: rgba(37,99,235,.85);
   box-shadow: 0 0 0 3px rgba(37,99,235,.18), 0 8px 18px rgba(37,99,235,.18);
 }
 [data-parasha-games] .st-color.is-on::after{
@@ -244,34 +255,8 @@
   outline-offset: 2px;
 }
 
-/* ===== Undo: make it stand out ===== */
 [data-parasha-games] .st-paletteActions{
   margin-top: 10px;
   display:flex;
   justify-content: center;
-}
-[data-parasha-games] .st-undo{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding: 9px 12px;
-  min-width: 120px;
-  justify-content:center;
-
-  background: #ffffff;
-  border: 2px solid rgba(37,99,235,.45);
-  box-shadow: 0 12px 22px rgba(37,99,235,.12);
-}
-[data-parasha-games] .st-undo:hover{
-  border-color: rgba(37,99,235,.70);
-  box-shadow: 0 14px 26px rgba(37,99,235,.16);
-}
-[data-parasha-games] .st-undoText{
-  font-weight: 950;
-}
-[data-parasha-games] .st-undo[disabled]{
-  opacity: .55;
-  cursor: not-allowed;
-  box-shadow: none !important;
-  border-color: rgba(0,0,0,.16);
 }
