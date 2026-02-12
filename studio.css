@@ -114,4 +114,142 @@
 }
 
 /* Make regions feel tappable + clearer selection */
-[data-parash]()
+[data-parasha-games] .st-canvas [data-id]{
+  cursor: pointer;
+  transition: filter .12s ease, opacity .12s ease;
+}
+[data-parasha-games] .st-canvas [data-id]:hover{
+  filter: drop-shadow(0 0 6px rgba(37,99,235,.18));
+}
+
+/* selected region (demo-like clarity) */
+[data-parasha-games] .st-canvas [data-id].is-selected{
+  filter: drop-shadow(0 0 10px rgba(37,99,235,.35));
+}
+
+/* ===== Side panel ===== */
+[data-parasha-games] .st-side{
+  border: 1px solid rgba(0,0,0,.10);
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 12px 28px rgba(0,0,0,.10);
+  padding: 8px; /* tighter */
+}
+
+[data-parasha-games] .st-thumbBox{
+  border: 0;
+  border-radius: 14px;
+  background: transparent;
+  overflow: hidden;
+  box-shadow: none;
+}
+[data-parasha-games] .st-thumb{
+  width: 100%;
+  aspect-ratio: 860 / 520;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: transparent; /* remove big white feel */
+}
+[data-parasha-games] .st-thumb svg{
+  width: 100%;
+  height: auto;
+  display:block;
+  opacity: .9;
+}
+
+/* dots (only shown when there are multiple) */
+[data-parasha-games] .st-dots{
+  margin-top: 8px;
+  display:flex;
+  gap: 8px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+[data-parasha-games] .st-dot{
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  border: 2px solid rgba(0,0,0,.22);
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+[data-parasha-games] .st-dot.is-on{
+  background: rgba(0,0,0,.22);
+}
+
+/* ===== Palette ===== */
+[data-parasha-games] .st-palette{
+  margin-top: 10px;
+  border-top: 1px dashed rgba(0,0,0,.12);
+  padding-top: 10px;
+}
+
+[data-parasha-games] .st-paletteTitle{
+  font-weight: 950;
+  font-size: 13px;
+  color: var(--st-muted);
+  margin: 0 0 6px;
+  text-align: center;
+}
+
+[data-parasha-games] .st-selected{
+  text-align: center;
+  font-weight: 900;
+  font-size: 12px;
+  color: var(--st-muted);
+  margin: 0 0 10px;
+}
+[data-parasha-games] .st-selected b{
+  color: var(--st-text);
+}
+
+[data-parasha-games] .st-colors{
+  display:flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  justify-content: center;
+}
+[data-parasha-games] .st-color{
+  width: 26px;
+  height: 26px;
+  border-radius: 12px; /* clearer than circles */
+  border: 2px solid rgba(0,0,0,.18);
+  cursor: pointer;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0,0,0,.06);
+}
+
+/* ✅ stronger selected color indicator (demo-like checkmark) */
+[data-parasha-games] .st-color.is-on{
+  border-color: rgba(37,99,235,.85);
+  box-shadow: 0 0 0 3px rgba(37,99,235,.18), 0 8px 18px rgba(37,99,235,.18);
+}
+[data-parasha-games] .st-color.is-on::after{
+  content:"✓";
+  position:absolute;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight: 950;
+  color:#111827;
+  text-shadow: 0 1px 0 rgba(255,255,255,.75);
+  background: rgba(255,255,255,.16);
+  border-radius: 10px;
+}
+
+[data-parasha-games] .st-color:focus-visible{
+  outline: 3px solid rgba(37,99,235,.22);
+  outline-offset: 2px;
+}
+
+/* ===== Small hint line ===== */
+[data-parasha-games] .st-hint{
+  margin-top: 10px;
+  text-align: center;
+  font-weight: 900;
+  font-size: 12px;
+  color: var(--st-muted);
+}
