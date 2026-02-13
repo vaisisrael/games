@@ -286,7 +286,11 @@
       hoverRegion: null,    // desktop hint only
       selectedRegion: null, // locked selection
 
-      undoStack: []
+      undoStack: [],
+
+      // ✅ touch zoom/pan (mobile): internal zoom on the canvas only
+      zoom: { enabled: false, scale: 1, tx: 0, ty: 0 },
+      zoomEl: null
     };
 
     let statusTimer = null;
@@ -443,6 +447,7 @@
           clearHover_();
           clearSelected_();
           clearUndo_();
+          resetZoom_();
           state.index = i;
           state.currentSlug = model.slugs[i];
           refreshDots_();
@@ -466,6 +471,7 @@
       clearHover_();
       clearSelected_();
       clearUndo_();
+      resetZoom_();
 
       state.userPickedColor = false;
       if (resetColor) state.currentColor = palette[0];
@@ -509,6 +515,7 @@
       clearHover_();
       clearSelected_();
       clearUndo_();
+      resetZoom_();
       setStatusAutoClear_("אופס… איפסנו את הציור הנוכחי 🙂", 1500);
     });
 
@@ -548,6 +555,165 @@
         w.print();
       } catch (_) {}
     });
+
+    // ---- zoom/pan (touch) ----
+    function clamp_(v, a, b) { return Math.max(a, Math.min(b, v)); }
+
+    function applyZoomTransform_() {
+      if (!state.zoomEl) return;
+      const z = state.zoom;
+      state.zoomEl.style.transform = `translate(${z.tx}px, ${z.ty}px) scale(${z.scale})`;
+    }
+
+    function resetZoom_() {
+      state.zoom.scale = 1;
+      state.zoom.tx = 0;
+      state.zoom.ty = 0;
+      applyZoomTransform_();
+    }
+
+    function enableTouchZoom_IfNeeded_() {
+      const enable = (navigator.maxTouchPoints > 0);
+      state.zoom.enabled = !!enable;
+      if (state.zoom.enabled) {
+        // prevent page pinch-zoom / scroll while interacting inside canvas
+        elCanvas.style.touchAction = "none";
+      } else {
+        elCanvas.style.touchAction = "";
+      }
+    }
+
+    function bindTouchZoomPan_(canvasEl) {
+      // bind once
+      let bound = false;
+      return function ensureBound_() {
+        if (bound) return;
+        bound = true;
+
+        const pointers = new Map(); // id -> {x,y}
+        let pinchStart = null;      // {dist, midX, midY, scale0, tx0, ty0}
+        let panStart = null;        // {x,y, tx0, ty0, moved}
+        const TAP_MOVE_PX = 6;
+
+        function dist_(a, b) {
+          const dx = a.x - b.x;
+          const dy = a.y - b.y;
+          return Math.hypot(dx, dy);
+        }
+        function mid_(a, b) {
+          return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+        }
+
+        function onDown(e) {
+          if (!state.zoom.enabled) return;
+          if (!isTouchLike_(e)) return;
+
+          try { canvasEl.setPointerCapture(e.pointerId); } catch (_) {}
+
+          pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+          if (pointers.size === 2) {
+            const arr = Array.from(pointers.values());
+            const m = mid_(arr[0], arr[1]);
+            pinchStart = {
+              dist: Math.max(1, dist_(arr[0], arr[1])),
+              midX: m.x,
+              midY: m.y,
+              scale0: state.zoom.scale,
+              tx0: state.zoom.tx,
+              ty0: state.zoom.ty
+            };
+            panStart = null;
+          } else if (pointers.size === 1) {
+            panStart = {
+              x: e.clientX,
+              y: e.clientY,
+              tx0: state.zoom.tx,
+              ty0: state.zoom.ty,
+              moved: false
+            };
+          }
+        }
+
+        function onMove(e) {
+          if (!state.zoom.enabled) return;
+          if (!isTouchLike_(e)) return;
+          if (!pointers.has(e.pointerId)) return;
+
+          pointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+
+          // pinch
+          if (pointers.size === 2 && pinchStart) {
+            const arr = Array.from(pointers.values());
+            const d = Math.max(1, dist_(arr[0], arr[1]));
+            const m = mid_(arr[0], arr[1]);
+
+            const factor = d / pinchStart.dist;
+            const newScale = clamp_(pinchStart.scale0 * factor, 1, 4);
+
+            // keep midpoint stable in screen coords
+            const s0 = pinchStart.scale0;
+            const s1 = newScale;
+            const tx0 = pinchStart.tx0;
+            const ty0 = pinchStart.ty0;
+
+            const mx0 = pinchStart.midX;
+            const my0 = pinchStart.midY;
+
+            const mx1 = m.x;
+            const my1 = m.y;
+
+            // translate so that content under midpoint stays under finger (approx)
+            const nx = mx1 - (mx0 - tx0) * (s1 / s0);
+            const ny = my1 - (my0 - ty0) * (s1 / s0);
+
+            state.zoom.scale = newScale;
+            state.zoom.tx = nx;
+            state.zoom.ty = ny;
+
+            applyZoomTransform_();
+            return;
+          }
+
+          // pan (only when zoomed in)
+          if (pointers.size === 1 && panStart) {
+            if (state.zoom.scale <= 1) return;
+
+            const dx = e.clientX - panStart.x;
+            const dy = e.clientY - panStart.y;
+
+            if (Math.abs(dx) > TAP_MOVE_PX || Math.abs(dy) > TAP_MOVE_PX) {
+              panStart.moved = true;
+            }
+
+            state.zoom.tx = panStart.tx0 + dx;
+            state.zoom.ty = panStart.ty0 + dy;
+            applyZoomTransform_();
+          }
+        }
+
+        function onUp(e) {
+          if (!state.zoom.enabled) return;
+          if (!isTouchLike_(e)) return;
+
+          pointers.delete(e.pointerId);
+
+          if (pointers.size < 2) {
+            pinchStart = null;
+          }
+          if (pointers.size === 0) {
+            panStart = null;
+          }
+        }
+
+        canvasEl.addEventListener("pointerdown", onDown, { passive: true });
+        canvasEl.addEventListener("pointermove", onMove, { passive: true });
+        canvasEl.addEventListener("pointerup", onUp, { passive: true });
+        canvasEl.addEventListener("pointercancel", onUp, { passive: true });
+      };
+    }
+
+    const ensureTouchZoomPanBound_ = bindTouchZoomPan_(elCanvas);
 
     // ---- global wiring ----
     let globalBound = false;
@@ -596,6 +762,42 @@
         const t = e.target;
         if (!t || !(t instanceof Element)) return;
 
+        // Touch: when zoomed-in, allow pan without breaking selection:
+        // treat as tap selection only if no movement occurred (handled by pointerup below)
+        if (isTouchLike_(e) && state.zoom.enabled && state.zoom.scale > 1) {
+          // mark candidate for tap
+          const region0 = t.closest("[data-id]");
+          if (!region0) return;
+
+          const x0 = e.clientX, y0 = e.clientY;
+          const id0 = e.pointerId;
+          let moved = false;
+
+          function onMoveOnce(ev) {
+            if (ev.pointerId !== id0) return;
+            const dx = ev.clientX - x0;
+            const dy = ev.clientY - y0;
+            if (Math.abs(dx) > 6 || Math.abs(dy) > 6) moved = true;
+          }
+
+          function onUpOnce(ev) {
+            if (ev.pointerId !== id0) return;
+            svgEl.removeEventListener("pointermove", onMoveOnce);
+            svgEl.removeEventListener("pointerup", onUpOnce);
+            svgEl.removeEventListener("pointercancel", onUpOnce);
+
+            if (moved) return; // it was a pan
+            clearStatus_();
+            clearHover_();
+            setSelected_(region0);
+          }
+
+          svgEl.addEventListener("pointermove", onMoveOnce, { passive: true });
+          svgEl.addEventListener("pointerup", onUpOnce, { passive: true });
+          svgEl.addEventListener("pointercancel", onUpOnce, { passive: true });
+          return;
+        }
+
         const region = t.closest("[data-id]");
         if (!region) return;
 
@@ -612,6 +814,7 @@
       clearHover_();
       clearSelected_();
       clearUndo_();
+      resetZoom_();
 
       const slug = state.currentSlug;
       const lvl = state.level;
@@ -626,7 +829,22 @@
       svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
 
       elCanvas.innerHTML = "";
-      elCanvas.appendChild(svg);
+
+      // ✅ internal zoom wrapper (canvas only) — keeps palette in place while zooming on mobile
+      const zoomBox = document.createElement("div");
+      zoomBox.className = "st-zoom";
+      zoomBox.style.width = "100%";
+      zoomBox.style.height = "100%";
+      zoomBox.style.transformOrigin = "0 0";
+      zoomBox.style.willChange = "transform";
+      zoomBox.style.display = "flex";
+      zoomBox.style.alignItems = "center";
+      zoomBox.style.justifyContent = "center";
+
+      zoomBox.appendChild(svg);
+      elCanvas.appendChild(zoomBox);
+
+      state.zoomEl = zoomBox;
 
       // ✅ תיקון אוטומטי לשוליים גדולים ב־SVG
       // חייב להיות אחרי append (כדי ש־getBBox יעבוד בצורה אמינה)
@@ -634,8 +852,13 @@
 
       state.currentSvg = svg;
 
+      // enable + bind touch zoom/pan (mobile) once
+      enableTouchZoom_IfNeeded_();
+      ensureTouchZoomPanBound_();
+
       bindGlobalOnce_();
       attachRegionHandlers_(svg);
+      applyZoomTransform_();
     }
 
     buildPalette_();
