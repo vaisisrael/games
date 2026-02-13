@@ -66,6 +66,15 @@
     return await res.text();
   }
 
+  // NEW: fetch inspire JSON (per slug+level)
+  async function fetchInspireJson_(baseUrl, buildVersion, slug, level) {
+    const file = `studio/${slug}_inspire_l${level}.json`;
+    const url = withVersion_(String(baseUrl || "") + file, buildVersion);
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error("Failed to load INSPIRE JSON: " + url);
+    return await res.json();
+  }
+
   function extractInlineSvg_(svgText) {
     const tmp = document.createElement("div");
     tmp.innerHTML = svgText;
@@ -178,6 +187,31 @@
     svg.setAttribute("viewBox", `${nx} ${ny} ${nw} ${nh}`);
   }
 
+  // NEW: apply inspire (zoom + fills) to an svg
+  function applyInspire_(svg, inspire) {
+    if (!svg || !inspire) return;
+
+    // zoom
+    const z = inspire.zoom;
+    if (z && Number.isFinite(z.w) && Number.isFinite(z.h) && z.w > 0 && z.h > 0) {
+      svg.setAttribute("viewBox", `${z.x} ${z.y} ${z.w} ${z.h}`);
+    }
+
+    // fills
+    const pal = Array.isArray(inspire.palette) ? inspire.palette : [];
+    const fills = inspire.fills && typeof inspire.fills === "object" ? inspire.fills : {};
+
+    Object.keys(fills).forEach((id) => {
+      const idx = fills[id];
+      const color = pal[idx];
+      if (!color) return;
+
+      const el = svg.querySelector(`[data-id="${CSS.escape(id)}"]`);
+      if (!el) return;
+      el.setAttribute("fill", String(color));
+    });
+  }
+
   // ---------- init ----------
   async function init(rootEl, ctx) {
     const parashaLabel = ctx?.parashaLabel || "";
@@ -263,6 +297,8 @@
     const btnPrint = rootEl.querySelector(".st-print");
     const btnUndo = rootEl.querySelector(".st-undo");
 
+    const elActions = rootEl.querySelector(".st-actions");
+
     const elColors = rootEl.querySelector(".st-colors");
     const elSelName = rootEl.querySelector(".st-selName");
 
@@ -302,6 +338,12 @@
         startCy: 0,
         startDist: 0
       }
+    };
+
+    // NEW: inspire button + modal refs
+    const inspire = {
+      btn: null,
+      overlay: null
     };
 
     let statusTimer = null;
@@ -618,6 +660,104 @@
       updatePaletteOn_();
     }
 
+    // NEW: ensure inspire button sits left of the active level button (RTL)
+    function ensureInspireBtnPosition_() {
+      if (!inspire.btn) return;
+      const active = (state.level === 1) ? btnLevel1 : btnLevel2;
+
+      // Move button right after active level button (in RTL this is "to its left")
+      const after = active.nextSibling;
+      if (after === inspire.btn) return;
+
+      try { inspire.btn.remove(); } catch (_) {}
+      if (active && active.parentNode) {
+        active.parentNode.insertBefore(inspire.btn, active.nextSibling);
+      }
+    }
+
+    // NEW: modal open/close
+    function closeInspireModal_() {
+      if (inspire.overlay) {
+        try { inspire.overlay.remove(); } catch (_) {}
+        inspire.overlay = null;
+      }
+    }
+
+    async function openInspireModal_() {
+      // Block double-open
+      if (inspire.overlay) return;
+
+      const slug = state.currentSlug;
+      const lvl = state.level;
+
+      // Build overlay skeleton immediately (so user sees it)
+      const overlay = document.createElement("div");
+      overlay.className = "st-modalOverlay";
+      overlay.innerHTML = `
+        <div class="st-modal" role="dialog" aria-modal="true" aria-label="השראה">
+          <div class="st-modalTop">
+            <button type="button" class="st-modalClose" aria-label="סגור השראה">סגור</button>
+            <div class="st-modalTitle">השראה · ${escapeHtml_(slug)} · רמה ${lvl}</div>
+          </div>
+          <div class="st-modalBody">
+            <div class="st-modalStage">טוען השראה...</div>
+          </div>
+        </div>
+      `.trim();
+
+      const btnClose = overlay.querySelector(".st-modalClose");
+      const stage = overlay.querySelector(".st-modalStage");
+
+      btnClose.addEventListener("click", closeInspireModal_);
+      overlay.addEventListener("click", (e) => {
+        // click outside closes
+        if (e.target === overlay) closeInspireModal_();
+      });
+
+      // ESC closes
+      function onKey_(e) {
+        if (e.key === "Escape") {
+          e.preventDefault();
+          closeInspireModal_();
+        }
+      }
+      document.addEventListener("keydown", onKey_, true);
+
+      // On close: remove key listener
+      const prevClose = closeInspireModal_;
+      closeInspireModal_ = function () {
+        try { document.removeEventListener("keydown", onKey_, true); } catch (_) {}
+        if (inspire.overlay) {
+          try { inspire.overlay.remove(); } catch (_) {}
+          inspire.overlay = null;
+        }
+      };
+
+      inspire.overlay = overlay;
+      document.body.appendChild(overlay);
+
+      try {
+        const [inspireData, svgText] = await Promise.all([
+          fetchInspireJson_(model.baseUrl, model.buildVersion, slug, lvl),
+          fetchSvgText_(model.baseUrl, model.buildVersion, slug, lvl)
+        ]);
+
+        const svg = extractInlineSvg_(svgText);
+        if (!svg) throw new Error("SVG לא תקין.");
+
+        svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
+
+        // Apply inspire (zoom + fills)
+        applyInspire_(svg, inspireData);
+
+        // Render
+        stage.innerHTML = "";
+        stage.appendChild(svg);
+      } catch (err) {
+        stage.innerHTML = `שגיאה בטעינת השראה.`;
+      }
+    }
+
     function setLevel_(lvl) {
       lvl = (lvl === 2) ? 2 : 1;
       if (state.level === lvl) return;
@@ -636,6 +776,9 @@
         btnLevel1.classList.remove("is-on");
         btnLevel1.setAttribute("aria-pressed", "false");
       }
+
+      // NEW: move inspire button next to active level
+      ensureInspireBtnPosition_();
 
       loadAndShow_().catch(() => {});
     }
@@ -755,6 +898,28 @@
       }, { passive: true });
     }
 
+    // NEW: create inspire button once
+    function buildInspireBtn_() {
+      if (inspire.btn) return;
+
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "st-btn st-inspireBtn";
+      b.setAttribute("aria-label", "השראה");
+      b.setAttribute("title", "השראה");
+      b.textContent = "💡";
+
+      b.addEventListener("click", () => {
+        // always use current slug + current level (after dots/level changes)
+        openInspireModal_().catch(() => {});
+      });
+
+      inspire.btn = b;
+
+      // place next to active level button
+      ensureInspireBtnPosition_();
+    }
+
     async function loadAndShow_() {
       elCanvas.innerHTML = "טוען ציור...";
 
@@ -795,6 +960,9 @@
     buildPalette_();
     buildDots_();
     setUndoEnabled_(false);
+
+    // NEW: build inspire button after DOM exists
+    buildInspireBtn_();
 
     loadAndShow_().catch(() => {
       elCanvas.innerHTML = "שגיאה בטעינת הציור.";
