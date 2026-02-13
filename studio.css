@@ -178,6 +178,15 @@
   padding: 10px;
 }
 
+/* ✅ sticky palette on mobile (keeps colors reachable while zooming/panning the canvas) */
+@media (max-width: 640px){
+  [data-parasha-games] .st-palette{
+    position: sticky;
+    bottom: 10px;
+    z-index: 5;
+  }
+}
+
 [data-parasha-games] .st-selected{
   text-align: center;
   font-weight: 900;
