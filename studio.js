@@ -297,8 +297,6 @@
     const btnPrint = rootEl.querySelector(".st-print");
     const btnUndo = rootEl.querySelector(".st-undo");
 
-    const elActions = rootEl.querySelector(".st-actions");
-
     const elColors = rootEl.querySelector(".st-colors");
     const elSelName = rootEl.querySelector(".st-selName");
 
@@ -343,7 +341,8 @@
     // NEW: inspire button + modal refs
     const inspire = {
       btn: null,
-      overlay: null
+      overlay: null,
+      keyHandler: null
     };
 
     let statusTimer = null;
@@ -473,7 +472,7 @@
     }
 
     function center_(a, b) {
-      return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+      return { x: (a.x + a.y) / 2, y: (b.x + b.y) / 2 };
     }
 
     let zoomBound = false;
@@ -481,8 +480,6 @@
       if (zoomBound) return;
       zoomBound = true;
 
-      // חשוב: למנוע זום "דף" טבעי כדי שהפלטה לא "תברח"
-      // (הזום יקרה רק בתוך הציור עם שתי אצבעות)
       try { elCanvas.style.touchAction = "none"; } catch (_) {}
 
       const z = state.zoom;
@@ -492,12 +489,16 @@
         return { x: e.clientX - r.left, y: e.clientY - r.top };
       }
 
+      function center2_(a, b) {
+        return { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+      }
+
       function startGestureIfReady_() {
         if (z.pointers.size !== 2) return;
 
         const pts = Array.from(z.pointers.values());
         const a = pts[0], b = pts[1];
-        const c = center_(a, b);
+        const c = center2_(a, b);
         const d = dist2_(a, b);
 
         z.gesturing = true;
@@ -515,12 +516,11 @@
 
         const pts = Array.from(z.pointers.values());
         const a = pts[0], b = pts[1];
-        const c = center_(a, b);
+        const c = center2_(a, b);
         const d = dist2_(a, b) || 1;
 
         const newScale = clamp_(z.startScale * (d / z.startDist), 1, 4);
 
-        // keep the content point under the initial center
         const x0 = (z.startCx - z.startTx) / (z.startScale || 1);
         const y0 = (z.startCy - z.startTy) / (z.startScale || 1);
 
@@ -537,7 +537,6 @@
         }
       }
 
-      // Handle touch pointers on the canvas (two-finger gesture)
       elCanvas.addEventListener("pointerdown", (e) => {
         if (!isTouchLike_(e)) return;
         try { elCanvas.setPointerCapture(e.pointerId); } catch (_) {}
@@ -660,23 +659,21 @@
       updatePaletteOn_();
     }
 
-    // NEW: ensure inspire button sits left of the active level button (RTL)
+    // ---------- Inspire (NEW) ----------
     function ensureInspireBtnPosition_() {
       if (!inspire.btn) return;
       const active = (state.level === 1) ? btnLevel1 : btnLevel2;
-
-      // Move button right after active level button (in RTL this is "to its left")
-      const after = active.nextSibling;
-      if (after === inspire.btn) return;
-
       try { inspire.btn.remove(); } catch (_) {}
       if (active && active.parentNode) {
-        active.parentNode.insertBefore(inspire.btn, active.nextSibling);
+        active.parentNode.insertBefore(inspire.btn, active.nextSibling); // RTL => left of active
       }
     }
 
-    // NEW: modal open/close
     function closeInspireModal_() {
+      if (inspire.keyHandler) {
+        try { document.removeEventListener("keydown", inspire.keyHandler, true); } catch (_) {}
+        inspire.keyHandler = null;
+      }
       if (inspire.overlay) {
         try { inspire.overlay.remove(); } catch (_) {}
         inspire.overlay = null;
@@ -684,13 +681,11 @@
     }
 
     async function openInspireModal_() {
-      // Block double-open
       if (inspire.overlay) return;
 
       const slug = state.currentSlug;
       const lvl = state.level;
 
-      // Build overlay skeleton immediately (so user sees it)
       const overlay = document.createElement("div");
       overlay.className = "st-modalOverlay";
       overlay.innerHTML = `
@@ -708,30 +703,22 @@
       const btnClose = overlay.querySelector(".st-modalClose");
       const stage = overlay.querySelector(".st-modalStage");
 
-      btnClose.addEventListener("click", closeInspireModal_);
+      btnClose.addEventListener("click", (e) => {
+        try { e.preventDefault(); e.stopPropagation(); } catch (_) {}
+        closeInspireModal_();
+      });
+
       overlay.addEventListener("click", (e) => {
-        // click outside closes
         if (e.target === overlay) closeInspireModal_();
       });
 
-      // ESC closes
-      function onKey_(e) {
+      inspire.keyHandler = (e) => {
         if (e.key === "Escape") {
           e.preventDefault();
           closeInspireModal_();
         }
-      }
-      document.addEventListener("keydown", onKey_, true);
-
-      // On close: remove key listener
-      const prevClose = closeInspireModal_;
-      closeInspireModal_ = function () {
-        try { document.removeEventListener("keydown", onKey_, true); } catch (_) {}
-        if (inspire.overlay) {
-          try { inspire.overlay.remove(); } catch (_) {}
-          inspire.overlay = null;
-        }
       };
+      document.addEventListener("keydown", inspire.keyHandler, true);
 
       inspire.overlay = overlay;
       document.body.appendChild(overlay);
@@ -746,18 +733,35 @@
         if (!svg) throw new Error("SVG לא תקין.");
 
         svg.setAttribute("preserveAspectRatio", "xMidYMid meet");
-
-        // Apply inspire (zoom + fills)
         applyInspire_(svg, inspireData);
 
-        // Render
         stage.innerHTML = "";
         stage.appendChild(svg);
-      } catch (err) {
+      } catch (_) {
         stage.innerHTML = `שגיאה בטעינת השראה.`;
       }
     }
 
+    function buildInspireBtn_() {
+      if (inspire.btn) return;
+
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "st-btn st-inspireBtn";
+      b.setAttribute("aria-label", "השראה");
+      b.setAttribute("title", "השראה");
+      b.textContent = "💡";
+
+      b.addEventListener("click", (e) => {
+        try { e.preventDefault(); e.stopPropagation(); } catch (_) {}
+        openInspireModal_().catch(() => {});
+      });
+
+      inspire.btn = b;
+      ensureInspireBtnPosition_();
+    }
+
+    // ---------- Level ----------
     function setLevel_(lvl) {
       lvl = (lvl === 2) ? 2 : 1;
       if (state.level === lvl) return;
@@ -777,9 +781,7 @@
         btnLevel1.setAttribute("aria-pressed", "false");
       }
 
-      // NEW: move inspire button next to active level
       ensureInspireBtnPosition_();
-
       loadAndShow_().catch(() => {});
     }
 
@@ -886,7 +888,6 @@
         const t = e.target;
         if (!t || !(t instanceof Element)) return;
 
-        // ✅ A: בזמן מחוות שתי-אצבעות לא מסמנים חלקים
         if (isTouchLike_(e) && state.zoom && state.zoom.pointers && state.zoom.pointers.size >= 2) return;
 
         const region = t.closest("[data-id]");
@@ -896,28 +897,6 @@
         clearHover_();
         setSelected_(region);
       }, { passive: true });
-    }
-
-    // NEW: create inspire button once
-    function buildInspireBtn_() {
-      if (inspire.btn) return;
-
-      const b = document.createElement("button");
-      b.type = "button";
-      b.className = "st-btn st-inspireBtn";
-      b.setAttribute("aria-label", "השראה");
-      b.setAttribute("title", "השראה");
-      b.textContent = "💡";
-
-      b.addEventListener("click", () => {
-        // always use current slug + current level (after dots/level changes)
-        openInspireModal_().catch(() => {});
-      });
-
-      inspire.btn = b;
-
-      // place next to active level button
-      ensureInspireBtnPosition_();
     }
 
     async function loadAndShow_() {
@@ -943,13 +922,10 @@
       elCanvas.innerHTML = "";
       elCanvas.appendChild(svg);
 
-      // ✅ תיקון אוטומטי לשוליים גדולים ב־SVG
-      // חייב להיות אחרי append (כדי ש־getBBox יעבוד בצורה אמינה)
       try { maybeTightenViewBox_(svg); } catch (_) {}
 
       state.currentSvg = svg;
 
-      // ✅ A: הפעלת זום/הזזה עם שתי אצבעות בלבד (אצבע אחת תמיד בחירה)
       bindZoomOnce_();
       resetZoom_();
 
@@ -957,11 +933,11 @@
       attachRegionHandlers_(svg);
     }
 
+    // ---------- boot ----------
     buildPalette_();
     buildDots_();
     setUndoEnabled_(false);
 
-    // NEW: build inspire button after DOM exists
     buildInspireBtn_();
 
     loadAndShow_().catch(() => {
