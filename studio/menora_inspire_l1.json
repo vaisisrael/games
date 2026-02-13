@@ -1,0 +1,9 @@
+{
+  "zoom": { "x": 230, "y": 300, "w": 400, "h": 220 },
+  "palette": ["#60a5fa", "#1d4ed8", "#a78bfa", "#16a34a", "#f59e0b", "#ef4444", "#9ca3af", "#111827"],
+  "fills": {
+    "base_top": 0,
+    "base_mid": 1,
+    "base_bottom": 6
+  }
+}

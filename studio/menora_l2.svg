@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520">
+  <g stroke="#111827" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="3">
+    <!-- Base (enhanced) -->
+    <rect data-id="base_bottom_outer" data-name="בסיס תחתון חיצוני" x="250" y="410" width="360" height="70" rx="22" ry="22"/>
+    <rect data-id="base_bottom_inner" data-name="בסיס תחתון פנימי" x="270" y="424" width="320" height="44" rx="18" ry="18"/>
+    <rect data-id="base_mid_outer" data-name="בסיס אמצעי חיצוני" x="290" y="360" width="280" height="55" rx="20" ry="20"/>
+    <rect data-id="base_mid_inner" data-name="בסיס אמצעי פנימי" x="305" y="372" width="250" height="32" rx="16" ry="16"/>
+    <rect data-id="base_top_outer" data-name="בסיס עליון חיצוני" x="320" y="320" width="220" height="48" rx="18" ry="18"/>
+    <rect data-id="base_top_inner" data-name="בסיס עליון פנימי" x="335" y="332" width="190" height="24" rx="12" ry="12"/>
+
+    <!-- Central stem (outer + inner) -->
+    <path data-id="stem_outer" data-name="עמוד מרכזי חיצוני" d="M430 320 L430 145"/>
+    <path data-id="stem_inner" data-name="עמוד מרכזי פנימי" d="M430 312 L430 155"/>
+
+    <!-- Small rings (3 regions) -->
+    <circle data-id="ring_1" data-name="טבעת 1" cx="430" cy="252" r="10"/>
+    <circle data-id="ring_2" data-name="טבעת 2" cx="430" cy="280" r="10"/>
+    <circle data-id="ring_3" data-name="טבעת 3" cx="430" cy="308" r="10"/>
+
+    <!-- Branches (6 regions) -->
+    <path data-id="branch_l1" data-name="קנה שמאל 1" d="M430 245 Q320 250 120 95"/>
+    <path data-id="branch_l2" data-name="קנה שמאל 2" d="M430 245 Q330 235 220 82"/>
+    <path data-id="branch_l3" data-name="קנה שמאל 3" d="M430 245 Q350 220 320 70"/>
+    <path data-id="branch_r1" data-name="קנה ימין 1" d="M430 245 Q540 250 740 95"/>
+    <path data-id="branch_r2" data-name="קנה ימין 2" d="M430 245 Q530 235 640 82"/>
+    <path data-id="branch_r3" data-name="קנה ימין 3" d="M430 245 Q510 220 540 70"/>
+
+    <!-- Top ornament (split to 3 petals) -->
+    <path data-id="orn_petals" data-name="עלי כותרת" d="M430 145 C410 128 398 108 430 96 C462 108 450 128 430 145 Z"/>
+    <path data-id="orn_leaf_top" data-name="עלה עליון" d="M392 110 Q430 82 468 110 Q430 138 392 110 Z"/>
+    <path data-id="orn_stem" data-name="גבעול קישוט" d="M430 145 L430 110"/>
+
+    <!-- Cups (outer + inner) -->
+    <path data-id="cup_1_outer" data-name="כוס שמאל 1 חיצוני" d="M118 105 Q142 88 168 105 Q160 140 143 158 Q126 140 118 105 Z"/>
+    <path data-id="cup_1_inner" data-name="כוס שמאל 1 פנימי" d="M128 110 Q143 98 158 110 Q154 134 143 146 Q132 134 128 110 Z"/>
+
+    <path data-id="cup_2_outer" data-name="כוס שמאל 2 חיצוני" d="M218 92 Q242 75 268 92 Q260 127 243 145 Q226 127 218 92 Z"/>
+    <path data-id="cup_2_inner" data-name="כוס שמאל 2 פנימי" d="M228 97 Q243 85 258 97 Q254 121 243 133 Q232 121 228 97 Z"/>
+
+    <path data-id="cup_3_outer" data-name="כוס שמאל 3 חיצוני" d="M318 80 Q342 63 368 80 Q360 115 343 133 Q326 115 318 80 Z"/>
+    <path data-id="cup_3_inner" data-name="כוס שמאל 3 פנימי" d="M328 85 Q343 73 358 85 Q354 109 343 121 Q332 109 328 85 Z"/>
+
+    <path data-id="cup_4_outer" data-name="כוס מרכז 4 חיצוני" d="M408 74 Q419 60 430 60 Q441 60 452 74 Q447 114 430 132 Q413 114 408 74 Z"/>
+    <path data-id="cup_4_inner" data-name="כוס מרכז 4 פנימי" d="M416 78 Q423 70 430 70 Q437 70 444 78 Q441 108 430 120 Q419 108 416 78 Z"/>
+
+    <path data-id="cup_5_outer" data-name="כוס ימין 5 חיצוני" d="M492 80 Q516 63 542 80 Q534 115 517 133 Q500 115 492 80 Z"/>
+    <path data-id="cup_5_inner" data-name="כוס ימין 5 פנימי" d="M502 85 Q517 73 532 85 Q528 109 517 121 Q506 109 502 85 Z"/>
+
+    <path data-id="cup_6_outer" data-name="כוס ימין 6 חיצוני" d="M592 92 Q616 75 642 92 Q634 127 617 145 Q600 127 592 92 Z"/>
+    <path data-id="cup_6_inner" data-name="כוס ימין 6 פנימי" d="M602 97 Q617 85 632 97 Q628 121 617 133 Q606 121 602 97 Z"/>
+
+    <path data-id="cup_7_outer" data-name="כוס ימין 7 חיצוני" d="M692 105 Q716 88 742 105 Q734 140 717 158 Q700 140 692 105 Z"/>
+    <path data-id="cup_7_inner" data-name="כוס ימין 7 פנימי" d="M702 110 Q717 98 732 110 Q728 134 717 146 Q706 134 702 110 Z"/>
+
+    <!-- Flames (7 regions) -->
+    <path data-id="flame_1" data-name="להבה שמאל 1" d="M143 92 C155 78 155 58 143 44 C131 58 131 78 143 92 Z"/>
+    <path data-id="flame_2" data-name="להבה שמאל 2" d="M243 79 C255 65 255 45 243 31 C231 45 231 65 243 79 Z"/>
+    <path data-id="flame_3" data-name="להבה שמאל 3" d="M343 67 C355 53 355 33 343 19 C331 33 331 53 343 67 Z"/>
+    <path data-id="flame_4" data-name="להבה מרכז 4" d="M430 56 C442 42 442 22 430 8 C418 22 418 42 430 56 Z"/>
+    <path data-id="flame_5" data-name="להבה ימין 5" d="M517 67 C529 53 529 33 517 19 C505 33 505 53 517 67 Z"/>
+    <path data-id="flame_6" data-name="להבה ימין 6" d="M617 79 C629 65 629 45 617 31 C605 45 605 65 617 79 Z"/>
+    <path data-id="flame_7" data-name="להבה ימין 7" d="M717 92 C729 78 729 58 717 44 C705 58 705 78 717 92 Z"/>
+  </g>
+</svg>
