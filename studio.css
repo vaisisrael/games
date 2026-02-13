@@ -112,6 +112,15 @@
   height: clamp(420px, 66vh, 780px);
 }
 
+/* ✅ תיקון מובייל: גובה לפי רוחב (מונע רווחים גדולים מעל/מתחת) */
+@media (max-width: 640px){
+  [data-parasha-games] .st-canvas{
+    height: auto;
+    aspect-ratio: 1 / 1.15;
+    max-height: 82vw;
+  }
+}
+
 [data-parasha-games] .st-canvas svg{
   width: 100%;
   height: 100%;
