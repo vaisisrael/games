@@ -224,12 +224,17 @@
 }
 
 /* =========================
-   NEW: Inspire button + modal (FIXED)
+   NEW: Inspire button + modal
    ========================= */
 
-[data-parasha-games] .st-inspireBtn{
+/* ✅ ברירת מחדל: נראה כמו st-btn רגיל (בלי "מסומן תמיד") */
+[data-parasha-games] .st-inspireBtn{}
+
+/* ✅ מודגש רק כשהחלונית פתוחה */
+[data-parasha-games] .st-inspireBtn.is-on{
   background:#fff7ed;
-  border-color:rgba(245,158,11,.35);
+  border-color: rgba(245,158,11,.35);
+  box-shadow: 0 8px 18px rgba(245,158,11,.14);
 }
 
 /* ⚠️ ללא prefix כדי שיעבוד כי המודאל ב-body */
@@ -242,61 +247,72 @@
   align-items:center;
   justify-content:center;
   padding: 14px;
+
+  /* ✅ אותו פונט כללי */
+  font-family: "Rubik", system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans Hebrew", "Heebo", sans-serif !important;
+  color: #0f172a;
 }
 
 .st-modal{
-  width: min(420px, 92vw);
-  max-height: min(420px, 82vh);
-  background:#fff;
-  border:1px solid rgba(0,0,0,.12);
-  border-radius:18px;
-  box-shadow:0 18px 48px rgba(0,0,0,.22);
-  overflow:hidden;
+  width: min(280px, 84vw);
+  background: #fff;
+  border: 1px solid rgba(0,0,0,.12);
+  border-radius: 18px;
+  box-shadow: 0 18px 48px rgba(0,0,0,.22);
+  overflow: hidden;
   display:flex;
-  flex-direction:column;
+  flex-direction: column;
 }
 
 .st-modalTop{
+  position: relative;
   display:flex;
   align-items:center;
   gap:10px;
-  padding:10px 12px;
-  border-bottom:1px solid rgba(0,0,0,.10);
+  padding: 8px 10px;
+  border-bottom: 1px solid rgba(0,0,0,.10);
+  background: linear-gradient(180deg, #fff, #f8fafc);
 }
 
+/* ✅ כותרת ממורכזת */
 .st-modalTitle{
-  font-weight:900;
-  margin-inline-start:auto;
-  font-size:13px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 70%;
+  text-align: center;
+  font-weight: 900;
+  font-size: 13px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
+/* כפתור סגירה בסגנון הכללי (st-btn) */
 .st-modalClose{
-  background:#eef2ff;
-  border:1px solid rgba(0,0,0,.10);
-  border-radius:12px;
-  padding:7px 10px;
-  cursor:pointer;
-  font-weight:900;
+  /* אין כאן עיצוב מיוחד — הכפתור יקבל class st-btn ב-JS */
 }
 
 .st-modalBody{
-  padding:10px;
-  overflow:auto;
+  padding: 8px;
+  overflow: auto;
 }
 
 .st-modalStage{
-  border:1px solid rgba(0,0,0,.10);
-  border-radius:14px;
-  overflow:hidden;
+  border: 1px solid rgba(0,0,0,.10);
+  border-radius: 14px;
+  overflow: hidden;
   display:flex;
   align-items:center;
   justify-content:center;
-  height:260px; /* קומפקטי */
-  padding:6px;
+  height: 190px; /* ✅ כרטיס חמוד קומפקטי */
+  padding: 6px;
+  background: #fff;
 }
 
 .st-modalStage svg{
-  width:100%;
-  height:auto;
+  width: 100%;
+  height: auto;
+  max-height: 175px;
   pointer-events:none;
 }
