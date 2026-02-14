@@ -234,8 +234,28 @@
    ========================= */
 
 [data-parasha-games] .st-inspireBtn{
+  /* ✅ לא נראה "לחוץ" כברירת מחדל */
+  background:#eef2ff;
+  border-color: rgba(245,158,11,.35);
+}
+[data-parasha-games] .st-inspireBtn:hover{
   background:#fff7ed;
-  border-color:rgba(245,158,11,.35);
+  box-shadow: 0 6px 14px rgba(245,158,11,.12);
+}
+/* ✅ פוקוס במובייל לפעמים "נתקע" ונראה כמו מצב פעיל — מנטרלים */
+[data-parasha-games] .st-inspireBtn:focus{
+  outline: none;
+  box-shadow: none;
+}
+[data-parasha-games] .st-inspireBtn:focus-visible{
+  outline: 3px solid rgba(245,158,11,.20);
+  outline-offset: 2px;
+}
+
+/* ✅ Rubik גם במודאל (הוא ב-body) */
+.st-modalOverlay,
+.st-modalOverlay *{
+  font-family: "Rubik", system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans Hebrew", "Heebo", sans-serif !important;
 }
 
 .st-modalOverlay{
@@ -261,7 +281,7 @@
   flex-direction:column;
 }
 
-/* ✅ FIXED HEADER ALIGNMENT */
+/* ✅ Header: כותרת ממורכזת בלי לשבור את "סגור" */
 .st-modalTop{
   display:flex;
   align-items:center;
@@ -271,7 +291,7 @@
 }
 
 .st-modalTitle{
-  flex:1;
+  flex: 1;
   font-weight:900;
   font-size:13px;
   text-align:center;
