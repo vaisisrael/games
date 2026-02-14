@@ -1,0 +1,56 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520">
+  <rect x="240" y="200" width="380" height="200" rx="18" ry="18" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="ark_body" data-name="גוף הארון"/>
+  <rect x="250" y="170" width="360" height="50" rx="14" ry="14" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="ark_lid" data-name="הכפורת"/>
+  <rect x="240" y="240" width="380" height="70" rx="12" ry="12" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="ark_band" data-name="מסגרת קדמית"/>
+
+  <rect x="260" y="220" width="340" height="55" rx="10" ry="10" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="ark_panel_top" data-name="לוח עליון"/>
+  <rect x="260" y="280" width="340" height="55" rx="10" ry="10" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="ark_panel_mid" data-name="לוח אמצעי"/>
+  <rect x="260" y="340" width="340" height="50" rx="10" ry="10" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="ark_panel_bottom" data-name="לוח תחתון"/>
+  <rect x="310" y="220" width="1" height="170" fill="none" stroke="#111827" stroke-width="2.5" data-id="ark_split_1" data-name="חלוקה פנימית 1"/>
+  <rect x="430" y="220" width="1" height="170" fill="none" stroke="#111827" stroke-width="2.5" data-id="ark_split_2" data-name="חלוקה פנימית 2"/>
+  <rect x="550" y="220" width="1" height="170" fill="none" stroke="#111827" stroke-width="2.5" data-id="ark_split_3" data-name="חלוקה פנימית 3"/>
+
+  <rect x="250" y="170" width="180" height="50" rx="14" ry="14" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="lid_left" data-name="כפורת שמאל"/>
+  <rect x="430" y="170" width="180" height="50" rx="14" ry="14" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="lid_right" data-name="כפורת ימין"/>
+  <path d="M250 195 H610" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="lid_line" data-name="קו כפורת"/>
+
+  <circle cx="260" cy="300" r="12" fill="none" stroke="#111827" stroke-width="2.5" data-id="ring_fl" data-name="טבעת קדמית שמאלית"/>
+  <circle cx="600" cy="300" r="12" fill="none" stroke="#111827" stroke-width="2.5" data-id="ring_fr" data-name="טבעת קדמית ימנית"/>
+  <circle cx="260" cy="360" r="12" fill="none" stroke="#111827" stroke-width="2.5" data-id="ring_bl" data-name="טבעת אחורית שמאלית"/>
+  <circle cx="600" cy="360" r="12" fill="none" stroke="#111827" stroke-width="2.5" data-id="ring_br" data-name="טבעת אחורית ימנית"/>
+
+  <rect x="120" y="288" width="620" height="20" rx="10" ry="10" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="pole_top" data-name="בד עליון"/>
+  <rect x="120" y="352" width="620" height="20" rx="10" ry="10" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="pole_bottom" data-name="בד תחתון"/>
+  <rect x="120" y="288" width="155" height="20" rx="10" ry="10" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="pole_top_seg1" data-name="בד עליון מקטע 1"/>
+  <rect x="275" y="288" width="155" height="20" rx="10" ry="10" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="pole_top_seg2" data-name="בד עליון מקטע 2"/>
+  <rect x="430" y="288" width="155" height="20" rx="10" ry="10" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="pole_top_seg3" data-name="בד עליון מקטע 3"/>
+  <rect x="585" y="288" width="155" height="20" rx="10" ry="10" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="pole_top_seg4" data-name="בד עליון מקטע 4"/>
+  <rect x="120" y="352" width="155" height="20" rx="10" ry="10" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="pole_bottom_seg1" data-name="בד תחתון מקטע 1"/>
+  <rect x="275" y="352" width="155" height="20" rx="10" ry="10" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="pole_bottom_seg2" data-name="בד תחתון מקטע 2"/>
+  <rect x="430" y="352" width="155" height="20" rx="10" ry="10" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="pole_bottom_seg3" data-name="בד תחתון מקטע 3"/>
+  <rect x="585" y="352" width="155" height="20" rx="10" ry="10" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="pole_bottom_seg4" data-name="בד תחתון מקטע 4"/>
+
+  <path d="M320 170 C300 150, 270 138, 250 150 C278 162, 300 180, 320 190" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="cherub_left_wing" data-name="כנף כרוב שמאל"/>
+  <path d="M306 170 C292 158, 275 150, 260 151" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="wing_l_line1" data-name="קו כנף שמאל 1"/>
+  <path d="M312 176 C296 166, 280 160, 266 161" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="wing_l_line2" data-name="קו כנף שמאל 2"/>
+  <path d="M318 182 C302 174, 288 170, 274 172" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="wing_l_line3" data-name="קו כנף שמאל 3"/>
+  <path d="M322 188 C310 184, 300 182, 290 184" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="wing_l_line4" data-name="קו כנף שמאל 4"/>
+
+  <circle cx="332" cy="152" r="16" fill="none" stroke="#111827" stroke-width="2.5" data-id="cherub_left_head" data-name="ראש כרוב שמאל"/>
+  <path d="M332 136 C338 142, 338 162, 332 168" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="head_l_split" data-name="חלוקת ראש שמאל"/>
+  <path d="M340 172 C332 182, 326 196, 326 212 C340 212, 354 202, 362 190 C360 182, 352 176, 340 172 Z" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="cherub_left_body" data-name="גוף כרוב שמאל"/>
+  <path d="M332 184 C340 188, 350 188, 358 184" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="body_l_line1" data-name="קו גוף שמאל 1"/>
+  <path d="M330 198 C340 202, 350 202, 360 198" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="body_l_line2" data-name="קו גוף שמאל 2"/>
+
+  <path d="M540 170 C560 150, 590 138, 610 150 C582 162, 560 180, 540 190" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="cherub_right_wing" data-name="כנף כרוב ימין"/>
+  <path d="M554 170 C568 158, 585 150, 600 151" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="wing_r_line1" data-name="קו כנף ימין 1"/>
+  <path d="M548 176 C564 166, 580 160, 594 161" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="wing_r_line2" data-name="קו כנף ימין 2"/>
+  <path d="M542 182 C558 174, 572 170, 586 172" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="wing_r_line3" data-name="קו כנף ימין 3"/>
+  <path d="M538 188 C550 184, 560 182, 570 184" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="wing_r_line4" data-name="קו כנף ימין 4"/>
+
+  <circle cx="528" cy="152" r="16" fill="none" stroke="#111827" stroke-width="2.5" data-id="cherub_right_head" data-name="ראש כרוב ימין"/>
+  <path d="M528 136 C522 142, 522 162, 528 168" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="head_r_split" data-name="חלוקת ראש ימין"/>
+  <path d="M520 172 C528 182, 534 196, 534 212 C520 212, 506 202, 498 190 C500 182, 508 176, 520 172 Z" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="cherub_right_body" data-name="גוף כרוב ימין"/>
+  <path d="M528 184 C520 188, 510 188, 502 184" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="body_r_line1" data-name="קו גוף ימין 1"/>
+  <path d="M530 198 C520 202, 510 202, 500 198" fill="none" stroke="#111827" stroke-width="2.5" stroke-linejoin="round" data-id="body_r_line2" data-name="קו גוף ימין 2"/>
+</svg>

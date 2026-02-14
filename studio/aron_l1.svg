@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520">
+  <rect x="240" y="200" width="380" height="200" rx="18" ry="18" fill="none" stroke="#111827" stroke-width="4" stroke-linejoin="round" data-id="ark_body" data-name="גוף הארון"/>
+  <rect x="250" y="170" width="360" height="50" rx="14" ry="14" fill="none" stroke="#111827" stroke-width="4" stroke-linejoin="round" data-id="ark_lid" data-name="הכפורת"/>
+  <rect x="240" y="240" width="380" height="70" rx="12" ry="12" fill="none" stroke="#111827" stroke-width="4" stroke-linejoin="round" data-id="ark_band" data-name="מסגרת קדמית"/>
+  <circle cx="260" cy="300" r="12" fill="none" stroke="#111827" stroke-width="4" data-id="ring_fl" data-name="טבעת קדמית שמאלית"/>
+  <circle cx="600" cy="300" r="12" fill="none" stroke="#111827" stroke-width="4" data-id="ring_fr" data-name="טבעת קדמית ימנית"/>
+  <circle cx="260" cy="360" r="12" fill="none" stroke="#111827" stroke-width="4" data-id="ring_bl" data-name="טבעת אחורית שמאלית"/>
+  <circle cx="600" cy="360" r="12" fill="none" stroke="#111827" stroke-width="4" data-id="ring_br" data-name="טבעת אחורית ימנית"/>
+  <rect x="120" y="288" width="620" height="20" rx="10" ry="10" fill="none" stroke="#111827" stroke-width="4" stroke-linejoin="round" data-id="pole_top" data-name="בד עליון"/>
+  <rect x="120" y="352" width="620" height="20" rx="10" ry="10" fill="none" stroke="#111827" stroke-width="4" stroke-linejoin="round" data-id="pole_bottom" data-name="בד תחתון"/>
+  <path d="M320 170 C300 150, 270 138, 250 150 C278 162, 300 180, 320 190" fill="none" stroke="#111827" stroke-width="4" stroke-linejoin="round" data-id="cherub_left_wing" data-name="כנף כרוב שמאל"/>
+  <circle cx="332" cy="152" r="16" fill="none" stroke="#111827" stroke-width="4" data-id="cherub_left_head" data-name="ראש כרוב שמאל"/>
+  <path d="M340 172 C332 182, 326 196, 326 212 C340 212, 354 202, 362 190 C360 182, 352 176, 340 172 Z" fill="none" stroke="#111827" stroke-width="4" stroke-linejoin="round" data-id="cherub_left_body" data-name="גוף כרוב שמאל"/>
+  <path d="M540 170 C560 150, 590 138, 610 150 C582 162, 560 180, 540 190" fill="none" stroke="#111827" stroke-width="4" stroke-linejoin="round" data-id="cherub_right_wing" data-name="כנף כרוב ימין"/>
+  <circle cx="528" cy="152" r="16" fill="none" stroke="#111827" stroke-width="4" data-id="cherub_right_head" data-name="ראש כרוב ימין"/>
+  <path d="M520 172 C528 182, 534 196, 534 212 C520 212, 506 202, 498 190 C500 182, 508 176, 520 172 Z" fill="none" stroke="#111827" stroke-width="4" stroke-linejoin="round" data-id="cherub_right_body" data-name="גוף כרוב ימין"/>
+</svg>
