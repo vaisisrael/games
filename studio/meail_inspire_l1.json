@@ -1,1 +1,23 @@
-{"palette":["#60a5fa","#1d4ed8","#a78bfa","#16a34a","#f59e0b","#ef4444","#9ca3af","#111827"],"fills":{"right_shoulder":"#60a5fa","right_panel":"#1d4ed8","neck_ring":"#a78bfa","bell1":"#16a34a","bell3":"#f59e0b","left_panel":"#ef4444"}}
+{
+  "zoom": {
+    "x": 470,
+    "y": 408,
+    "w": 160,
+    "h": 90
+  },
+  "palette": [
+    "#60a5fa",
+    "#1d4ed8",
+    "#a78bfa",
+    "#16a34a",
+    "#f59e0b",
+    "#ef4444",
+    "#9ca3af",
+    "#111827"
+  ],
+  "fills": {
+    "pom-03": 5,
+    "bell-03l": 4,
+    "bell-03r": 0
+  }
+}

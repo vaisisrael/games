@@ -1,1 +1,29 @@
-{"palette":["#60a5fa","#1d4ed8","#a78bfa","#16a34a","#f59e0b","#ef4444","#9ca3af","#111827"],"fills":{"front_lower_right":"#60a5fa","front_band1":"#1d4ed8","pom1":"#a78bfa","pom2":"#16a34a","left_shoulder_bottom":"#f59e0b","left_rib1":"#ef4444","hem_3":"#9ca3af","right_shoulder_bottom":"#111827","left_mid":"#60a5fa","left_rib2":"#1d4ed8","hem_5":"#a78bfa","bell5":"#16a34a","bell3":"#f59e0b","pom3":"#ef4444"}}
+{
+  "zoom": {
+    "x": 470,
+    "y": 408,
+    "w": 160,
+    "h": 90
+  },
+  "palette": [
+    "#60a5fa",
+    "#1d4ed8",
+    "#a78bfa",
+    "#16a34a",
+    "#f59e0b",
+    "#ef4444",
+    "#9ca3af",
+    "#111827"
+  ],
+  "fills": {
+    "pom03-a": 4,
+    "pom03-b": 5,
+    "bell03l-a": 0,
+    "bell03l-b": 1,
+    "bell03r-a": 0,
+    "bell03r-b": 1,
+    "hem-trim-mid": 7,
+    "hem-mid": 6,
+    "collar-inner": 2
+  }
+}

@@ -1,20 +1,90 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" fill="none" stroke="#111827" stroke-width="3.2" stroke-linejoin="round" stroke-linecap="round">
-  <g>
-    <path data-id="bg_outline" data-name="מתאר המעיל" d="M220 90 Q430 30 640 90 L690 410 Q430 500 170 410 Z" />
-    <path data-id="neck_ring" data-name="פתח הצווארון" d="M380 110 Q430 85 480 110 Q510 130 480 150 Q430 175 380 150 Q350 130 380 110 Z" />
-    <path data-id="left_shoulder" data-name="כתף שמאל" d="M240 95 Q330 55 400 95 L360 160 Q300 150 240 130 Z" />
-    <path data-id="right_shoulder" data-name="כתף ימין" d="M460 95 Q530 55 620 95 L620 130 Q560 150 500 160 Z" />
-    <path data-id="front_panel" data-name="חזית מרכז" d="M360 160 Q430 140 500 160 L540 405 Q430 455 320 405 Z" />
-    <path data-id="left_panel" data-name="צד שמאל" d="M170 410 L240 130 Q300 150 360 160 L320 405 Q250 430 170 410 Z" />
-    <path data-id="right_panel" data-name="צד ימין" d="M500 160 Q560 150 620 130 L690 410 Q610 430 540 405 Z" />
-    <path data-id="hem_band" data-name="שפת המעיל" d="M170 410 Q430 500 690 410 L675 445 Q430 520 185 445 Z" />
-    <path data-id="bell1" data-name="פעמון 1" d="M250 438 Q260 420 280 420 Q300 420 310 438 Q295 452 280 462 Q265 452 250 438 Z" />
-    <path data-id="pom1" data-name="רימון 1" d="M320 438 Q340 414 360 438 Q365 458 340 468 Q315 458 320 438 Z" />
-    <path data-id="bell2" data-name="פעמון 2" d="M400 440 Q410 422 430 422 Q450 422 460 440 Q445 454 430 464 Q415 454 400 440 Z" />
-    <path data-id="pom2" data-name="רימון 2" d="M470 438 Q490 414 510 438 Q515 458 490 468 Q465 458 470 438 Z" />
-    <path data-id="bell3" data-name="פעמון 3" d="M550 438 Q560 420 580 420 Q600 420 610 438 Q595 452 580 462 Q565 452 550 438 Z" />
-    <path data-id="side_seam_l" data-name="תפר שמאל" d="M240 130 L185 445" />
-    <path data-id="side_seam_r" data-name="תפר ימין" d="M620 130 L675 445" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520">
+  <g stroke="#111827" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="4">
+    <path data-id="robe" data-name="מעיל הכהן"
+          d="M310 90
+             C345 70, 515 70, 550 90
+             C585 110, 620 150, 640 195
+             C654 226, 650 250, 628 260
+             L585 240
+             L585 410
+             C585 450, 555 480, 515 480
+             L345 480
+             C305 480, 275 450, 275 410
+             L275 240
+             L232 260
+             C210 250, 206 226, 220 195
+             C240 150, 275 110, 310 90
+             Z"/>
+
+    <path data-id="neck" data-name="פתח הצוואר"
+          d="M380 110
+             C395 95, 465 95, 480 110
+             C492 125, 482 150, 455 155
+             C430 160, 410 160, 405 155
+             C378 150, 368 125, 380 110
+             Z"/>
+
+    <path data-id="collar" data-name="שפת הצוואר"
+          d="M372 112
+             C392 86, 468 86, 488 112
+             C505 134, 490 172, 455 178
+             C430 183, 410 183, 405 178
+             C370 172, 355 134, 372 112
+             Z"/>
+
+    <path data-id="hem" data-name="שפת המעיל"
+          d="M300 420
+             C345 440, 515 440, 560 420
+             L560 468
+             C515 490, 345 490, 300 468
+             Z"/>
+
+    <path data-id="pom-01" data-name="רימון 1"
+          d="M335 430
+             C320 438, 318 456, 335 466
+             C352 476, 372 470, 376 454
+             C380 438, 350 422, 335 430
+             Z"/>
+    <circle data-id="bell-01" data-name="פעמון 1" cx="390" cy="452" r="16"/>
+
+    <path data-id="pom-02" data-name="רימון 2"
+          d="M415 430
+             C400 438, 398 456, 415 466
+             C432 476, 452 470, 456 454
+             C460 438, 430 422, 415 430
+             Z"/>
+    <circle data-id="bell-02" data-name="פעמון 2" cx="470" cy="452" r="16"/>
+
+    <path data-id="pom-03" data-name="רימון 3"
+          d="M495 430
+             C480 438, 478 456, 495 466
+             C512 476, 532 470, 536 454
+             C540 438, 510 422, 495 430
+             Z"/>
+    <circle data-id="bell-03l" data-name="פעמון 3 שמאל" cx="545" cy="452" r="16"/>
+    <circle data-id="bell-03r" data-name="פעמון 3 ימין" cx="585" cy="452" r="16"/>
+
+    <path data-id="pom-04" data-name="רימון 4"
+          d="M625 430
+             C610 438, 608 456, 625 466
+             C642 476, 662 470, 666 454
+             C670 438, 640 422, 625 430
+             Z"/>
+    <circle data-id="bell-04" data-name="פעמון 4" cx="680" cy="452" r="16"/>
+
+    <path data-id="fold-left" data-name="קפל שמאל"
+          d="M340 160
+             C320 230, 320 310, 345 380
+             C350 395, 340 410, 325 402
+             C290 382, 290 210, 325 158
+             C332 147, 345 150, 340 160
+             Z"/>
+    <path data-id="fold-right" data-name="קפל ימין"
+          d="M520 160
+             C540 230, 540 310, 515 380
+             C510 395, 520 410, 535 402
+             C570 382, 570 210, 535 158
+             C528 147, 515 150, 520 160
+             Z"/>
   </g>
 </svg>
