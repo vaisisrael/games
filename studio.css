@@ -158,7 +158,6 @@
   filter: drop-shadow(0 0 8px rgba(37,99,235,.22));
 }
 
-/* ✅ NEW — selected highlight (glow pulse instead of orange stroke) */
 @keyframes stSelectedPulse{
   0%{ filter: drop-shadow(0 0 6px rgba(59,130,246,.45)); }
   50%{ filter: drop-shadow(0 0 14px rgba(59,130,246,.75)); }
@@ -262,6 +261,7 @@
   flex-direction:column;
 }
 
+/* ✅ FIXED HEADER ALIGNMENT */
 .st-modalTop{
   display:flex;
   align-items:center;
@@ -271,11 +271,12 @@
 }
 
 .st-modalTitle{
+  flex:1;
   font-weight:900;
-  margin-inline-start:auto;
   font-size:13px;
   text-align:center;
-  width:100%;
+  margin:0;
+  color:#0f172a;
 }
 
 .st-modalClose{
@@ -285,6 +286,8 @@
   padding:7px 10px;
   cursor:pointer;
   font-weight:900;
+  font-size:13px;
+  white-space:nowrap;
 }
 
 .st-modalBody{
