@@ -351,6 +351,7 @@
       if (statusTimer) { clearTimeout(statusTimer); statusTimer = null; }
       setStatus_("");
     }
+    function clearStatus_() { elStatus.textContent = ""; } // (left as-is in original behavior)
     function setStatusAutoClear_(text, ms) {
       clearStatus_();
       setStatus_(text);
@@ -469,10 +470,6 @@
       const dx = (a.x - b.x);
       const dy = (a.y - b.y);
       return Math.sqrt(dx * dx + dy * dy);
-    }
-
-    function center_(a, b) {
-      return { x: (a.x + a.y) / 2, y: (b.x + b.y) / 2 };
     }
 
     let zoomBound = false;
@@ -678,6 +675,7 @@
         try { inspire.overlay.remove(); } catch (_) {}
         inspire.overlay = null;
       }
+      if (inspire.btn) inspire.btn.classList.remove("is-on");
     }
 
     async function openInspireModal_() {
@@ -689,10 +687,10 @@
       const overlay = document.createElement("div");
       overlay.className = "st-modalOverlay";
       overlay.innerHTML = `
-        <div class="st-modal" role="dialog" aria-modal="true" aria-label="השראה">
+        <div class="st-modal" role="dialog" aria-modal="true" aria-label="השראה לצביעה">
           <div class="st-modalTop">
-            <button type="button" class="st-modalClose" aria-label="סגור השראה">סגור</button>
-            <div class="st-modalTitle">השראה · ${escapeHtml_(slug)} · רמה ${lvl}</div>
+            <button type="button" class="st-btn st-modalClose" aria-label="סגור השראה">סגור</button>
+            <div class="st-modalTitle">השראה לצביעה</div>
           </div>
           <div class="st-modalBody">
             <div class="st-modalStage">טוען השראה...</div>
@@ -723,6 +721,8 @@
       inspire.overlay = overlay;
       document.body.appendChild(overlay);
 
+      if (inspire.btn) inspire.btn.classList.add("is-on");
+
       try {
         const [inspireData, svgText] = await Promise.all([
           fetchInspireJson_(model.baseUrl, model.buildVersion, slug, lvl),
@@ -748,9 +748,9 @@
       const b = document.createElement("button");
       b.type = "button";
       b.className = "st-btn st-inspireBtn";
-      b.setAttribute("aria-label", "השראה");
-      b.setAttribute("title", "השראה");
-      b.textContent = "💡";
+      b.setAttribute("aria-label", "הצג השראה");
+      b.setAttribute("title", "הצג השראה");
+      b.textContent = "🖌️";
 
       b.addEventListener("click", (e) => {
         try { e.preventDefault(); e.stopPropagation(); } catch (_) {}
