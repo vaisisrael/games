@@ -1,90 +1,167 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" width="860" height="520">
-  <g>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="l_strap" data-name="רצועה שמאל" x="260.0" y="80.0" width="120" height="70" rx="18" ry="18"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="r_strap" data-name="רצועה ימין" x="480.0" y="80.0" width="120" height="70" rx="18" ry="18"/>
-  <path fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="chain_left" data-name="שרשרת שמאל" d="M 350.0,150.0 C 310.0,205.0 315.0,190.0 275.0,135.0"/>
-  <path fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="chain_right" data-name="שרשרת ימין" d="M 510.0,150.0 C 550.0,205.0 545.0,190.0 585.0,135.0"/>
-  <circle fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="ring_left" data-name="טבעת שמאל" cx="275.0" cy="135.0" r="12"/>
-  <circle fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="ring_right" data-name="טבעת ימין" cx="585.0" cy="135.0" r="12"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="frame_outer" data-name="מסגרת חיצונית" x="220.0" y="125.0" width="420" height="320" rx="28" ry="28"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="panel_inner" data-name="לוח פנימי" x="246.0" y="151.0" width="368" height="268" rx="20" ry="20"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="stone_1" data-name="אבן 1" x="264.0" y="169.0" width="98.66666666666667" height="44.5" rx="14" ry="14"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="bezel_1" data-name="שיבוץ אבן 1" x="271.0" y="176.0" width="84.66666666666667" height="30.5" rx="11" ry="11"/>
-  <polygon fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="facetA_1" data-name="אבן 1 – פאה א" points="280.0,185.0 346.6666666666667,185.0 280.0,197.5"/>
-  <polygon fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="facetB_1" data-name="אבן 1 – פאה ב" points="346.6666666666667,185.0 346.6666666666667,197.5 280.0,197.5"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="stone_2" data-name="אבן 2" x="380.6666666666667" y="169.0" width="98.66666666666667" height="44.5" rx="14" ry="14"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="bezel_2" data-name="שיבוץ אבן 2" x="387.6666666666667" y="176.0" width="84.66666666666667" height="30.5" rx="11" ry="11"/>
-  <polygon fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="facetA_2" data-name="אבן 2 – פאה א" points="396.6666666666667,185.0 463.33333333333337,185.0 396.6666666666667,197.5"/>
-  <polygon fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="facetB_2" data-name="אבן 2 – פאה ב" points="463.33333333333337,185.0 463.33333333333337,197.5 396.6666666666667,197.5"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="stone_3" data-name="אבן 3" x="497.33333333333337" y="169.0" width="98.66666666666667" height="44.5" rx="14" ry="14"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="bezel_3" data-name="שיבוץ אבן 3" x="504.33333333333337" y="176.0" width="84.66666666666667" height="30.5" rx="11" ry="11"/>
-  <polygon fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="facetA_3" data-name="אבן 3 – פאה א" points="513.3333333333334,185.0 580.0,185.0 513.3333333333334,197.5"/>
-  <polygon fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="facetB_3" data-name="אבן 3 – פאה ב" points="580.0,185.0 580.0,197.5 513.3333333333334,197.5"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="stone_4" data-name="אבן 4" x="264.0" y="231.5" width="98.66666666666667" height="44.5" rx="14" ry="14"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="bezel_4" data-name="שיבוץ אבן 4" x="271.0" y="238.5" width="84.66666666666667" height="30.5" rx="11" ry="11"/>
-  <polygon fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="facetA_4" data-name="אבן 4 – פאה א" points="280.0,247.5 346.6666666666667,247.5 280.0,260.0"/>
-  <polygon fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="facetB_4" data-name="אבן 4 – פאה ב" points="346.6666666666667,247.5 346.6666666666667,260.0 280.0,260.0"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="stone_5" data-name="אבן 5" x="380.6666666666667" y="231.5" width="98.66666666666667" height="44.5" rx="14" ry="14"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="bezel_5" data-name="שיבוץ אבן 5" x="387.6666666666667" y="238.5" width="84.66666666666667" height="30.5" rx="11" ry="11"/>
-  <polygon fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="facetA_5" data-name="אבן 5 – פאה א" points="396.6666666666667,247.5 463.33333333333337,247.5 396.6666666666667,260.0"/>
-  <polygon fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="facetB_5" data-name="אבן 5 – פאה ב" points="463.33333333333337,247.5 463.33333333333337,260.0 396.6666666666667,260.0"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="stone_6" data-name="אבן 6" x="497.33333333333337" y="231.5" width="98.66666666666667" height="44.5" rx="14" ry="14"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="bezel_6" data-name="שיבוץ אבן 6" x="504.33333333333337" y="238.5" width="84.66666666666667" height="30.5" rx="11" ry="11"/>
-  <polygon fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="facetA_6" data-name="אבן 6 – פאה א" points="513.3333333333334,247.5 580.0,247.5 513.3333333333334,260.0"/>
-  <polygon fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="facetB_6" data-name="אבן 6 – פאה ב" points="580.0,247.5 580.0,260.0 513.3333333333334,260.0"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="stone_7" data-name="אבן 7" x="264.0" y="294.0" width="98.66666666666667" height="44.5" rx="14" ry="14"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="bezel_7" data-name="שיבוץ אבן 7" x="271.0" y="301.0" width="84.66666666666667" height="30.5" rx="11" ry="11"/>
-  <polygon fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="facetA_7" data-name="אבן 7 – פאה א" points="280.0,310.0 346.6666666666667,310.0 280.0,322.5"/>
-  <polygon fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="facetB_7" data-name="אבן 7 – פאה ב" points="346.6666666666667,310.0 346.6666666666667,322.5 280.0,322.5"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="stone_8" data-name="אבן 8" x="380.6666666666667" y="294.0" width="98.66666666666667" height="44.5" rx="14" ry="14"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="bezel_8" data-name="שיבוץ אבן 8" x="387.6666666666667" y="301.0" width="84.66666666666667" height="30.5" rx="11" ry="11"/>
-  <polygon fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="facetA_8" data-name="אבן 8 – פאה א" points="396.6666666666667,310.0 463.33333333333337,310.0 396.6666666666667,322.5"/>
-  <polygon fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="facetB_8" data-name="אבן 8 – פאה ב" points="463.33333333333337,310.0 463.33333333333337,322.5 396.6666666666667,322.5"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="stone_9" data-name="אבן 9" x="497.33333333333337" y="294.0" width="98.66666666666667" height="44.5" rx="14" ry="14"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="bezel_9" data-name="שיבוץ אבן 9" x="504.33333333333337" y="301.0" width="84.66666666666667" height="30.5" rx="11" ry="11"/>
-  <polygon fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="facetA_9" data-name="אבן 9 – פאה א" points="513.3333333333334,310.0 580.0,310.0 513.3333333333334,322.5"/>
-  <polygon fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="facetB_9" data-name="אבן 9 – פאה ב" points="580.0,310.0 580.0,322.5 513.3333333333334,322.5"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="stone_10" data-name="אבן 10" x="264.0" y="356.5" width="98.66666666666667" height="44.5" rx="14" ry="14"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="bezel_10" data-name="שיבוץ אבן 10" x="271.0" y="363.5" width="84.66666666666667" height="30.5" rx="11" ry="11"/>
-  <polygon fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="facetA_10" data-name="אבן 10 – פאה א" points="280.0,372.5 346.6666666666667,372.5 280.0,385.0"/>
-  <polygon fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="facetB_10" data-name="אבן 10 – פאה ב" points="346.6666666666667,372.5 346.6666666666667,385.0 280.0,385.0"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="stone_11" data-name="אבן 11" x="380.6666666666667" y="356.5" width="98.66666666666667" height="44.5" rx="14" ry="14"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="bezel_11" data-name="שיבוץ אבן 11" x="387.6666666666667" y="363.5" width="84.66666666666667" height="30.5" rx="11" ry="11"/>
-  <polygon fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="facetA_11" data-name="אבן 11 – פאה א" points="396.6666666666667,372.5 463.33333333333337,372.5 396.6666666666667,385.0"/>
-  <polygon fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="facetB_11" data-name="אבן 11 – פאה ב" points="463.33333333333337,372.5 463.33333333333337,385.0 396.6666666666667,385.0"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="stone_12" data-name="אבן 12" x="497.33333333333337" y="356.5" width="98.66666666666667" height="44.5" rx="14" ry="14"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="bezel_12" data-name="שיבוץ אבן 12" x="504.33333333333337" y="363.5" width="84.66666666666667" height="30.5" rx="11" ry="11"/>
-  <polygon fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="facetA_12" data-name="אבן 12 – פאה א" points="513.3333333333334,372.5 580.0,372.5 513.3333333333334,385.0"/>
-  <polygon fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="facetB_12" data-name="אבן 12 – פאה ב" points="580.0,372.5 580.0,385.0 513.3333333333334,385.0"/>
-  <path fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="cord_1" data-name="פתיל שמאל" d="M 310,440.0 C 300,465.0 320,485.0 310,515.0"/>
-  <circle fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="knot_1" data-name="קשר שמאל" cx="310" cy="470.0" r="10"/>
-  <path fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="tassel_1_1" data-name="ציצית פתיל שמאל 1" d="M 302,510.0 C 296,527.0 308,537.0 302,550.0"/>
-  <path fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="tassel_1_2" data-name="ציצית פתיל שמאל 2" d="M 310,510.0 C 304,527.0 316,537.0 310,550.0"/>
-  <path fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="tassel_1_3" data-name="ציצית פתיל שמאל 3" d="M 318,510.0 C 312,527.0 324,537.0 318,550.0"/>
-  <path fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="cord_2" data-name="פתיל ימין" d="M 550,440.0 C 540,465.0 560,485.0 550,515.0"/>
-  <circle fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="knot_2" data-name="קשר ימין" cx="550" cy="470.0" r="10"/>
-  <path fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="tassel_2_1" data-name="ציצית פתיל ימין 1" d="M 542,510.0 C 536,527.0 548,537.0 542,550.0"/>
-  <path fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="tassel_2_2" data-name="ציצית פתיל ימין 2" d="M 550,510.0 C 544,527.0 556,537.0 550,550.0"/>
-  <path fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="tassel_2_3" data-name="ציצית פתיל ימין 3" d="M 558,510.0 C 552,527.0 564,537.0 558,550.0"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="corner_tl" data-name="פינת מסגרת שמאל עליון" x="230.0" y="135.0" width="62" height="46" rx="10" ry="10"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="corner_tr" data-name="פינת מסגרת ימין עליון" x="568.0" y="135.0" width="62" height="46" rx="10" ry="10"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="corner_bl" data-name="פינת מסגרת שמאל תחתון" x="230.0" y="389.0" width="62" height="46" rx="10" ry="10"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="corner_br" data-name="פינת מסגרת ימין תחתון" x="568.0" y="389.0" width="62" height="46" rx="10" ry="10"/>
-  <path fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="stitch_top" data-name="תפר עליון" d="M 246.0,163.0 H 614.0"/>
-  <path fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="stitch_bottom" data-name="תפר תחתון" d="M 246.0,407.0 H 614.0"/>
-  <path fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="stitch_left" data-name="תפר שמאל" d="M 258.0,151.0 V 419.0"/>
-  <path fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="stitch_right" data-name="תפר ימין" d="M 602.0,151.0 V 419.0"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="link_L_1" data-name="חוליה שמאל 1" x="330.2857142857143" y="152.70423633508182" width="18" height="12" rx="6" ry="6"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="link_L_2" data-name="חוליה שמאל 2" x="319.57142857142856" y="159.26007277598646" width="18" height="12" rx="6" ry="6"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="link_L_3" data-name="חוליה שמאל 3" x="308.85714285714283" y="161.94462637597414" width="18" height="12" rx="6" ry="6"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="link_L_4" data-name="חוליה שמאל 4" x="298.1428571428571" y="159.80176923311703" width="18" height="12" rx="6" ry="6"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="link_L_5" data-name="חוליה שמאל 5" x="287.42857142857144" y="152.831501347415" width="18" height="12" rx="6" ry="6"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="link_L_6" data-name="חוליה שמאל 6" x="276.7142857142857" y="141.9899506207961" width="18" height="12" rx="6" ry="6"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="link_R_1" data-name="חוליה ימין 1" x="511.7142857142858" y="152.70423633508182" width="18" height="12" rx="6" ry="6"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="link_R_2" data-name="חוליה ימין 2" x="522.4285714285714" y="159.26007277598646" width="18" height="12" rx="6" ry="6"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="link_R_3" data-name="חוליה ימין 3" x="533.1428571428571" y="161.94462637597414" width="18" height="12" rx="6" ry="6"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="link_R_4" data-name="חוליה ימין 4" x="543.8571428571429" y="159.80176923311703" width="18" height="12" rx="6" ry="6"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="link_R_5" data-name="חוליה ימין 5" x="554.5714285714286" y="152.831501347415" width="18" height="12" rx="6" ry="6"/>
-  <rect fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" data-id="link_R_6" data-name="חוליה ימין 6" x="565.2857142857142" y="141.9899506207961" width="18" height="12" rx="6" ry="6"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520">
+  <!-- Decorative (non-coloring) lines -->
+  <g stroke="#111827" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.8">
+    <!-- Robe outer -->
+    <path d="M250 110
+             C285 85, 335 80, 380 90
+             L480 90
+             C525 80, 575 85, 610 110
+             L670 175
+             C686 195, 684 220, 664 235
+             L610 200
+             L610 430
+             C610 458, 588 480, 560 480
+             L300 480
+             C272 480, 250 458, 250 430
+             L250 200
+             L196 235
+             C176 220, 174 195, 190 175
+             Z"/>
+    <!-- Fold lines -->
+    <path d="M305 160 C320 220, 320 300, 305 420"/>
+    <path d="M430 150 C430 235, 430 330, 430 450"/>
+    <path d="M555 160 C540 220, 540 300, 555 420"/>
+    <!-- Belt guide -->
+    <path d="M270 320 C360 300, 500 300, 590 320"/>
+    <!-- Breastplate outer -->
+    <rect x="300" y="110" width="260" height="260" rx="18"/>
+    <rect x="314" y="124" width="232" height="232" rx="14"/>
+    <!-- Stitch marks (decorative) -->
+    <path d="M320 120 L540 120"/>
+    <path d="M320 360 L540 360"/>
+    <path d="M300 250 L560 250"/>
+    <!-- Stone facet guides (decorative) -->
+    <path d="M325 135 L375 185"/>
+    <path d="M380 185 L430 135"/>
+    <path d="M435 135 L485 185"/>
+    <path d="M490 185 L540 135"/>
+    <path d="M325 240 L375 190"/>
+    <path d="M380 190 L430 240"/>
+    <path d="M435 240 L485 190"/>
+    <path d="M490 190 L540 240"/>
+    <path d="M325 245 L375 295"/>
+    <path d="M380 295 L430 245"/>
+    <path d="M435 245 L485 295"/>
+    <path d="M490 295 L540 245"/>
+  </g>
+
+  <!-- Coloring regions -->
+  <g stroke="#111827" fill="none" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.8">
+    <!-- Robe panels -->
+    <path data-id="robe-left" data-name="גלימה שמאל"
+          d="M250 110 L190 175
+             C174 195, 176 220, 196 235
+             L250 200 L250 430
+             C250 458, 272 480, 300 480
+             L390 480 L390 120
+             C350 110, 305 110, 250 110 Z"/>
+    <path data-id="robe-center" data-name="גלימה אמצע"
+          d="M390 120
+             C410 115, 450 115, 470 120
+             L470 480 L390 480 Z"/>
+    <path data-id="robe-right" data-name="גלימה ימין"
+          d="M470 120 L470 480 L560 480
+             C588 480, 610 458, 610 430
+             L610 200 L664 235
+             C684 220, 686 195, 670 175
+             L610 110
+             C555 110, 510 110, 470 120 Z"/>
+
+    <!-- Belt parts -->
+    <path data-id="belt-left" data-name="אבנט שמאל"
+          d="M270 300
+             C330 286, 380 282, 430 282
+             L430 358
+             C380 358, 330 354, 270 340
+             Z"/>
+    <path data-id="belt-center" data-name="אבנט אמצע"
+          d="M430 282
+             C460 282, 500 286, 530 292
+             L530 348
+             C500 354, 460 358, 430 358
+             Z"/>
+    <path data-id="belt-right" data-name="אבנט ימין"
+          d="M530 292
+             C552 296, 572 300, 590 304
+             L590 336
+             C572 340, 552 344, 530 348
+             Z"/>
+
+    <rect data-id="buckle" data-name="אבזם" x="422" y="305" width="36" height="30" rx="6"/>
+
+    <!-- Straps + stitch regions -->
+    <path data-id="strap-left" data-name="רצועה שמאלית"
+          d="M340 130
+             C330 170, 330 220, 342 255
+             C354 290, 370 305, 390 305
+             C400 305, 406 296, 404 286
+             C396 245, 398 175, 410 132
+             C412 122, 406 114, 395 114
+             C370 114, 350 118, 340 130
+             Z"/>
+    <path data-id="strap-left-stitch" data-name="תפר רצועה שמאל"
+          d="M365 128
+             C356 170, 356 220, 366 255
+             C374 282, 382 292, 392 292
+             C394 292, 395 290, 395 286
+             C388 245, 390 175, 398 130 Z"/>
+
+    <path data-id="strap-right" data-name="רצועה ימנית"
+          d="M520 130
+             C530 170, 530 220, 518 255
+             C506 290, 490 305, 470 305
+             C460 305, 454 296, 456 286
+             C464 245, 462 175, 450 132
+             C448 122, 454 114, 465 114
+             C490 114, 510 118, 520 130
+             Z"/>
+    <path data-id="strap-right-stitch" data-name="תפר רצועה ימין"
+          d="M495 128
+             C504 170, 504 220, 494 255
+             C486 282, 478 292, 468 292
+             C466 292, 465 290, 465 286
+             C472 245, 470 175, 462 130 Z"/>
+
+    <!-- Breastplate frame split -->
+    <rect data-id="bp-frame-outer" data-name="מסגרת חיצונית" x="300" y="110" width="260" height="260" rx="18"/>
+    <rect data-id="bp-frame-inner" data-name="מסגרת פנימית" x="314" y="124" width="232" height="232" rx="14"/>
+
+    <!-- Stones (each split to 2 facets) -->
+    <!-- Stone 01 (used for inspirations) -->
+    <path data-id="stone01-a" data-name="אבן 1 חלק א" d="M325 135 L375 135 L375 185 Z"/>
+    <path data-id="stone01-b" data-name="אבן 1 חלק ב" d="M325 135 L375 185 L325 185 Z"/>
+
+    <path data-id="stone02-a" data-name="אבן 2 חלק א" d="M380 135 L430 135 L430 185 Z"/>
+    <path data-id="stone02-b" data-name="אבן 2 חלק ב" d="M380 135 L430 185 L380 185 Z"/>
+
+    <path data-id="stone03-a" data-name="אבן 3 חלק א" d="M435 135 L485 135 L485 185 Z"/>
+    <path data-id="stone03-b" data-name="אבן 3 חלק ב" d="M435 135 L485 185 L435 185 Z"/>
+
+    <path data-id="stone04-a" data-name="אבן 4 חלק א" d="M490 135 L540 135 L540 185 Z"/>
+    <path data-id="stone04-b" data-name="אבן 4 חלק ב" d="M490 135 L540 185 L490 185 Z"/>
+
+    <path data-id="stone05-a" data-name="אבן 5 חלק א" d="M325 190 L375 190 L375 240 Z"/>
+    <path data-id="stone05-b" data-name="אבן 5 חלק ב" d="M325 190 L375 240 L325 240 Z"/>
+
+    <path data-id="stone06-a" data-name="אבן 6 חלק א" d="M380 190 L430 190 L430 240 Z"/>
+    <path data-id="stone06-b" data-name="אבן 6 חלק ב" d="M380 190 L430 240 L380 240 Z"/>
+
+    <path data-id="stone07-a" data-name="אבן 7 חלק א" d="M435 190 L485 190 L485 240 Z"/>
+    <path data-id="stone07-b" data-name="אבן 7 חלק ב" d="M435 190 L485 240 L435 240 Z"/>
+
+    <path data-id="stone08-a" data-name="אבן 8 חלק א" d="M490 190 L540 190 L540 240 Z"/>
+    <path data-id="stone08-b" data-name="אבן 8 חלק ב" d="M490 190 L540 240 L490 240 Z"/>
+
+    <path data-id="stone09-a" data-name="אבן 9 חלק א" d="M325 245 L375 245 L375 295 Z"/>
+    <path data-id="stone09-b" data-name="אבן 9 חלק ב" d="M325 245 L375 295 L325 295 Z"/>
+
+    <path data-id="stone10-a" data-name="אבן 10 חלק א" d="M380 245 L430 245 L430 295 Z"/>
+    <path data-id="stone10-b" data-name="אבן 10 חלק ב" d="M380 245 L430 295 L380 295 Z"/>
+
+    <path data-id="stone11-a" data-name="אבן 11 חלק א" d="M435 245 L485 245 L485 295 Z"/>
+    <path data-id="stone11-b" data-name="אבן 11 חלק ב" d="M435 245 L485 295 L435 295 Z"/>
+
+    <path data-id="stone12-a" data-name="אבן 12 חלק א" d="M490 245 L540 245 L540 295 Z"/>
+    <path data-id="stone12-b" data-name="אבן 12 חלק ב" d="M490 245 L540 295 L490 295 Z"/>
   </g>
 </svg>
