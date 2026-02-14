@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" fill="none" stroke="#111827" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round">
+  <g>
+    <path data-id="bg_outline" data-name="מתאר המעיל" d="M220 90 Q430 30 640 90 L690 410 Q430 500 170 410 Z" />
+    <path data-id="neck_ring" data-name="פתח הצווארון" d="M380 110 Q430 85 480 110 Q510 130 480 150 Q430 175 380 150 Q350 130 380 110 Z" />
+    <path data-id="left_shoulder_top" data-name="כתף שמאל עליונה" d="M240 95 Q330 55 400 95 L385 120 Q315 105 255 110 Z" />
+    <path data-id="left_shoulder_bottom" data-name="כתף שמאל תחתונה" d="M255 110 Q315 105 385 120 L360 160 Q300 150 240 130 Z" />
+    <path data-id="right_shoulder_top" data-name="כתף ימין עליונה" d="M460 95 Q530 55 620 95 L605 110 Q545 105 475 120 Z" />
+    <path data-id="right_shoulder_bottom" data-name="כתף ימין תחתונה" d="M475 120 Q545 105 605 110 L620 130 Q560 150 500 160 Z" />
+    <path data-id="front_left" data-name="חזית שמאל" d="M360 160 Q395 150 430 152 L420 405 Q380 420 340 405 Z" />
+    <path data-id="front_mid" data-name="חזית אמצע" d="M430 152 Q465 150 500 160 L520 405 Q475 430 420 405 Z" />
+    <path data-id="front_band1" data-name="פס קדמי עליון" d="M345 245 Q430 220 515 245 L505 280 Q430 260 355 280 Z" />
+    <path data-id="front_band2" data-name="פס קדמי אמצעי" d="M335 315 Q430 295 525 315 L515 350 Q430 335 345 350 Z" />
+    <path data-id="front_lower_left" data-name="חזית תחתית שמאל" d="M340 405 Q380 420 420 405 L410 438 Q370 452 330 435 Z" />
+    <path data-id="front_lower_right" data-name="חזית תחתית ימין" d="M420 405 Q475 430 520 405 L530 435 Q490 452 420 438 Z" />
+    <path data-id="left_upper" data-name="צד שמאל עליון" d="M240 130 Q300 150 360 160 L345 245 Q280 230 225 210 Z" />
+    <path data-id="left_mid" data-name="צד שמאל אמצע" d="M225 210 Q280 230 345 245 L335 315 Q270 300 210 285 Z" />
+    <path data-id="left_lower" data-name="צד שמאל תחתון" d="M210 285 Q270 300 335 315 L340 405 Q250 430 170 410 Z" />
+    <path data-id="left_trim" data-name="פס שמאל פנימי" d="M185 445 L240 130 L225 210 L210 285 L170 410 Z" />
+    <path data-id="left_rib1" data-name="קפל שמאל 1" d="M260 170 Q250 250 245 330 Q240 390 235 430" />
+    <path data-id="left_rib2" data-name="קפל שמאל 2" d="M300 180 Q295 255 290 325 Q285 390 280 435" />
+    <path data-id="right_upper" data-name="צד ימין עליון" d="M500 160 Q560 150 620 130 L635 210 Q580 230 515 245 Z" />
+    <path data-id="right_mid" data-name="צד ימין אמצע" d="M515 245 Q580 230 635 210 L650 285 Q590 300 525 315 Z" />
+    <path data-id="right_lower" data-name="צד ימין תחתון" d="M525 315 Q590 300 650 285 L690 410 Q610 430 540 405 Z" />
+    <path data-id="right_trim" data-name="פס ימין פנימי" d="M675 445 L620 130 L635 210 L650 285 L690 410 Z" />
+    <path data-id="right_rib1" data-name="קפל ימין 1" d="M600 170 Q610 250 615 330 Q620 390 625 430" />
+    <path data-id="right_rib2" data-name="קפל ימין 2" d="M560 180 Q565 255 570 325 Q575 390 580 435" />
+    <path data-id="hem_1" data-name="שפת המעיל 1" d="M185.0 445 Q215.6 480 246.2 445 L244.2 432 Q215.6 465 187.0 432 Z" />
+    <path data-id="hem_2" data-name="שפת המעיל 2" d="M246.2 445 Q276.9 480 307.5 445 L305.5 432 Q276.9 465 248.2 432 Z" />
+    <path data-id="hem_3" data-name="שפת המעיל 3" d="M307.5 445 Q338.1 480 368.8 445 L366.8 432 Q338.1 465 309.5 432 Z" />
+    <path data-id="hem_4" data-name="שפת המעיל 4" d="M368.8 445 Q399.4 480 430.0 445 L428.0 432 Q399.4 465 370.8 432 Z" />
+    <path data-id="hem_5" data-name="שפת המעיל 5" d="M430.0 445 Q460.6 480 491.2 445 L489.2 432 Q460.6 465 432.0 432 Z" />
+    <path data-id="hem_6" data-name="שפת המעיל 6" d="M491.2 445 Q521.9 480 552.5 445 L550.5 432 Q521.9 465 493.2 432 Z" />
+    <path data-id="hem_7" data-name="שפת המעיל 7" d="M552.5 445 Q583.1 480 613.8 445 L611.8 432 Q583.1 465 554.5 432 Z" />
+    <path data-id="hem_8" data-name="שפת המעיל 8" d="M613.8 445 Q644.4 480 675.0 445 L673.0 432 Q644.4 465 615.8 432 Z" />
+    <path data-id="bell1" data-name="פעמון 1" d="M240 438 Q250 420 270 420 Q290 420 300 438 Q285 454 270 464 Q255 454 240 438 Z" />
+    <path data-id="pom1" data-name="רימון 1" d="M310 438 Q330 414 350 438 Q355 458 330 468 Q305 458 310 438 Z" />
+    <path data-id="bell2" data-name="פעמון 2" d="M315 438 Q325 420 345 420 Q365 420 375 438 Q360 454 345 464 Q330 454 315 438 Z" />
+    <path data-id="pom2" data-name="רימון 2" d="M385 438 Q405 414 425 438 Q430 458 405 468 Q380 458 385 438 Z" />
+    <path data-id="bell3" data-name="פעמון 3" d="M390 438 Q400 420 420 420 Q440 420 450 438 Q435 454 420 464 Q405 454 390 438 Z" />
+    <path data-id="pom3" data-name="רימון 3" d="M460 438 Q480 414 500 438 Q505 458 480 468 Q455 458 460 438 Z" />
+    <path data-id="bell4" data-name="פעמון 4" d="M465 438 Q475 420 495 420 Q515 420 525 438 Q510 454 495 464 Q480 454 465 438 Z" />
+    <path data-id="pom4" data-name="רימון 4" d="M535 438 Q555 414 575 438 Q580 458 555 468 Q530 458 535 438 Z" />
+    <path data-id="bell5" data-name="פעמון 5" d="M540 438 Q550 420 570 420 Q590 420 600 438 Q585 454 570 464 Q555 454 540 438 Z" />
+    <path data-id="pom5" data-name="רימון 5" d="M610 438 Q630 414 650 438 Q655 458 630 468 Q605 458 610 438 Z" />
+    <path data-id="side_seam_l" data-name="תפר שמאל" d="M240 130 L185 445" />
+    <path data-id="side_seam_r" data-name="תפר ימין" d="M620 130 L675 445" />
+    <path data-id="center_seam" data-name="תפר מרכז" d="M430 150 L430 438" />
+  </g>
+</svg>
