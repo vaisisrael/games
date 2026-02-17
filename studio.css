@@ -109,13 +109,17 @@
   justify-content:center;
 
   padding: 4px;
-  height: clamp(420px, 66vh, 780px);
+
+  /* ✅ תיקון נייח: יחס כמו SVG כדי לצמצם רווחים */
+  height: auto;
+  aspect-ratio: 860 / 520;
+  max-height: clamp(420px, 66vh, 780px);
 }
 
 @media (max-width: 640px){
   [data-parasha-games] .st-canvas{
     height: auto;
-    aspect-ratio: 1 / 1.15;
+    aspect-ratio: 860 / 520; /* ✅ תיקון מובייל */
     max-height: 82vw;
   }
 }
