@@ -68,7 +68,14 @@
   border-color: #93c5fd;
 }
 
-/* Undo button */
+/* ✅ NEW: שם ציור מעל הקנבס (נראה כמו כפתור) */
+[data-parasha-games] .st-figName{
+  width: max-content;
+  margin: 0 auto 6px;
+  cursor: default;
+}
+
+ /* Undo button */
 [data-parasha-games] .st-undo{
   padding: 6px 10px;
   min-width: 44px;
