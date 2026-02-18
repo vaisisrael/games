@@ -500,6 +500,7 @@
       setUndoEnabled_(state.undoStack.length > 0);
 
       clearStatus_();
+       clearSelected_();
     }
 
     function undoLast_() {
