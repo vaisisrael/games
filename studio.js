@@ -220,6 +220,7 @@
     const CONTROL_API = ctx?.CONTROL_API || "";
 
     let cell = { parashaName: "", slugs: [] };
+    let names = [];
     try {
       const apiUrl = withVersion_(
         `${CONTROL_API}?mode=studio&parasha=${encodeURIComponent(parashaLabel)}`,
@@ -229,6 +230,10 @@
       const data = await res.json();
       const raw = data?.row?.studio_slugs || "";
       cell = parsestudioCell_(raw);
+
+      // ✅ NEW: studio_names (CSV of display names, aligned with slugs)
+      const rawNames = data?.row?.studio_names || "";
+      names = parseCsvList(rawNames);
     } catch (_) {
       rootEl.innerHTML = `<div>שגיאה בקבלת נתוני סטודיו.</div>`;
       return { reset: () => {} };
@@ -244,6 +249,7 @@
       parashaLabel,
       parashaName: cell.parashaName,
       slugs,
+      names, // ✅ NEW
       baseUrl,
       buildVersion
     });
@@ -268,6 +274,7 @@
 
           <div class="st-layout">
             <div class="st-main">
+              <div class="st-figName st-btn" aria-label="שם הציור"></div>
               <div class="st-canvas" aria-label="ציור לצביעה"></div>
               <div class="st-dots" role="tablist" aria-label="מעבר בין ציורים"></div>
             </div>
@@ -290,6 +297,7 @@
     const elStatus = rootEl.querySelector(".st-status");
     const elCanvas = rootEl.querySelector(".st-canvas");
     const elDots = rootEl.querySelector(".st-dots");
+    const elFigName = rootEl.querySelector(".st-figName");
 
     const btnLevel1 = rootEl.querySelector('.st-level[data-level="1"]');
     const btnLevel2 = rootEl.querySelector('.st-level[data-level="2"]');
@@ -347,6 +355,16 @@
       overlay: null,
       keyHandler: null
     };
+
+    // ✅ NEW: current figure name
+    function getCurrentFigName_() {
+      const n = (model.names && model.names[state.index]) ? String(model.names[state.index]) : "";
+      return n.trim() || String(state.currentSlug || "").trim();
+    }
+    function renderFigName_() {
+      if (!elFigName) return;
+      elFigName.textContent = getCurrentFigName_();
+    }
 
     let statusTimer = null;
     function setStatus_(text) { elStatus.textContent = text || ""; }
@@ -689,6 +707,7 @@
           clearUndo_();
           state.index = i;
           state.currentSlug = model.slugs[i];
+          renderFigName_(); // ✅ NEW
           refreshDots_();
           loadAndShow_().catch(() => {});
         });
@@ -1003,6 +1022,8 @@
     setUndoEnabled_(false);
 
     buildInspireBtn_();
+
+    renderFigName_(); // ✅ NEW
 
     loadAndShow_().catch(() => {
       elCanvas.innerHTML = "שגיאה בטעינת הציור.";
