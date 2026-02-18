@@ -86,7 +86,7 @@
   font-weight: 900;
   font-size: 13px;
   color: var(--mono-muted);
-  min-width: 86px;
+  min-width: 120px;
 }
 
 /* ===== Board ===== */
@@ -211,6 +211,22 @@
   direction: rtl;
 }
 
+/* IMPORTANT: bring the same button look into modal (modal lives in body, not under [data-parasha-games]) */
+.mono-modalOverlay .mono-btn{
+  border: 1px solid rgba(0,0,0,.10);
+  background: #eef2ff;
+  border-radius: 12px;
+  padding: 7px 10px;
+  cursor: pointer;
+  font-weight: 900;
+  font-size: 13px;
+  user-select:none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.mono-modalOverlay .mono-btn:hover{ box-shadow: 0 6px 14px rgba(0,0,0,.06); }
+.mono-modalOverlay .mono-btn[disabled]{ opacity:.55; cursor:not-allowed; box-shadow:none !important; }
+
 .mono-modal{
   width: min(520px, 92vw);
   max-height: min(520px, 82vh);
@@ -221,6 +237,12 @@
   overflow:hidden;
   display:flex;
   flex-direction:column;
+
+  /* allow dragging (JS sets left/top). Keep it above overlay content. */
+  position: fixed;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
 
 .mono-modalTop{
@@ -229,7 +251,12 @@
   gap:10px;
   padding:10px 12px;
   border-bottom:1px solid rgba(0,0,0,.10);
+  cursor: grab;
+  user-select:none;
+  -webkit-user-select:none;
+  touch-action: none;
 }
+.mono-modalTop:active{ cursor: grabbing; }
 
 .mono-modalTitle{
   flex: 1;
@@ -240,20 +267,20 @@
   color:#0f172a;
 }
 
-.mono-modalClose{
-  background:#eef2ff;
-  border:1px solid rgba(0,0,0,.10);
-  border-radius:12px;
-  padding:7px 10px;
-  cursor:pointer;
-  font-weight:900;
-  font-size:13px;
-  white-space:nowrap;
-}
-
 .mono-modalBody{
   padding:12px;
   overflow:auto;
+}
+
+.mono-modalScore{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  font-weight: 950;
+  color: rgba(15,23,42,.70);
+  margin-bottom: 10px;
+  font-size: 13px;
+  white-space: nowrap;
 }
 
 .mono-cardText{
