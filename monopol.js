@@ -15,6 +15,13 @@
 
   const GAME_ID = "monopol";
 
+  // Movement timing (slower as requested)
+  const MOVE_STEP_MS = 320;
+  const MOVE_FINAL_MS = 450;
+
+  // After landing: wait 1s before showing the card
+  const AFTER_LAND_PAUSE_MS = 1000;
+
   function withVersion_(url, buildVersion) {
     try {
       const u = new URL(url, window.location.href);
@@ -144,7 +151,7 @@
             <div class="mono-actions">
               <button type="button" class="mono-btn mono-roll">🎲 זרוק קובייה</button>
               <div class="mono-die" aria-label="קובייה" role="status">
-                <span class="mono-dieNum">1</span>
+                <span class="mono-dieNum">0</span>
               </div>
               <div class="mono-dieText" aria-live="polite">תורך</div>
             </div>
@@ -202,6 +209,11 @@
       return type;
     }
 
+    function cellTypeByIndex_(idx) {
+      const id = model.cells[idx];
+      return cellTypeById_(id);
+    }
+
     function buildBoardDom_() {
       elBoard.innerHTML = "";
       const display = model.displayGrid;
@@ -247,11 +259,28 @@
       });
     }
 
+    function chooseDieValue_(who) {
+      // If player has 0 points: don't allow a roll that lands on a trap cell (if possible)
+      const score = (who === "bot") ? state.botScore : state.humanScore;
+      const pos = (who === "bot") ? state.botPos : state.humanPos;
+
+      if (score !== 0) return randInt_(1, 6);
+
+      const safe = [];
+      for (let v = 1; v <= 6; v++) {
+        const landed = Math.min(pos + v, 23);
+        const t = cellTypeByIndex_(landed);
+        if (t !== "trap") safe.push(v);
+      }
+
+      if (safe.length) return safe[randInt_(0, safe.length - 1)];
+      return randInt_(1, 6);
+    }
+
     async function animateDieRoll_(finalValue, who) {
       state.rolling = true;
       setRollEnabled_(false);
 
-      // status text during roll
       if (who === "bot") setDieText_("🤖 זורק קובייה…");
       else setDieText_("מגריל…");
 
@@ -278,17 +307,16 @@
       const from = (who === "bot") ? state.botPos : state.humanPos;
       const to = Math.min(from + steps, lastIdx);
 
-      // walk
       for (let p = from + 1; p <= to; p++) {
         if (who === "bot") state.botPos = p;
         else state.humanPos = p;
 
         state.activeCellIdx = p;
         updateTokensAndActive_();
-        await sleep_(220);
+        await sleep_(MOVE_STEP_MS);
       }
 
-      await sleep_(350);
+      await sleep_(MOVE_FINAL_MS);
 
       return to;
     }
@@ -309,19 +337,29 @@
         </div>
       `.trim();
 
-      function close() {
+      const closeBtn = overlay.querySelector(".mono-modalClose");
+      if (opts.hideClose) closeBtn.style.display = "none";
+
+      let _resolve = null;
+      const closedPromise = new Promise(res => { _resolve = res; });
+
+      function close(reason) {
         overlay.remove();
-        if (typeof opts.onClose === "function") opts.onClose();
+        if (typeof opts.onClose === "function") opts.onClose(reason);
+        if (_resolve) _resolve(reason);
       }
 
-      overlay.addEventListener("click", (e) => {
-        if (e.target === overlay) close();
-      });
-      overlay.querySelector(".mono-modalClose").addEventListener("click", close);
+      if (!opts.disableBackdropClose) {
+        overlay.addEventListener("click", (e) => {
+          if (e.target === overlay) close("backdrop");
+        });
+      }
+
+      closeBtn.addEventListener("click", () => close("close"));
 
       document.body.appendChild(overlay);
 
-      return { close, overlay };
+      return { close, overlay, closed: closedPromise };
     }
 
     function applyScore_(who, delta) {
@@ -333,7 +371,7 @@
 
     function switchTurn_() {
       state.turn = (state.turn === "human") ? "bot" : "human";
-      setDieText_(state.turn === "human" ? "תורך" : "תור הבוט");
+      setDieText_(state.turn === "human" ? "תורך" : "תור המחשב");
       setRollEnabled_(state.turn === "human" && !state.ended);
     }
 
@@ -353,22 +391,24 @@
         </div>
       `.trim();
 
-      let closed = false;
+      // Apply the score immediately upon showing (as before),
+      // but keep the flow blocked until the user clicks "המשך".
       const modal = openModal_(typeIcon_(type) + " " + title, body, {
-        onClose: () => { closed = true; }
+        hideClose: true,
+        disableBackdropClose: true
       });
 
-      // apply action immediately when shown (MVP)
       applyScore_(who, reward);
 
       const btn = modal.overlay.querySelector(".mono-continue");
-      btn.addEventListener("click", () => modal.close());
+      btn.addEventListener("click", () => modal.close("continue"));
 
       if (who === "bot") {
-        // bot reading time
         await sleep_(2000);
-        if (!closed) modal.close();
+        modal.close("auto");
       }
+
+      await modal.closed;
     }
 
     async function handleQuiz_(who, row) {
@@ -378,7 +418,7 @@
       const correct = safeText_(row.correct);
       const reward = Number(row.reward || 0) || 0;
 
-      const buttonsHtml = answers.map((a, i) => {
+      const buttonsHtml = answers.map((a) => {
         const disabledAttr = (!a ? "disabled" : "");
         return `<button type="button" class="mono-ans" data-ans="${encodeURIComponent(a)}" ${disabledAttr}>${a || "—"}</button>`;
       }).join("");
@@ -393,9 +433,12 @@
       `.trim();
 
       let locked = false;
-      let chosen = null;
 
-      const modal = openModal_("❓ " + qTitle, body, {});
+      const modal = openModal_("❓ " + qTitle, body, {
+        hideClose: true,
+        disableBackdropClose: true
+      });
+
       const ansBtns = Array.from(modal.overlay.querySelectorAll(".mono-ans"));
       const botLine = modal.overlay.querySelector(".mono-botLine");
       const actions = modal.overlay.querySelector(".mono-cardActions");
@@ -436,29 +479,26 @@
         actions.style.display = "flex";
       }
 
-      // Human interaction
+      // Human interaction (must block flow until "המשך")
       if (who === "human") {
         ansBtns.forEach(btn => {
           btn.addEventListener("click", () => {
             if (locked) return;
             const a = decodeURIComponent(btn.dataset.ans || "");
-            chosen = a;
-            reveal_(chosen);
+            reveal_(a);
           });
         });
 
-        btnContinue.addEventListener("click", () => modal.close());
+        btnContinue.addEventListener("click", () => modal.close("continue"));
+        await modal.closed;
         return;
       }
 
       // Bot flow
-      // 2s read
       await sleep_(2000);
       botLine.style.display = "block";
-      // 2.5s think
       await sleep_(2500);
 
-      // choose with 60% correctness
       const willBeCorrect = chance_(0.6);
       let pick = correct;
 
@@ -470,15 +510,14 @@
       const pickBtn = findBtnByAnswer_(pick);
       if (pickBtn) pickBtn.classList.add("is-botSelect");
 
-      // 0.6s drama
       await sleep_(600);
 
       reveal_(pick);
 
-      // 1.2s result
       await sleep_(1200);
 
-      modal.close();
+      modal.close("auto");
+      await modal.closed;
     }
 
     async function handleLanding_(who, idx) {
@@ -486,6 +525,9 @@
       const row = model.idMap.get(id) || { id, type: "station", title: "", text: "", reward: 0 };
 
       const type = normalizeType_(row.type);
+
+      // Pause after landing (as requested)
+      await sleep_(AFTER_LAND_PAUSE_MS);
 
       if (type === "end") {
         state.ended = true;
@@ -496,7 +538,7 @@
 
         let winnerText = "תיקו!";
         if (h > b) winnerText = "נצחת! 🎉";
-        else if (b > h) winnerText = "הבוט ניצח 🤖";
+        else if (b > h) winnerText = "המחשב ניצח 🤖";
 
         const body = `
           <div class="mono-cardText">הגעתם לסיום. המשחק נגמר.</div>
@@ -507,16 +549,19 @@
           </div>
         `.trim();
 
-        const modal = openModal_("🏆 סיום", body, {});
+        const modal = openModal_("🏆 סיום", body, {
+          hideClose: true,
+          disableBackdropClose: true
+        });
+
         modal.overlay.querySelector(".mono-restart").addEventListener("click", () => {
-          modal.close();
+          modal.close("restart");
           restart_();
         });
+
+        await modal.closed;
         return;
       }
-
-      // 0.7s after landing open card (per spec for bot too; human feels instant enough)
-      await sleep_(700);
 
       if (type === "quiz") {
         await handleQuiz_(who, row);
@@ -530,7 +575,7 @@
 
       setRollEnabled_(false);
 
-      const steps = randInt_(1, 6);
+      const steps = chooseDieValue_(who);
       await animateDieRoll_(steps, who);
 
       const landedIdx = await moveTokenStepByStep_(who, steps);
@@ -542,7 +587,6 @@
       switchTurn_();
 
       if (state.turn === "bot") {
-        // bot starts its roll automatically
         await sleep_(300);
         await doTurn_("bot");
       }
@@ -558,7 +602,7 @@
       state.activeCellIdx = 0;
       state.ended = false;
 
-      elDieNum.textContent = "1";
+      elDieNum.textContent = "0";
       setDieText_("תורך");
       updateScores_();
       updateTokensAndActive_();
@@ -569,6 +613,7 @@
     buildBoardDom_();
     updateScores_();
     updateTokensAndActive_();
+    elDieNum.textContent = "0";
     setDieText_("תורך");
     setRollEnabled_(true);
 
@@ -604,7 +649,6 @@
       const rows = await fetchData_(CONTROL_API, parashaLabel, buildVersion);
       const idMap = buildIdMap_(rows);
 
-      // ensure all ids exist at least with defaults
       const fixedCells = cells.map(id => safeText_(id));
       const displayGrid = buildBoardGrid_(fixedCells);
 
