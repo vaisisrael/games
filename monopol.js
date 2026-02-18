@@ -83,14 +83,7 @@
     }
   }
 
-  function rewardText_(reward) {
-    const n = Number(reward || 0);
-    if (!n) return "";
-    return (n > 0 ? `+${n}⭐` : `${n}⭐`);
-  }
-
   function gridPosForIndex_(i) {
-    // 3×8 snake: row 0 L->R, row 1 R->L, row 2 L->R
     const row = Math.floor(i / 8);
     const colInRow = i % 8;
     const col = (row % 2 === 0) ? colInRow : (7 - colInRow);
@@ -188,12 +181,24 @@
       ended: false
     };
 
-    function scoreLine_() {
+    // Modal live references (to keep score line synced)
+    let activeModalOverlay = null;
+    let activeModalScoreEl = null;
+
+    function whoLabel_(who) {
+      return (who === "bot") ? "המחשב" : "אתה";
+    }
+
+    function scoreLineHtml_() {
       return `👦 ${state.humanScore}⭐ <span class="mono-scoreSep">|</span> 🤖 ${state.botScore}⭐`;
     }
 
     function setDieText_(t) {
       elDieText.textContent = safeText_(t) || "";
+    }
+
+    function setDieNum0_() {
+      elDieNum.textContent = "0";
     }
 
     function setRollEnabled_(on) {
@@ -204,6 +209,12 @@
     function updateScores_() {
       elScoreH.textContent = `👦 ${state.humanScore}⭐`;
       elScoreB.textContent = `🤖 ${state.botScore}⭐`;
+    }
+
+    function updateModalScore_() {
+      if (activeModalScoreEl) {
+        activeModalScoreEl.innerHTML = scoreLineHtml_();
+      }
     }
 
     function cellTypeById_(id) {
@@ -262,6 +273,7 @@
     }
 
     function chooseDieValue_(who) {
+      // If player has 0 points: don't allow a roll that lands on a trap cell (if possible)
       const score = (who === "bot") ? state.botScore : state.humanScore;
       const pos = (who === "bot") ? state.botPos : state.humanPos;
 
@@ -273,6 +285,7 @@
         const t = cellTypeByIndex_(landed);
         if (t !== "trap") safe.push(v);
       }
+
       if (safe.length) return safe[randInt_(0, safe.length - 1)];
       return randInt_(1, 6);
     }
@@ -320,25 +333,21 @@
       return to;
     }
 
+    function clamp_(v, min, max) {
+      return Math.max(min, Math.min(max, v));
+    }
+
     function makeDraggable_(overlay) {
       const modal = overlay.querySelector(".mono-modal");
       const top = overlay.querySelector(".mono-modalTop");
       if (!modal || !top) return;
 
-      // ensure we start centered
-      // (CSS starts centered with translate; when first drag begins we switch to explicit left/top)
       let dragging = false;
       let startX = 0, startY = 0;
       let startLeft = 0, startTop = 0;
 
-      function clamp_(v, min, max) {
-        return Math.max(min, Math.min(max, v));
-      }
-
       function begin_(clientX, clientY) {
         const rect = modal.getBoundingClientRect();
-
-        // switch to explicit positioning from now on
         modal.style.transform = "none";
         modal.style.left = rect.left + "px";
         modal.style.top = rect.top + "px";
@@ -368,9 +377,7 @@
         modal.style.top = nextTop + "px";
       }
 
-      function end_() {
-        dragging = false;
-      }
+      function end_() { dragging = false; }
 
       top.addEventListener("mousedown", (e) => {
         e.preventDefault();
@@ -420,14 +427,11 @@
             <div class="mono-modalTitle">${safeText_(title)}</div>
           </div>
           <div class="mono-modalBody">
-            <div class="mono-modalScore">${scoreLine_()}</div>
+            <div class="mono-modalScore">${scoreLineHtml_()}</div>
             ${bodyHtml || ""}
           </div>
         </div>
       `.trim();
-
-      // no backdrop close
-      // no close button
 
       let _resolve = null;
       const closedPromise = new Promise(res => { _resolve = res; });
@@ -435,10 +439,17 @@
       function close(reason) {
         overlay.remove();
         if (_resolve) _resolve(reason);
+        if (activeModalOverlay === overlay) {
+          activeModalOverlay = null;
+          activeModalScoreEl = null;
+        }
       }
 
       document.body.appendChild(overlay);
       makeDraggable_(overlay);
+
+      activeModalOverlay = overlay;
+      activeModalScoreEl = overlay.querySelector(".mono-modalScore");
 
       return { close, overlay, closed: closedPromise };
     }
@@ -447,7 +458,9 @@
       if (!delta) return;
       if (who === "bot") state.botScore = clamp0_(state.botScore + delta);
       else state.humanScore = clamp0_(state.humanScore + delta);
+
       updateScores_();
+      updateModalScore_();
     }
 
     function setTurnUi_() {
@@ -456,6 +469,7 @@
         setRollEnabled_(false);
         return;
       }
+      setDieNum0_();
       if (state.turn === "human") {
         setDieText_("תורך");
       } else {
@@ -464,28 +478,38 @@
       setRollEnabled_(true);
     }
 
+    function rewardLine_(who, reward) {
+      const n = Number(reward || 0) || 0;
+      if (!n) return "";
+      const whoTxt = (who === "bot") ? "המחשב" : "קיבלת";
+      if (n > 0) {
+        return (who === "bot") ? `המחשב קיבל ${n}⭐` : `קיבלת ${n}⭐`;
+      }
+      // negative (trap)
+      return (who === "bot") ? `המחשב הפסיד ${Math.abs(n)}⭐` : `הפסדת ${Math.abs(n)}⭐`;
+    }
+
     async function handleStationBonusTrap_(who, row) {
       const type = normalizeType_(row.type);
       const title = safeText_(row.title) || (type === "station" ? "תחנה" : type === "bonus" ? "בונוס" : "מלכודת");
       const text = safeText_(row.text);
 
       const reward = Number(row.reward || 0) || 0;
-      const rtxt = rewardText_(reward);
+      const rline = rewardLine_(who, reward);
 
       const body = `
         <div class="mono-cardText">${text}</div>
-        ${rtxt ? `<div class="mono-cardReward">${rtxt}</div>` : ""}
+        ${rline ? `<div class="mono-cardReward">${rline}</div>` : ""}
         <div class="mono-cardActions">
           <button type="button" class="mono-btn mono-continue">המשך</button>
         </div>
       `.trim();
 
+      // open first, apply score immediately (so the modal score is synced right away)
       const modal = openModal_(typeIcon_(type) + " " + title, body);
-
       applyScore_(who, reward);
 
       modal.overlay.querySelector(".mono-continue").addEventListener("click", () => modal.close("continue"));
-
       await modal.closed;
     }
 
@@ -494,7 +518,10 @@
       const qText = safeText_(row.text);
       const answers = [row.a1, row.a2, row.a3, row.a4].map(safeText_);
       const correct = safeText_(row.correct);
-      const reward = Number(row.reward || 0) || 0;
+
+      // Hard rule: quiz reward can only be positive; wrong answers never subtract points.
+      const rewardRaw = Number(row.reward || 0) || 0;
+      const reward = Math.max(0, rewardRaw);
 
       const buttonsHtml = answers.map((a) => {
         const disabledAttr = (!a ? "disabled" : "");
@@ -504,7 +531,7 @@
       const body = `
         <div class="mono-cardText">${qText}</div>
         <div class="mono-answers">${buttonsHtml}</div>
-        <div class="mono-botLine" style="display:none">🤖 חושב…</div>
+        <div class="mono-botLine" style="display:none">🤖 המחשב חושב…</div>
         <div class="mono-cardActions" style="display:none">
           <button type="button" class="mono-btn mono-continue">המשך</button>
         </div>
@@ -513,11 +540,7 @@
       let locked = false;
 
       const modal = openModal_("❓ " + qTitle, body);
-
-      // keep modal score updated (it may be outdated if points changed before open)
       const modalScore = modal.overlay.querySelector(".mono-modalScore");
-      if (modalScore) modalScore.innerHTML = scoreLine_();
-
       const ansBtns = Array.from(modal.overlay.querySelectorAll(".mono-ans"));
       const botLine = modal.overlay.querySelector(".mono-botLine");
       const actions = modal.overlay.querySelector(".mono-cardActions");
@@ -548,55 +571,57 @@
 
         if (isCorrect) {
           markAnswer_(pickedBtn, "is-correct");
-          applyScore_(who, reward);
+          applyScore_(who, reward); // immediate
         } else {
           if (pickedBtn) markAnswer_(pickedBtn, "is-wrong");
           const correctBtn = findBtnByAnswer_(correct);
           markAnswer_(correctBtn, "is-correct");
+          // wrong: no score change (for anyone)
         }
 
-        // update modal score line after scoring
-        if (modalScore) modalScore.innerHTML = scoreLine_();
-
+        if (modalScore) modalScore.innerHTML = scoreLineHtml_();
+        if (botLine) botLine.style.display = "none"; // hide "thinking" once result is shown
         actions.style.display = "flex";
       }
 
-      // Human interaction
-      if (who === "human") {
-        ansBtns.forEach(btn => {
-          btn.addEventListener("click", () => {
-            if (locked) return;
-            const a = decodeURIComponent(btn.dataset.ans || "");
-            reveal_(a);
-          });
-        });
+      // Bot turn: child must not be able to click answers while bot thinks
+      if (who === "bot") {
+        // lock immediately so child can't interact
+        lockAnswers_();
+
+        await sleep_(2000);
+        if (botLine) botLine.style.display = "block";
+        await sleep_(2500);
+
+        const willBeCorrect = chance_(0.6);
+        let pick = correct;
+
+        if (!willBeCorrect) {
+          const wrongs = answers.filter(a => a && a !== correct);
+          pick = wrongs.length ? wrongs[randInt_(0, wrongs.length - 1)] : correct;
+        }
+
+        const pickBtn = findBtnByAnswer_(pick);
+        if (pickBtn) pickBtn.classList.add("is-botSelect");
+
+        await sleep_(600);
+
+        reveal_(pick);
 
         btnContinue.addEventListener("click", () => modal.close("continue"));
         await modal.closed;
         return;
       }
 
-      // Bot flow (still shows "המשך" and waits for child)
-      await sleep_(2000);
-      botLine.style.display = "block";
-      await sleep_(2500);
-
-      const willBeCorrect = chance_(0.6);
-      let pick = correct;
-
-      if (!willBeCorrect) {
-        const wrongs = answers.filter(a => a && a !== correct);
-        pick = wrongs.length ? wrongs[randInt_(0, wrongs.length - 1)] : correct;
-      }
-
-      const pickBtn = findBtnByAnswer_(pick);
-      if (pickBtn) pickBtn.classList.add("is-botSelect");
-
-      await sleep_(600);
-
-      reveal_(pick);
-
-      await sleep_(1200);
+      // Human interaction
+      ansBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+          if (locked) return;
+          if (btn.disabled) return;
+          const a = decodeURIComponent(btn.dataset.ans || "");
+          reveal_(a);
+        });
+      });
 
       btnContinue.addEventListener("click", () => modal.close("continue"));
       await modal.closed;
@@ -653,7 +678,6 @@
       await animateDieRoll_(steps, who);
 
       const landedIdx = await moveTokenStepByStep_(who, steps);
-
       await handleLanding_(who, landedIdx);
 
       if (state.ended) return;
@@ -663,7 +687,7 @@
     }
 
     function restart_() {
-      state.turn = "human";
+      state.turn = "human";     // always start with child
       state.rolling = false;
       state.humanPos = 0;
       state.botPos = 0;
@@ -672,19 +696,20 @@
       state.activeCellIdx = 0;
       state.ended = false;
 
-      elDieNum.textContent = "0";
+      setDieNum0_();
       updateScores_();
       updateTokensAndActive_();
       setTurnUi_();
     }
 
-    // init board
+    // init
     buildBoardDom_();
     updateScores_();
     updateTokensAndActive_();
-    elDieNum.textContent = "0";
+    setDieNum0_();
     setTurnUi_();
 
+    // Child always clicks the same button (even in bot turn)
     btnRoll.addEventListener("click", () => {
       if (state.rolling || state.ended) return;
       doTurn_(state.turn);
