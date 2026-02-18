@@ -16,7 +16,7 @@
   const GAME_ID = "monopol";
 
   // Movement timing
-  const MOVE_STEP_MS = 320;   // slower
+  const MOVE_STEP_MS = 320;
   const MOVE_FINAL_MS = 450;
 
   // After landing: wait 1s before showing the card
@@ -171,7 +171,7 @@
     const elScoreB = rootEl.querySelector(".mono-scoreB");
 
     const state = {
-      turn: "human", // "human" | "bot"
+      turn: "human",
       rolling: false,
       humanPos: 0,
       botPos: 0,
@@ -184,10 +184,6 @@
     // Modal live references (to keep score line synced)
     let activeModalOverlay = null;
     let activeModalScoreEl = null;
-
-    function whoLabel_(who) {
-      return (who === "bot") ? "המחשב" : "אתה";
-    }
 
     function scoreLineHtml_() {
       return `👦 ${state.humanScore}⭐ <span class="mono-scoreSep">|</span> 🤖 ${state.botScore}⭐`;
@@ -337,6 +333,28 @@
       return Math.max(min, Math.min(max, v));
     }
 
+    function clampModalToViewport_(modalEl) {
+      if (!modalEl) return;
+      const rect = modalEl.getBoundingClientRect();
+
+      // convert to fixed left/top without transform
+      modalEl.style.transform = "none";
+      modalEl.style.left = rect.left + "px";
+      modalEl.style.top = rect.top + "px";
+
+      const mw = modalEl.offsetWidth;
+      const mh = modalEl.offsetHeight;
+
+      const maxLeft = window.innerWidth - mw - 8;
+      const maxTop = window.innerHeight - mh - 8;
+
+      const nextLeft = clamp_(rect.left, 8, Math.max(8, maxLeft));
+      const nextTop = clamp_(rect.top, 8, Math.max(8, maxTop));
+
+      modalEl.style.left = nextLeft + "px";
+      modalEl.style.top = nextTop + "px";
+    }
+
     function makeDraggable_(overlay) {
       const modal = overlay.querySelector(".mono-modal");
       const top = overlay.querySelector(".mono-modalTop");
@@ -347,10 +365,8 @@
       let startLeft = 0, startTop = 0;
 
       function begin_(clientX, clientY) {
+        clampModalToViewport_(modal);
         const rect = modal.getBoundingClientRect();
-        modal.style.transform = "none";
-        modal.style.left = rect.left + "px";
-        modal.style.top = rect.top + "px";
 
         dragging = true;
         startX = clientX;
@@ -451,6 +467,10 @@
       activeModalOverlay = overlay;
       activeModalScoreEl = overlay.querySelector(".mono-modalScore");
 
+      // Clamp once after layout so it never starts outside screen
+      const modalEl = overlay.querySelector(".mono-modal");
+      requestAnimationFrame(() => clampModalToViewport_(modalEl));
+
       return { close, overlay, closed: closedPromise };
     }
 
@@ -481,32 +501,56 @@
     function rewardLine_(who, reward) {
       const n = Number(reward || 0) || 0;
       if (!n) return "";
-      const whoTxt = (who === "bot") ? "המחשב" : "קיבלת";
-      if (n > 0) {
-        return (who === "bot") ? `המחשב קיבל ${n}⭐` : `קיבלת ${n}⭐`;
-      }
-      // negative (trap)
+      if (n > 0) return (who === "bot") ? `המחשב קיבל ${n}⭐` : `קיבלת ${n}⭐`;
       return (who === "bot") ? `המחשב הפסיד ${Math.abs(n)}⭐` : `הפסדת ${Math.abs(n)}⭐`;
+    }
+
+    function prefixDidYouKnow_(text) {
+      const t = safeText_(text);
+      if (!t) return "הידעת?";
+      // Avoid double "הידעת?"
+      if (/^\s*הידעת\??/i.test(t)) return t;
+      return `הידעת? ${t}`;
     }
 
     async function handleStationBonusTrap_(who, row) {
       const type = normalizeType_(row.type);
-      const title = safeText_(row.title) || (type === "station" ? "תחנה" : type === "bonus" ? "בונוס" : "מלכודת");
-      const text = safeText_(row.text);
+
+      const rawTitle = safeText_(row.title);
+      const rawText = safeText_(row.text);
 
       const reward = Number(row.reward || 0) || 0;
       const rline = rewardLine_(who, reward);
 
+      let title = "תחנה";
+      let bodyTextMain = rawText;
+      let subText = "";
+
+      if (type === "station") {
+        title = rawTitle || "תחנה";
+        bodyTextMain = prefixDidYouKnow_(rawText);
+      } else if (type === "bonus") {
+        title = rawTitle || "בונוס";
+        // Bonus: focus on reward; text (if exists) becomes secondary
+        bodyTextMain = "כל הכבוד! 🎉";
+        subText = rawText;
+      } else { // trap
+        title = rawTitle || "מלכודת";
+        bodyTextMain = rawText || "אופס…";
+      }
+
       const body = `
-        <div class="mono-cardText">${text}</div>
-        ${rline ? `<div class="mono-cardReward">${rline}</div>` : ""}
+        <div class="mono-cardText">${bodyTextMain}</div>
+        ${subText ? `<div class="mono-cardSub">${subText}</div>` : ""}
+        ${rline ? `<div class="mono-cardReward mono-cardReward--big">${rline}</div>` : ""}
         <div class="mono-cardActions">
           <button type="button" class="mono-btn mono-continue">המשך</button>
         </div>
       `.trim();
 
-      // open first, apply score immediately (so the modal score is synced right away)
       const modal = openModal_(typeIcon_(type) + " " + title, body);
+
+      // Apply score immediately so score line is synced while the modal is open
       applyScore_(who, reward);
 
       modal.overlay.querySelector(".mono-continue").addEventListener("click", () => modal.close("continue"));
@@ -571,22 +615,20 @@
 
         if (isCorrect) {
           markAnswer_(pickedBtn, "is-correct");
-          applyScore_(who, reward); // immediate
+          applyScore_(who, reward);
         } else {
           if (pickedBtn) markAnswer_(pickedBtn, "is-wrong");
           const correctBtn = findBtnByAnswer_(correct);
           markAnswer_(correctBtn, "is-correct");
-          // wrong: no score change (for anyone)
         }
 
         if (modalScore) modalScore.innerHTML = scoreLineHtml_();
-        if (botLine) botLine.style.display = "none"; // hide "thinking" once result is shown
+        if (botLine) botLine.style.display = "none";
         actions.style.display = "flex";
       }
 
       // Bot turn: child must not be able to click answers while bot thinks
       if (who === "bot") {
-        // lock immediately so child can't interact
         lockAnswers_();
 
         await sleep_(2000);
@@ -687,7 +729,7 @@
     }
 
     function restart_() {
-      state.turn = "human";     // always start with child
+      state.turn = "human";
       state.rolling = false;
       state.humanPos = 0;
       state.botPos = 0;
