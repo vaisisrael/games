@@ -1,0 +1,52 @@
+[data-parasha-games] .mono-wrap{
+font-family:"Rubik",sans-serif;
+background:#f6f7fb;
+padding:12px;
+border-radius:16px;
+border:1px solid rgba(0,0,0,.1);
+}
+
+.mono-board{
+display:grid;
+grid-template-columns:repeat(8,1fr);
+gap:6px;
+margin-bottom:12px;
+}
+
+.mono-cell{
+background:#fff;
+border-radius:12px;
+border:1px solid rgba(0,0,0,.12);
+padding:10px;
+text-align:center;
+font-weight:900;
+}
+
+.mono-pawns{
+display:flex;
+justify-content:center;
+gap:8px;
+font-size:18px;
+margin-top:4px;
+}
+
+.mono-ui{
+text-align:center;
+}
+
+.mono-btn{
+padding:10px 18px;
+font-weight:900;
+border-radius:12px;
+border:1px solid rgba(0,0,0,.2);
+background:#eef2ff;
+cursor:pointer;
+}
+
+.mono-card{
+margin-top:10px;
+background:#fff;
+border-radius:14px;
+padding:12px;
+border:1px solid rgba(0,0,0,.1);
+}
