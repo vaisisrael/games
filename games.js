@@ -30,7 +30,7 @@
     { id: "puzzle", title: "🧩 פאזל", js: "puzzle.js", css: "puzzle.css" },
     { id: "wordstack", title: "🔤 בְּלִילוֹן", js: "wordstack.js", css: "wordstack.css" },
     { id: "classify", title: "🗄️ מגירון", js: "classify.js", css: "classify.css" },
-    { id: "studio", title: "🎨 סטודיו", js: "studio.js", css: "studio.css" }
+    { id: "studio", title: "🎨 סטודיו", js: "studio.js", css: "studio.css" },
     { id: "monopol", title: "🎲 חכמון", js: "monopol.js", css: "monopol.css" }
   ];
 
