@@ -1,101 +1,632 @@
-(()=>{
+/* קובץ מלא: monopol.js – Parasha "חכמון" (monopol / Monopol)
+   מקור הנתונים:
+     - גיליון 1: controlRow.monopol = yes/no או true/false (הדלקה בלבד)
+     - גיליון "monopol_board" דרך Apps Script: mode=monopol_board → row.cells (24 מזהים)
+     - גיליון "monopol_data" דרך Apps Script: mode=monopol_data → rows (מפת id→תוכן)
 
-const ID="monopol";
+   הערות:
+     - לוח 24 משבצות קבוע: 3×8 זיגזג
+     - התחלה: משמאל למעלה (index 0)
+     - סיום: ימינה למטה (index 23)
+*/
 
-async function init(root,ctx){
+(() => {
+  "use strict";
 
-const api=ctx.CONTROL_API;
-const p=ctx.parashaLabel;
+  const GAME_ID = "monopol";
 
-/* load board */
-const bRes=await fetch(`${api}?mode=monopol_board&parasha=${encodeURIComponent(p)}`);
-const boardData=(await bRes.json()).row;
+  function withVersion_(url, buildVersion) {
+    try {
+      const u = new URL(url, window.location.href);
+      if (buildVersion) u.searchParams.set("v", String(buildVersion));
+      return u.toString();
+    } catch (_) {
+      return url;
+    }
+  }
 
-/* load data */
-const dRes=await fetch(`${api}?mode=monopol_data&parasha=${encodeURIComponent(p)}`);
-const rows=(await dRes.json()).rows||[];
+  function safeText_(s) {
+    return String(s == null ? "" : s).trim();
+  }
 
-const cells=(boardData?.cells||"").split(",");
+  function clamp0_(n) {
+    n = Number(n || 0);
+    return n < 0 ? 0 : n;
+  }
 
-const state={
-pos:[0,0],
-score:[0,0],
-turn:0
-};
+  function parseCellsCsv_(s) {
+    return safeText_(s)
+      .split(",")
+      .map(x => x.trim())
+      .filter(Boolean);
+  }
 
-root.innerHTML=`
-<div class="mono-wrap">
-<div class="mono-board"></div>
-<div class="mono-ui">
-<button class="mono-btn">זרוק קובייה</button>
-<div class="mono-card" hidden></div>
-</div>
-</div>
-`;
+  function sleep_(ms) {
+    return new Promise(r => setTimeout(r, ms));
+  }
 
-const boardEl=root.querySelector(".mono-board");
-const btn=root.querySelector(".mono-btn");
-const card=root.querySelector(".mono-card");
+  function randInt_(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+  }
 
-/* build board */
-cells.forEach((c,i)=>{
-const d=document.createElement("div");
-d.className="mono-cell";
-d.dataset.i=i;
-d.textContent=c;
-boardEl.appendChild(d);
-});
+  function chance_(p) {
+    return Math.random() < p;
+  }
 
-function drawPawns(){
-document.querySelectorAll(".mono-pawns").forEach(e=>e.remove());
-state.pos.forEach((p,i)=>{
-const cell=boardEl.children[p];
-const wrap=document.createElement("div");
-wrap.className="mono-pawns";
-wrap.textContent=i===0?"🧒":"🤖";
-cell.appendChild(wrap);
-});
-}
-drawPawns();
+  function normalizeType_(t) {
+    t = safeText_(t).toLowerCase();
+    if (t === "start") return "start";
+    if (t === "end") return "end";
+    if (t === "station") return "station";
+    if (t === "bonus") return "bonus";
+    if (t === "trap") return "trap";
+    if (t === "quiz") return "quiz";
+    return "station";
+  }
 
-btn.onclick=()=>{
-const roll=1+Math.floor(Math.random()*6);
-const pl=state.turn;
-state.pos[pl]+=roll;
-if(state.pos[pl]>=cells.length-1)state.pos[pl]=cells.length-1;
-drawPawns();
-handleCell(pl);
-state.turn=pl?0:1;
-};
+  function typeIcon_(type) {
+    switch (type) {
+      case "start": return "🏁";
+      case "end": return "🏆";
+      case "quiz": return "❓";
+      case "station": return "📘";
+      case "bonus": return "⭐";
+      case "trap": return "⚠️";
+      default: return "📘";
+    }
+  }
 
-function handleCell(pl){
-const id=cells[state.pos[pl]];
-const data=rows.find(r=>r.id==id);
-if(!data)return;
+  function rewardText_(reward) {
+    const n = Number(reward || 0);
+    if (!n) return "";
+    return (n > 0 ? `+${n}⭐` : `${n}⭐`);
+  }
 
-card.hidden=false;
+  function gridPosForIndex_(i) {
+    // 3×8 snake: row 0 L->R, row 1 R->L, row 2 L->R
+    const row = Math.floor(i / 8);
+    const colInRow = i % 8;
+    const col = (row % 2 === 0) ? colInRow : (7 - colInRow);
+    return { row, col };
+  }
 
-if(data.type==="quiz"){
-card.innerHTML=`<b>${data.title}</b><br>${data.text}<br>
-${["a1","a2","a3","a4"].map(a=>`<button class="ans">${data[a]}</button>`).join("")}`;
-card.querySelectorAll(".ans").forEach(b=>{
-b.onclick=()=>{
-if(b.textContent==data.correct)state.score[pl]+=2;
-card.hidden=true;
-};
-});
-}
-else if(data.type==="bonus"){state.score[pl]+=1;}
-else if(data.type==="trap"){state.score[pl]=Math.max(0,state.score[pl]-1);}
-else if(data.type==="station"){state.score[pl]+=1;}
-}
-return{reset(){}};
-}
+  function buildBoardGrid_(cells24) {
+    const grid = Array.from({ length: 24 }, (_, i) => ({ i, id: cells24[i] }));
+    // convert to display order by rows/cols
+    const display = Array.from({ length: 3 }, () => Array.from({ length: 8 }, () => null));
+    grid.forEach(({ i, id }) => {
+      const { row, col } = gridPosForIndex_(i);
+      display[row][col] = { idx: i, id };
+    });
+    return display;
+  }
 
-(function reg(){
-if(window.ParashaGamesRegister){
-window.ParashaGamesRegister(ID,{init});
-}else setTimeout(reg,50);
-})();
+  function buildIdMap_(rows) {
+    const m = new Map();
+    (rows || []).forEach(r => {
+      const id = safeText_(r.id);
+      if (id) m.set(id, r);
+    });
+    return m;
+  }
 
+  async function fetchBoard_(CONTROL_API, parashaLabel, buildVersion) {
+    const url = withVersion_(
+      `${CONTROL_API}?mode=monopol_board&parasha=${encodeURIComponent(parashaLabel)}`,
+      buildVersion
+    );
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error("Failed to fetch monopol_board");
+    const data = await res.json();
+    const row = data && data.row ? data.row : null;
+    const cells = row ? parseCellsCsv_(row.cells) : [];
+    return cells;
+  }
+
+  async function fetchData_(CONTROL_API, parashaLabel, buildVersion) {
+    const url = withVersion_(
+      `${CONTROL_API}?mode=monopol_data&parasha=${encodeURIComponent(parashaLabel)}`,
+      buildVersion
+    );
+    const res = await fetch(url, { cache: "no-store" });
+    if (!res.ok) throw new Error("Failed to fetch monopol_data");
+    const data = await res.json();
+    const rows = data && data.rows ? data.rows : [];
+    return rows;
+  }
+
+  function render(rootEl, model) {
+    rootEl.innerHTML = `
+      <div class="mono-wrap">
+        <div class="mono-cardbox">
+
+          <div class="mono-topbar">
+            <div class="mono-actions">
+              <button type="button" class="mono-btn mono-roll">🎲 זרוק קובייה</button>
+              <div class="mono-die" aria-label="קובייה" role="status">
+                <span class="mono-dieNum">1</span>
+              </div>
+              <div class="mono-dieText" aria-live="polite">תורך</div>
+            </div>
+
+            <div class="mono-score" aria-live="polite">
+              <span class="mono-scoreH">👦 0⭐</span>
+              <span class="mono-scoreSep">|</span>
+              <span class="mono-scoreB">🤖 0⭐</span>
+            </div>
+          </div>
+
+          <div class="mono-boardWrap">
+            <div class="mono-board" aria-label="לוח המשחק" role="grid"></div>
+          </div>
+
+        </div>
+      </div>
+    `.trim();
+
+    const elBoard = rootEl.querySelector(".mono-board");
+    const btnRoll = rootEl.querySelector(".mono-roll");
+    const elDieNum = rootEl.querySelector(".mono-dieNum");
+    const elDieText = rootEl.querySelector(".mono-dieText");
+    const elScoreH = rootEl.querySelector(".mono-scoreH");
+    const elScoreB = rootEl.querySelector(".mono-scoreB");
+
+    const state = {
+      turn: "human", // "human" | "bot"
+      rolling: false,
+      humanPos: 0,
+      botPos: 0,
+      humanScore: 0,
+      botScore: 0,
+      activeCellIdx: 0,
+      ended: false
+    };
+
+    function setDieText_(t) {
+      elDieText.textContent = safeText_(t) || "";
+    }
+
+    function setRollEnabled_(on) {
+      btnRoll.disabled = !on;
+      btnRoll.setAttribute("aria-disabled", on ? "false" : "true");
+    }
+
+    function updateScores_() {
+      elScoreH.textContent = `👦 ${state.humanScore}⭐`;
+      elScoreB.textContent = `🤖 ${state.botScore}⭐`;
+    }
+
+    function cellTypeById_(id) {
+      const row = model.idMap.get(id);
+      const type = normalizeType_(row ? row.type : "");
+      return type;
+    }
+
+    function buildBoardDom_() {
+      elBoard.innerHTML = "";
+      const display = model.displayGrid;
+
+      for (let r = 0; r < display.length; r++) {
+        for (let c = 0; c < display[r].length; c++) {
+          const cell = display[r][c];
+          const idx = cell.idx;
+          const id = cell.id;
+          const type = cellTypeById_(id);
+          const icon = typeIcon_(type);
+          const num = idx + 1;
+
+          const cellEl = document.createElement("div");
+          cellEl.className = `mono-cell mono-${type}`;
+          cellEl.dataset.idx = String(idx);
+          cellEl.dataset.id = id;
+          cellEl.setAttribute("role", "gridcell");
+
+          cellEl.innerHTML = `
+            <div class="mono-num">${num}</div>
+            <div class="mono-icon" aria-hidden="true">${icon}</div>
+            <div class="mono-tokens" aria-hidden="true">
+              <span class="mono-token mono-token--human" style="display:none">👦</span>
+              <span class="mono-token mono-token--bot" style="display:none">🤖</span>
+            </div>
+          `.trim();
+
+          elBoard.appendChild(cellEl);
+        }
+      }
+    }
+
+    function updateTokensAndActive_() {
+      const cells = Array.from(elBoard.querySelectorAll(".mono-cell"));
+      cells.forEach(cell => {
+        const idx = Number(cell.dataset.idx || 0);
+        const th = cell.querySelector(".mono-token--human");
+        const tb = cell.querySelector(".mono-token--bot");
+        if (th) th.style.display = (idx === state.humanPos) ? "inline-flex" : "none";
+        if (tb) tb.style.display = (idx === state.botPos) ? "inline-flex" : "none";
+        cell.classList.toggle("is-active", idx === state.activeCellIdx);
+      });
+    }
+
+    async function animateDieRoll_(finalValue, who) {
+      state.rolling = true;
+      setRollEnabled_(false);
+
+      // status text during roll
+      if (who === "bot") setDieText_("🤖 זורק קובייה…");
+      else setDieText_("מגריל…");
+
+      const start = Date.now();
+      const duration = 900;
+      let last = 1;
+
+      while (Date.now() - start < duration) {
+        last = randInt_(1, 6);
+        elDieNum.textContent = String(last);
+        await sleep_(90);
+      }
+
+      elDieNum.textContent = String(finalValue);
+      setDieText_(`יצא: ${finalValue}`);
+
+      await sleep_(1000);
+
+      state.rolling = false;
+    }
+
+    async function moveTokenStepByStep_(who, steps) {
+      const lastIdx = 23;
+      const from = (who === "bot") ? state.botPos : state.humanPos;
+      const to = Math.min(from + steps, lastIdx);
+
+      // walk
+      for (let p = from + 1; p <= to; p++) {
+        if (who === "bot") state.botPos = p;
+        else state.humanPos = p;
+
+        state.activeCellIdx = p;
+        updateTokensAndActive_();
+        await sleep_(220);
+      }
+
+      await sleep_(350);
+
+      return to;
+    }
+
+    function openModal_(title, bodyHtml, options) {
+      const opts = options || {};
+      const overlay = document.createElement("div");
+      overlay.className = "mono-modalOverlay";
+      overlay.innerHTML = `
+        <div class="mono-modal" role="dialog" aria-modal="true">
+          <div class="mono-modalTop">
+            <div class="mono-modalTitle">${safeText_(title)}</div>
+            <button type="button" class="mono-modalClose">סגור</button>
+          </div>
+          <div class="mono-modalBody">
+            ${bodyHtml || ""}
+          </div>
+        </div>
+      `.trim();
+
+      function close() {
+        overlay.remove();
+        if (typeof opts.onClose === "function") opts.onClose();
+      }
+
+      overlay.addEventListener("click", (e) => {
+        if (e.target === overlay) close();
+      });
+      overlay.querySelector(".mono-modalClose").addEventListener("click", close);
+
+      document.body.appendChild(overlay);
+
+      return { close, overlay };
+    }
+
+    function applyScore_(who, delta) {
+      if (!delta) return;
+      if (who === "bot") state.botScore = clamp0_(state.botScore + delta);
+      else state.humanScore = clamp0_(state.humanScore + delta);
+      updateScores_();
+    }
+
+    function switchTurn_() {
+      state.turn = (state.turn === "human") ? "bot" : "human";
+      setDieText_(state.turn === "human" ? "תורך" : "תור הבוט");
+      setRollEnabled_(state.turn === "human" && !state.ended);
+    }
+
+    async function handleStationBonusTrap_(who, row) {
+      const type = normalizeType_(row.type);
+      const title = safeText_(row.title) || (type === "station" ? "תחנה" : type === "bonus" ? "בונוס" : "מלכודת");
+      const text = safeText_(row.text);
+
+      const reward = Number(row.reward || 0) || 0;
+      const rtxt = rewardText_(reward);
+
+      const body = `
+        <div class="mono-cardText">${text}</div>
+        ${rtxt ? `<div class="mono-cardReward">${rtxt}</div>` : ""}
+        <div class="mono-cardActions">
+          <button type="button" class="mono-btn mono-continue">המשך</button>
+        </div>
+      `.trim();
+
+      let closed = false;
+      const modal = openModal_(typeIcon_(type) + " " + title, body, {
+        onClose: () => { closed = true; }
+      });
+
+      // apply action immediately when shown (MVP)
+      applyScore_(who, reward);
+
+      const btn = modal.overlay.querySelector(".mono-continue");
+      btn.addEventListener("click", () => modal.close());
+
+      if (who === "bot") {
+        // bot reading time
+        await sleep_(2000);
+        if (!closed) modal.close();
+      }
+    }
+
+    async function handleQuiz_(who, row) {
+      const qTitle = safeText_(row.title) || "שאלה";
+      const qText = safeText_(row.text);
+      const answers = [row.a1, row.a2, row.a3, row.a4].map(safeText_);
+      const correct = safeText_(row.correct);
+      const reward = Number(row.reward || 0) || 0;
+
+      const buttonsHtml = answers.map((a, i) => {
+        const disabledAttr = (!a ? "disabled" : "");
+        return `<button type="button" class="mono-ans" data-ans="${encodeURIComponent(a)}" ${disabledAttr}>${a || "—"}</button>`;
+      }).join("");
+
+      const body = `
+        <div class="mono-cardText">${qText}</div>
+        <div class="mono-answers">${buttonsHtml}</div>
+        <div class="mono-botLine" style="display:none">🤖 חושב…</div>
+        <div class="mono-cardActions" style="display:none">
+          <button type="button" class="mono-btn mono-continue">המשך</button>
+        </div>
+      `.trim();
+
+      let locked = false;
+      let chosen = null;
+
+      const modal = openModal_("❓ " + qTitle, body, {});
+      const ansBtns = Array.from(modal.overlay.querySelectorAll(".mono-ans"));
+      const botLine = modal.overlay.querySelector(".mono-botLine");
+      const actions = modal.overlay.querySelector(".mono-cardActions");
+      const btnContinue = modal.overlay.querySelector(".mono-continue");
+
+      function lockAnswers_() {
+        locked = true;
+        ansBtns.forEach(b => b.disabled = true);
+      }
+
+      function markAnswer_(btn, cls) {
+        if (!btn) return;
+        btn.classList.add(cls);
+      }
+
+      function findBtnByAnswer_(a) {
+        const enc = encodeURIComponent(a || "");
+        return ansBtns.find(b => (b.dataset.ans || "") === enc) || null;
+      }
+
+      function reveal_(picked) {
+        lockAnswers_();
+
+        const isCorrect = safeText_(picked) && safeText_(picked) === correct;
+
+        const pickedBtn = findBtnByAnswer_(picked);
+        if (pickedBtn) pickedBtn.classList.add("is-picked");
+
+        if (isCorrect) {
+          markAnswer_(pickedBtn, "is-correct");
+          applyScore_(who, reward);
+        } else {
+          if (pickedBtn) markAnswer_(pickedBtn, "is-wrong");
+          const correctBtn = findBtnByAnswer_(correct);
+          markAnswer_(correctBtn, "is-correct");
+        }
+
+        actions.style.display = "flex";
+      }
+
+      // Human interaction
+      if (who === "human") {
+        ansBtns.forEach(btn => {
+          btn.addEventListener("click", () => {
+            if (locked) return;
+            const a = decodeURIComponent(btn.dataset.ans || "");
+            chosen = a;
+            reveal_(chosen);
+          });
+        });
+
+        btnContinue.addEventListener("click", () => modal.close());
+        return;
+      }
+
+      // Bot flow
+      // 2s read
+      await sleep_(2000);
+      botLine.style.display = "block";
+      // 2.5s think
+      await sleep_(2500);
+
+      // choose with 60% correctness
+      const willBeCorrect = chance_(0.6);
+      let pick = correct;
+
+      if (!willBeCorrect) {
+        const wrongs = answers.filter(a => a && a !== correct);
+        pick = wrongs.length ? wrongs[randInt_(0, wrongs.length - 1)] : correct;
+      }
+
+      const pickBtn = findBtnByAnswer_(pick);
+      if (pickBtn) pickBtn.classList.add("is-botSelect");
+
+      // 0.6s drama
+      await sleep_(600);
+
+      reveal_(pick);
+
+      // 1.2s result
+      await sleep_(1200);
+
+      modal.close();
+    }
+
+    async function handleLanding_(who, idx) {
+      const id = model.cells[idx];
+      const row = model.idMap.get(id) || { id, type: "station", title: "", text: "", reward: 0 };
+
+      const type = normalizeType_(row.type);
+
+      if (type === "end") {
+        state.ended = true;
+        setRollEnabled_(false);
+
+        const h = state.humanScore;
+        const b = state.botScore;
+
+        let winnerText = "תיקו!";
+        if (h > b) winnerText = "נצחת! 🎉";
+        else if (b > h) winnerText = "הבוט ניצח 🤖";
+
+        const body = `
+          <div class="mono-cardText">הגעתם לסיום. המשחק נגמר.</div>
+          <div class="mono-endScores">👦 ${h}⭐ <span class="mono-scoreSep">|</span> 🤖 ${b}⭐</div>
+          <div class="mono-endWinner">${winnerText}</div>
+          <div class="mono-cardActions">
+            <button type="button" class="mono-btn mono-restart">משחק חדש</button>
+          </div>
+        `.trim();
+
+        const modal = openModal_("🏆 סיום", body, {});
+        modal.overlay.querySelector(".mono-restart").addEventListener("click", () => {
+          modal.close();
+          restart_();
+        });
+        return;
+      }
+
+      // 0.7s after landing open card (per spec for bot too; human feels instant enough)
+      await sleep_(700);
+
+      if (type === "quiz") {
+        await handleQuiz_(who, row);
+      } else {
+        await handleStationBonusTrap_(who, row);
+      }
+    }
+
+    async function doTurn_(who) {
+      if (state.ended) return;
+
+      setRollEnabled_(false);
+
+      const steps = randInt_(1, 6);
+      await animateDieRoll_(steps, who);
+
+      const landedIdx = await moveTokenStepByStep_(who, steps);
+
+      await handleLanding_(who, landedIdx);
+
+      if (state.ended) return;
+
+      switchTurn_();
+
+      if (state.turn === "bot") {
+        // bot starts its roll automatically
+        await sleep_(300);
+        await doTurn_("bot");
+      }
+    }
+
+    function restart_() {
+      state.turn = "human";
+      state.rolling = false;
+      state.humanPos = 0;
+      state.botPos = 0;
+      state.humanScore = 0;
+      state.botScore = 0;
+      state.activeCellIdx = 0;
+      state.ended = false;
+
+      elDieNum.textContent = "1";
+      setDieText_("תורך");
+      updateScores_();
+      updateTokensAndActive_();
+      setRollEnabled_(true);
+    }
+
+    // init board
+    buildBoardDom_();
+    updateScores_();
+    updateTokensAndActive_();
+    setDieText_("תורך");
+    setRollEnabled_(true);
+
+    btnRoll.addEventListener("click", () => {
+      if (state.turn !== "human") return;
+      if (state.rolling || state.ended) return;
+      doTurn_("human");
+    });
+
+    return { reset: () => {} };
+  }
+
+  async function init(rootEl, ctx) {
+    const parashaLabel = ctx?.parashaLabel || "";
+    const CONTROL_API = ctx?.CONTROL_API || "";
+    const buildVersion = ctx?.BUILD_VERSION || "";
+
+    if (!parashaLabel || !CONTROL_API) {
+      rootEl.innerHTML = `<div>שגיאה: חסר ctx.</div>`;
+      return { reset: () => {} };
+    }
+
+    rootEl.innerHTML = "טוען...";
+
+    try {
+      const cells = await fetchBoard_(CONTROL_API, parashaLabel, buildVersion);
+
+      if (cells.length !== 24) {
+        rootEl.innerHTML = `<div>שגיאה: לוח חייב להכיל 24 משבצות (נמצאו ${cells.length}).</div>`;
+        return { reset: () => {} };
+      }
+
+      const rows = await fetchData_(CONTROL_API, parashaLabel, buildVersion);
+      const idMap = buildIdMap_(rows);
+
+      // ensure all ids exist at least with defaults
+      const fixedCells = cells.map(id => safeText_(id));
+      const displayGrid = buildBoardGrid_(fixedCells);
+
+      return render(rootEl, {
+        parashaLabel,
+        cells: fixedCells,
+        idMap,
+        displayGrid
+      });
+    } catch (_) {
+      rootEl.innerHTML = `<div>שגיאה בטעינת נתוני חכמון.</div>`;
+      return { reset: () => {} };
+    }
+  }
+
+  (function registerWhenReady_() {
+    if (window.ParashaGamesRegister) {
+      window.ParashaGamesRegister(GAME_ID, {
+        init: async (rootEl, ctx) => init(rootEl, ctx)
+      });
+      return;
+    }
+    setTimeout(registerWhenReady_, 30);
+  })();
 })();
