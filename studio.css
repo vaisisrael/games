@@ -173,6 +173,26 @@
   stroke-width: 2.2;
 }
 
+/* ✅ NEW: בחירה בולטת באמת (מתאים גם למובייל)
+   - עמעום שאר החלקים בעת בחירה
+   - שכבת הדגשה נפרדת מעל הציור (לא חוסמת קליקים)
+*/
+[data-parasha-games] .st-canvas svg.has-selection [data-id]{
+  opacity: .48;
+  filter: none;
+}
+[data-parasha-games] .st-canvas svg.has-selection [data-id].is-selected{
+  opacity: 1;
+}
+[data-parasha-games] .st-canvas .st-hi,
+[data-parasha-games] .st-canvas .st-hi *{
+  pointer-events: none;
+}
+[data-parasha-games] .st-canvas .st-hi [data-id]{
+  opacity: 1;
+  filter: drop-shadow(0 0 10px rgba(59,130,246,.55));
+}
+
 /* ===== Palette ===== */
 [data-parasha-games] .st-palette{
   margin-top: 12px;
