@@ -68,11 +68,17 @@
   border-color: #93c5fd;
 }
 
-/* ✅ NEW: שם ציור מעל הקנבס (נראה כמו כפתור) */
+/* ✅ NEW: שם ציור מעל הקנבס (נראה כמו כותרת מידע, לא כפתור) */
 [data-parasha-games] .st-figName{
   width: max-content;
   margin: 0 auto 6px;
-  cursor: default;
+
+  background:#f8fafc;
+  border:1px solid rgba(0,0,0,.08);
+
+  box-shadow:none;
+  cursor:default;
+  opacity:.9;
 }
 
  /* Undo button */
