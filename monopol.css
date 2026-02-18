@@ -100,7 +100,6 @@
 }
 
 [data-parasha-games] .mono-board{
-  /* IMPORTANT: keep left/right stable regardless of RTL page */
   direction: ltr;
   display:grid;
   grid-template-columns: repeat(8, minmax(44px, 1fr));
@@ -125,7 +124,7 @@
   display:flex;
   align-items:center;
   justify-content:center;
-  overflow:hidden;
+  overflow: visible; /* allow tokens to "pop" */
 }
 
 @media (max-width: 640px){
@@ -135,7 +134,7 @@
 [data-parasha-games] .mono-num{
   position:absolute;
   top: 6px;
-  left: 8px; /* number at top-left as decided */
+  left: 8px;
   font-weight: 900;
   font-size: 11px;
   color: rgba(15,23,42,.45);
@@ -147,34 +146,38 @@
   transform: translateY(2px);
 }
 
-/* Tokens */
+/* Tokens (bigger + "pops out") */
 [data-parasha-games] .mono-tokens{
   position:absolute;
-  bottom: 6px;
+  bottom: -10px;   /* pop out of the cell */
   right: 8px;
   display:flex;
-  gap: 6px;
+  gap: 8px;
 }
+
 [data-parasha-games] .mono-token{
-  width: 22px;
-  height: 22px;
+  width: 30px;
+  height: 30px;
   border-radius: 999px;
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  border: 2px solid rgba(0,0,0,.14);
-  box-shadow: 0 8px 18px rgba(0,0,0,.12);
-  font-size: 12px;
-  background: rgba(255,255,255,.85);
-}
-[data-parasha-games] .mono-token--human{
-  border-color: rgba(37,99,235,.45);
-}
-[data-parasha-games] .mono-token--bot{
-  border-color: rgba(16,185,129,.45);
+  border: 2px solid rgba(0,0,0,.18);
+  outline: 3px solid rgba(255,255,255,.95);
+  box-shadow: 0 14px 26px rgba(0,0,0,.18);
+  font-size: 16px;
+  background: rgba(255,255,255,.95);
 }
 
-/* Active cell highlight: thin border + subtle glow (once even if two tokens) */
+[data-parasha-games] .mono-token--human{
+  border-color: rgba(37,99,235,.55);
+}
+
+[data-parasha-games] .mono-token--bot{
+  border-color: rgba(16,185,129,.55);
+}
+
+/* Active cell highlight */
 [data-parasha-games] .mono-cell.is-active{
   border: 2px solid rgba(37,99,235,.30);
   box-shadow:
@@ -211,7 +214,7 @@
   direction: rtl;
 }
 
-/* IMPORTANT: bring the same button look into modal (modal lives in body, not under [data-parasha-games]) */
+/* Bring button style into modal (modal lives in body) */
 .mono-modalOverlay .mono-btn{
   border: 1px solid rgba(0,0,0,.10);
   background: #eef2ff;
@@ -228,8 +231,8 @@
 .mono-modalOverlay .mono-btn[disabled]{ opacity:.55; cursor:not-allowed; box-shadow:none !important; }
 
 .mono-modal{
-  width: min(520px, 92vw);
-  max-height: min(520px, 82vh);
+  width: min(560px, 94vw);
+  max-height: min(560px, 82vh);
   background:#fff;
   border:1px solid rgba(0,0,0,.12);
   border-radius:18px;
@@ -238,7 +241,6 @@
   display:flex;
   flex-direction:column;
 
-  /* allow dragging (JS sets left/top). Keep it above overlay content. */
   position: fixed;
   left: 50%;
   top: 50%;
@@ -302,7 +304,7 @@
 }
 
 .mono-cardActions{
-  margin-top: 12px;
+  margin-top:  14px;
   display:flex;
   justify-content:center;
   gap:10px;
