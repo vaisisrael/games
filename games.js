@@ -4,7 +4,7 @@
 
   // ====== CONFIG ======
   const CONTROL_API =
-    "https://script.google.com/macros/s/AKfycbwvOoURLCfXzSMBaj2uVCjctXmaBkM0iUtXttVM-dpYmY0A2JQDSdLIoSV16H9W6PklSg/exec";
+    "https://script.google.com/macros/s/AKfycbyTA6B6ufgd7KjkaYvBcTvYSJ9rsgUHKnUTrMJBGRBHi5CrKwR_x2uaIBO6NqWNH7Ijig/exec";
 
   // version for cache busting (also used when loading game modules)
   const BUILD_VERSION = (() => {
@@ -31,6 +31,7 @@
     { id: "wordstack", title: "🔤 בְּלִילוֹן", js: "wordstack.js", css: "wordstack.css" },
     { id: "classify", title: "🗄️ מגירון", js: "classify.js", css: "classify.css" },
     { id: "studio", title: "🎨 סטודיו", js: "studio.js", css: "studio.css" }
+    { id: "monopol", title: "🎲 חכמון", js: "monopol.js", css: "monopol.css" }
   ];
 
   // ====== LOAD RUBIK FONT (no Blogger theme changes) ======
