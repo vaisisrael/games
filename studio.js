@@ -322,6 +322,9 @@
 
       undoStack: [],
 
+      // ✅ NEW: שכבת הדגשה מעל הציור
+      highlightLayer: null,
+
       // ✅ Zoom/Pan (A): שני אצבעות בלבד לזום/הזזה, אצבע אחת תמיד בוחרת חלק
       zoom: {
         scale: 1,
@@ -379,6 +382,61 @@
       state.hoverRegion = null;
     }
 
+    // ✅ NEW: highlight helpers
+    function ensureHighlightLayer_() {
+      const svg = state.currentSvg;
+      if (!svg) return null;
+
+      let g = svg.querySelector(":scope > g.st-hi");
+      if (!g) {
+        g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+        g.setAttribute("class", "st-hi");
+        g.setAttribute("aria-hidden", "true");
+        svg.appendChild(g);
+      }
+      state.highlightLayer = g;
+      return g;
+    }
+
+    function clearHighlight_() {
+      const svg = state.currentSvg;
+      if (svg) svg.classList.remove("has-selection");
+      const g = state.highlightLayer;
+      if (g) g.innerHTML = "";
+    }
+
+    function renderHighlight_() {
+      const svg = state.currentSvg;
+      const g = ensureHighlightLayer_();
+      if (!svg || !g) return;
+
+      g.innerHTML = "";
+
+      const el = state.selectedRegion;
+      if (!el) {
+        svg.classList.remove("has-selection");
+        return;
+      }
+
+      svg.classList.add("has-selection");
+
+      // Clone selected region and style it for strong highlight (fill + outline)
+      const c = el.cloneNode(true);
+
+      // Make sure highlight never blocks clicks
+      try { c.style.pointerEvents = "none"; } catch (_) {}
+
+      // Strong, visible highlight (without touching actual painted fill)
+      c.setAttribute("fill", "rgba(59,130,246,.18)");
+      c.setAttribute("stroke", "rgba(37,99,235,.95)");
+      c.setAttribute("stroke-width", "5.5");
+      c.setAttribute("paint-order", "stroke");
+      c.setAttribute("vector-effect", "non-scaling-stroke");
+      c.setAttribute("opacity", "1");
+
+      g.appendChild(c);
+    }
+
     function setSelected_(regionEl) {
       if (state.selectedRegion && state.selectedRegion !== regionEl) {
         state.selectedRegion.classList.remove("is-selected");
@@ -386,12 +444,14 @@
       state.selectedRegion = regionEl || null;
       if (state.selectedRegion) state.selectedRegion.classList.add("is-selected");
       renderSelectedName_();
+      renderHighlight_();
     }
 
     function clearSelected_() {
       if (state.selectedRegion) state.selectedRegion.classList.remove("is-selected");
       state.selectedRegion = null;
       renderSelectedName_();
+      clearHighlight_();
     }
 
     function renderSelectedName_() {
@@ -925,6 +985,10 @@
       try { maybeTightenViewBox_(svg); } catch (_) {}
 
       state.currentSvg = svg;
+
+      // ✅ NEW: create highlight layer (once per SVG)
+      ensureHighlightLayer_();
+      clearHighlight_();
 
       bindZoomOnce_();
       resetZoom_();
