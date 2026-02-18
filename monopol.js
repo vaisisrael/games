@@ -15,8 +15,8 @@
 
   const GAME_ID = "monopol";
 
-  // Movement timing (slower as requested)
-  const MOVE_STEP_MS = 320;
+  // Movement timing
+  const MOVE_STEP_MS = 320;   // slower
   const MOVE_FINAL_MS = 450;
 
   // After landing: wait 1s before showing the card
@@ -99,7 +99,6 @@
 
   function buildBoardGrid_(cells24) {
     const grid = Array.from({ length: 24 }, (_, i) => ({ i, id: cells24[i] }));
-    // convert to display order by rows/cols
     const display = Array.from({ length: 3 }, () => Array.from({ length: 8 }, () => null));
     grid.forEach(({ i, id }) => {
       const { row, col } = gridPosForIndex_(i);
@@ -189,6 +188,10 @@
       ended: false
     };
 
+    function scoreLine_() {
+      return `👦 ${state.humanScore}⭐ <span class="mono-scoreSep">|</span> 🤖 ${state.botScore}⭐`;
+    }
+
     function setDieText_(t) {
       elDieText.textContent = safeText_(t) || "";
     }
@@ -205,8 +208,7 @@
 
     function cellTypeById_(id) {
       const row = model.idMap.get(id);
-      const type = normalizeType_(row ? row.type : "");
-      return type;
+      return normalizeType_(row ? row.type : "");
     }
 
     function cellTypeByIndex_(idx) {
@@ -260,7 +262,6 @@
     }
 
     function chooseDieValue_(who) {
-      // If player has 0 points: don't allow a roll that lands on a trap cell (if possible)
       const score = (who === "bot") ? state.botScore : state.humanScore;
       const pos = (who === "bot") ? state.botPos : state.humanPos;
 
@@ -272,7 +273,6 @@
         const t = cellTypeByIndex_(landed);
         if (t !== "trap") safe.push(v);
       }
-
       if (safe.length) return safe[randInt_(0, safe.length - 1)];
       return randInt_(1, 6);
     }
@@ -281,8 +281,7 @@
       state.rolling = true;
       setRollEnabled_(false);
 
-      if (who === "bot") setDieText_("🤖 זורק קובייה…");
-      else setDieText_("מגריל…");
+      setDieText_(who === "bot" ? "תור המחשב — מגריל…" : "מגריל…");
 
       const start = Date.now();
       const duration = 900;
@@ -297,7 +296,7 @@
       elDieNum.textContent = String(finalValue);
       setDieText_(`יצא: ${finalValue}`);
 
-      await sleep_(1000);
+      await sleep_(900);
 
       state.rolling = false;
     }
@@ -321,43 +320,125 @@
       return to;
     }
 
-    function openModal_(title, bodyHtml, options) {
-      const opts = options || {};
+    function makeDraggable_(overlay) {
+      const modal = overlay.querySelector(".mono-modal");
+      const top = overlay.querySelector(".mono-modalTop");
+      if (!modal || !top) return;
+
+      // ensure we start centered
+      // (CSS starts centered with translate; when first drag begins we switch to explicit left/top)
+      let dragging = false;
+      let startX = 0, startY = 0;
+      let startLeft = 0, startTop = 0;
+
+      function clamp_(v, min, max) {
+        return Math.max(min, Math.min(max, v));
+      }
+
+      function begin_(clientX, clientY) {
+        const rect = modal.getBoundingClientRect();
+
+        // switch to explicit positioning from now on
+        modal.style.transform = "none";
+        modal.style.left = rect.left + "px";
+        modal.style.top = rect.top + "px";
+
+        dragging = true;
+        startX = clientX;
+        startY = clientY;
+        startLeft = rect.left;
+        startTop = rect.top;
+      }
+
+      function move_(clientX, clientY) {
+        if (!dragging) return;
+        const dx = clientX - startX;
+        const dy = clientY - startY;
+
+        const mw = modal.offsetWidth;
+        const mh = modal.offsetHeight;
+
+        const maxLeft = window.innerWidth - mw - 8;
+        const maxTop = window.innerHeight - mh - 8;
+
+        const nextLeft = clamp_(startLeft + dx, 8, Math.max(8, maxLeft));
+        const nextTop = clamp_(startTop + dy, 8, Math.max(8, maxTop));
+
+        modal.style.left = nextLeft + "px";
+        modal.style.top = nextTop + "px";
+      }
+
+      function end_() {
+        dragging = false;
+      }
+
+      top.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        begin_(e.clientX, e.clientY);
+        window.addEventListener("mousemove", onMouseMove_, { passive: false });
+        window.addEventListener("mouseup", onMouseUp_, { passive: true, once: true });
+      });
+
+      function onMouseMove_(e) {
+        e.preventDefault();
+        move_(e.clientX, e.clientY);
+      }
+
+      function onMouseUp_() {
+        window.removeEventListener("mousemove", onMouseMove_);
+        end_();
+      }
+
+      top.addEventListener("touchstart", (e) => {
+        const t = e.touches && e.touches[0];
+        if (!t) return;
+        e.preventDefault();
+        begin_(t.clientX, t.clientY);
+        window.addEventListener("touchmove", onTouchMove_, { passive: false });
+        window.addEventListener("touchend", onTouchEnd_, { passive: true, once: true });
+      }, { passive: false });
+
+      function onTouchMove_(e) {
+        const t = e.touches && e.touches[0];
+        if (!t) return;
+        e.preventDefault();
+        move_(t.clientX, t.clientY);
+      }
+
+      function onTouchEnd_() {
+        window.removeEventListener("touchmove", onTouchMove_);
+        end_();
+      }
+    }
+
+    function openModal_(title, bodyHtml) {
       const overlay = document.createElement("div");
       overlay.className = "mono-modalOverlay";
       overlay.innerHTML = `
         <div class="mono-modal" role="dialog" aria-modal="true">
           <div class="mono-modalTop">
             <div class="mono-modalTitle">${safeText_(title)}</div>
-            <button type="button" class="mono-modalClose">סגור</button>
           </div>
           <div class="mono-modalBody">
+            <div class="mono-modalScore">${scoreLine_()}</div>
             ${bodyHtml || ""}
           </div>
         </div>
       `.trim();
 
-      const closeBtn = overlay.querySelector(".mono-modalClose");
-      if (opts.hideClose) closeBtn.style.display = "none";
+      // no backdrop close
+      // no close button
 
       let _resolve = null;
       const closedPromise = new Promise(res => { _resolve = res; });
 
       function close(reason) {
         overlay.remove();
-        if (typeof opts.onClose === "function") opts.onClose(reason);
         if (_resolve) _resolve(reason);
       }
 
-      if (!opts.disableBackdropClose) {
-        overlay.addEventListener("click", (e) => {
-          if (e.target === overlay) close("backdrop");
-        });
-      }
-
-      closeBtn.addEventListener("click", () => close("close"));
-
       document.body.appendChild(overlay);
+      makeDraggable_(overlay);
 
       return { close, overlay, closed: closedPromise };
     }
@@ -369,10 +450,18 @@
       updateScores_();
     }
 
-    function switchTurn_() {
-      state.turn = (state.turn === "human") ? "bot" : "human";
-      setDieText_(state.turn === "human" ? "תורך" : "תור המחשב");
-      setRollEnabled_(state.turn === "human" && !state.ended);
+    function setTurnUi_() {
+      if (state.ended) {
+        setDieText_("");
+        setRollEnabled_(false);
+        return;
+      }
+      if (state.turn === "human") {
+        setDieText_("תורך");
+      } else {
+        setDieText_("תור המחשב — לחץ כדי להטיל");
+      }
+      setRollEnabled_(true);
     }
 
     async function handleStationBonusTrap_(who, row) {
@@ -391,22 +480,11 @@
         </div>
       `.trim();
 
-      // Apply the score immediately upon showing (as before),
-      // but keep the flow blocked until the user clicks "המשך".
-      const modal = openModal_(typeIcon_(type) + " " + title, body, {
-        hideClose: true,
-        disableBackdropClose: true
-      });
+      const modal = openModal_(typeIcon_(type) + " " + title, body);
 
       applyScore_(who, reward);
 
-      const btn = modal.overlay.querySelector(".mono-continue");
-      btn.addEventListener("click", () => modal.close("continue"));
-
-      if (who === "bot") {
-        await sleep_(2000);
-        modal.close("auto");
-      }
+      modal.overlay.querySelector(".mono-continue").addEventListener("click", () => modal.close("continue"));
 
       await modal.closed;
     }
@@ -434,10 +512,11 @@
 
       let locked = false;
 
-      const modal = openModal_("❓ " + qTitle, body, {
-        hideClose: true,
-        disableBackdropClose: true
-      });
+      const modal = openModal_("❓ " + qTitle, body);
+
+      // keep modal score updated (it may be outdated if points changed before open)
+      const modalScore = modal.overlay.querySelector(".mono-modalScore");
+      if (modalScore) modalScore.innerHTML = scoreLine_();
 
       const ansBtns = Array.from(modal.overlay.querySelectorAll(".mono-ans"));
       const botLine = modal.overlay.querySelector(".mono-botLine");
@@ -476,10 +555,13 @@
           markAnswer_(correctBtn, "is-correct");
         }
 
+        // update modal score line after scoring
+        if (modalScore) modalScore.innerHTML = scoreLine_();
+
         actions.style.display = "flex";
       }
 
-      // Human interaction (must block flow until "המשך")
+      // Human interaction
       if (who === "human") {
         ansBtns.forEach(btn => {
           btn.addEventListener("click", () => {
@@ -494,7 +576,7 @@
         return;
       }
 
-      // Bot flow
+      // Bot flow (still shows "המשך" and waits for child)
       await sleep_(2000);
       botLine.style.display = "block";
       await sleep_(2500);
@@ -516,7 +598,7 @@
 
       await sleep_(1200);
 
-      modal.close("auto");
+      btnContinue.addEventListener("click", () => modal.close("continue"));
       await modal.closed;
     }
 
@@ -526,7 +608,6 @@
 
       const type = normalizeType_(row.type);
 
-      // Pause after landing (as requested)
       await sleep_(AFTER_LAND_PAUSE_MS);
 
       if (type === "end") {
@@ -549,11 +630,7 @@
           </div>
         `.trim();
 
-        const modal = openModal_("🏆 סיום", body, {
-          hideClose: true,
-          disableBackdropClose: true
-        });
-
+        const modal = openModal_("🏆 סיום", body);
         modal.overlay.querySelector(".mono-restart").addEventListener("click", () => {
           modal.close("restart");
           restart_();
@@ -563,11 +640,8 @@
         return;
       }
 
-      if (type === "quiz") {
-        await handleQuiz_(who, row);
-      } else {
-        await handleStationBonusTrap_(who, row);
-      }
+      if (type === "quiz") await handleQuiz_(who, row);
+      else await handleStationBonusTrap_(who, row);
     }
 
     async function doTurn_(who) {
@@ -584,12 +658,8 @@
 
       if (state.ended) return;
 
-      switchTurn_();
-
-      if (state.turn === "bot") {
-        await sleep_(300);
-        await doTurn_("bot");
-      }
+      state.turn = (state.turn === "human") ? "bot" : "human";
+      setTurnUi_();
     }
 
     function restart_() {
@@ -603,10 +673,9 @@
       state.ended = false;
 
       elDieNum.textContent = "0";
-      setDieText_("תורך");
       updateScores_();
       updateTokensAndActive_();
-      setRollEnabled_(true);
+      setTurnUi_();
     }
 
     // init board
@@ -614,13 +683,11 @@
     updateScores_();
     updateTokensAndActive_();
     elDieNum.textContent = "0";
-    setDieText_("תורך");
-    setRollEnabled_(true);
+    setTurnUi_();
 
     btnRoll.addEventListener("click", () => {
-      if (state.turn !== "human") return;
       if (state.rolling || state.ended) return;
-      doTurn_("human");
+      doTurn_(state.turn);
     });
 
     return { reset: () => {} };
