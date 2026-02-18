@@ -66,21 +66,48 @@
 [data-parasha-games] .mono-btn:hover{ box-shadow: 0 6px 14px rgba(0,0,0,.06); }
 [data-parasha-games] .mono-btn[disabled]{ opacity:.55; cursor:not-allowed; box-shadow:none !important; }
 
+/* ===== "Cube" look for the die ===== */
 [data-parasha-games] .mono-die{
   width: 44px;
   height: 44px;
-  border-radius: 14px;
-  border: 1px solid rgba(0,0,0,.12);
-  background:#fff;
-  box-shadow: 0 10px 24px rgba(0,0,0,.10);
+  border-radius: 12px;
+  border: 1px solid rgba(0,0,0,.14);
+  background: linear-gradient(180deg, #ffffff 0%, #f3f4f6 100%);
+  box-shadow:
+    0 12px 22px rgba(0,0,0,.12),
+    inset 0 2px 0 rgba(255,255,255,.75),
+    inset 0 -2px 0 rgba(0,0,0,.06);
   display:flex;
   align-items:center;
   justify-content:center;
+  position: relative;
+  overflow: hidden;
+}
+[data-parasha-games] .mono-die::before{
+  content:"";
+  position:absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,.55), rgba(255,255,255,0));
+  pointer-events:none;
+}
+[data-parasha-games] .mono-die::after{
+  content:"";
+  position:absolute;
+  left: 6px;
+  right: 6px;
+  bottom: -10px;
+  height: 18px;
+  background: rgba(0,0,0,.08);
+  filter: blur(10px);
+  opacity: .35;
+  pointer-events:none;
 }
 [data-parasha-games] .mono-dieNum{
   font-weight: 950;
   font-size: 18px;
   color:#0f172a;
+  position: relative;
+  z-index: 1;
 }
 [data-parasha-games] .mono-dieText{
   font-weight: 900;
@@ -149,7 +176,7 @@
 /* Tokens (bigger + "pops out") */
 [data-parasha-games] .mono-tokens{
   position:absolute;
-  bottom: -10px;   /* pop out of the cell */
+  bottom: -10px;
   right: 8px;
   display:flex;
   gap: 8px;
@@ -169,13 +196,8 @@
   background: rgba(255,255,255,.95);
 }
 
-[data-parasha-games] .mono-token--human{
-  border-color: rgba(37,99,235,.55);
-}
-
-[data-parasha-games] .mono-token--bot{
-  border-color: rgba(16,185,129,.55);
-}
+[data-parasha-games] .mono-token--human{ border-color: rgba(37,99,235,.55); }
+[data-parasha-games] .mono-token--bot{ border-color: rgba(16,185,129,.55); }
 
 /* Active cell highlight */
 [data-parasha-games] .mono-cell.is-active{
@@ -230,9 +252,10 @@
 .mono-modalOverlay .mono-btn:hover{ box-shadow: 0 6px 14px rgba(0,0,0,.06); }
 .mono-modalOverlay .mono-btn[disabled]{ opacity:.55; cursor:not-allowed; box-shadow:none !important; }
 
+/* Smaller modal so it never "feels" out of frame */
 .mono-modal{
-  width: min(560px, 94vw);
-  max-height: min(560px, 82vh);
+  width: min(420px, 92vw);
+  max-height: min(420px, 72vh);
   background:#fff;
   border:1px solid rgba(0,0,0,.12);
   border-radius:18px;
@@ -270,7 +293,7 @@
 }
 
 .mono-modalBody{
-  padding:12px;
+  padding:10px;
   overflow:auto;
 }
 
@@ -280,7 +303,7 @@
   gap:10px;
   font-weight: 950;
   color: rgba(15,23,42,.70);
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   font-size: 13px;
   white-space: nowrap;
 }
@@ -292,26 +315,40 @@
   font-size: 14px;
 }
 
+.mono-cardSub{
+  margin-top: 8px;
+  font-weight: 900;
+  color: rgba(15,23,42,.72);
+  line-height: 1.45;
+  font-size: 13px;
+}
+
 .mono-cardReward{
   margin-top: 10px;
   font-weight: 950;
   color: #0f172a;
-  background: rgba(255,255,255,.75);
+  background: rgba(255,255,255,.85);
   border: 1px solid rgba(0,0,0,.10);
   border-radius: 14px;
   padding: 8px 10px;
   display:inline-block;
 }
 
+.mono-cardReward--big{
+  font-size: 15px;
+  padding: 10px 12px;
+  border-radius: 16px;
+}
+
 .mono-cardActions{
-  margin-top:  14px;
+  margin-top: 12px;
   display:flex;
   justify-content:center;
   gap:10px;
 }
 
 .mono-answers{
-  margin-top: 12px;
+  margin-top: 10px;
   display:grid;
   grid-template-columns: 1fr;
   gap: 8px;
@@ -321,7 +358,7 @@
   border: 1px solid rgba(0,0,0,.12);
   background: #fff;
   border-radius: 14px;
-  padding: 10px 12px;
+  padding: 9px 10px; /* tighter */
   cursor: pointer;
   font-weight: 900;
   font-size: 14px;
@@ -336,9 +373,7 @@
   outline-offset: 2px;
 }
 
-.mono-ans.is-picked{
-  border-color: rgba(0,0,0,.20);
-}
+.mono-ans.is-picked{ border-color: rgba(0,0,0,.20); }
 
 .mono-ans.is-correct{
   background: #ecfdf5;
