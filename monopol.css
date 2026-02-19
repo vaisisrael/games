@@ -189,7 +189,8 @@
   transform: translateY(2px);
 }
 @media (max-width: 640px){
-  [data-parasha-games] .mono-icon{ font-size: 18px; }
+  /* ✅ תיקון 1: הקטנת אימוג'י סוג משבצת בנייד כדי שלא יסתיר את המספר */
+  [data-parasha-games] .mono-icon{ font-size: 16px; }
 }
 
 /* Tokens (bigger + "pops out") */
@@ -356,22 +357,18 @@
   text-align: center;
 }
 
+/* ✅ תיקון 3: שורת תגמול כמו טקסט רגיל (ממורכז, אותו גודל/גופן, בלי "תג גדול") */
 .mono-cardReward{
   margin-top: 10px;
-  font-weight: 950;
+  font-weight: 800;
   color: #0f172a;
-  background: rgba(255,255,255,.85);
-  border: 1px solid rgba(0,0,0,.10);
-  border-radius: 14px;
-  padding: 8px 10px;
-  display:inline-block;
+  font-size: 14px;
   text-align: center;
-}
-
-.mono-cardReward--big{
-  font-size: 15px;
-  padding: 10px 12px;
-  border-radius: 16px;
+  background: none;
+  border: none;
+  border-radius: 0;
+  padding: 0;
+  display: block;
 }
 
 .mono-cardActions{
