@@ -39,6 +39,16 @@
   flex-wrap: wrap;
   direction: rtl;
 }
+
+/* תיקון בנייח: לא לתת ל"דיה-טקסט" ליצור רווח קבוע שמרחיק את הכפתור */
+[data-parasha-games] .mono-dieText{
+  font-weight: 900;
+  font-size: 13px;
+  color: var(--mono-muted);
+  min-width: 0;
+  white-space: nowrap;
+}
+
 [data-parasha-games] .mono-score{
   margin-inline-start: auto;
   display:flex;
@@ -109,12 +119,6 @@
   position: relative;
   z-index: 1;
 }
-[data-parasha-games] .mono-dieText{
-  font-weight: 900;
-  font-size: 13px;
-  color: var(--mono-muted);
-  min-width: 120px;
-}
 
 /* ===== Board ===== */
 [data-parasha-games] .mono-boardWrap{
@@ -136,12 +140,17 @@
 
 @media (max-width: 640px){
   [data-parasha-games] .mono-boardWrap{ padding: 8px; }
-  [data-parasha-games] .mono-dieText{ min-width: 0; }
+
+  /* 9) בנייד: להקטין כך שכל 8 ייכנסו ללא גלילה אופקית */
   [data-parasha-games] .mono-board{
-    grid-template-columns: repeat(8, 40px);
-    gap: 6px;
-    min-width: 362px; /* 8*40 + 7*6 */
+    grid-template-columns: repeat(8, 1fr);
+    gap: 4px;
+    min-width: 0;
   }
+
+  /* התאמות קלות כדי לא "להתנפח" */
+  [data-parasha-games] .mono-die{ width: 42px; height: 42px; border-radius: 12px; }
+  [data-parasha-games] .mono-dieNum{ font-size: 17px; }
 }
 
 [data-parasha-games] .mono-cell{
@@ -157,7 +166,8 @@
 }
 
 @media (max-width: 640px){
-  [data-parasha-games] .mono-cell{ height: 52px; border-radius: 14px; }
+  /* 9) בנייד: להקטין משבצת */
+  [data-parasha-games] .mono-cell{ height: 46px; border-radius: 14px; }
 }
 
 [data-parasha-games] .mono-num{
@@ -170,7 +180,7 @@
 }
 
 @media (max-width: 640px){
-  [data-parasha-games] .mono-num{ top: 5px; left: 7px; font-size: 10px; }
+  [data-parasha-games] .mono-num{ top: 5px; left: 6px; font-size: 10px; }
 }
 
 [data-parasha-games] .mono-icon{
@@ -179,7 +189,7 @@
   transform: translateY(2px);
 }
 @media (max-width: 640px){
-  [data-parasha-games] .mono-icon{ font-size: 20px; }
+  [data-parasha-games] .mono-icon{ font-size: 18px; }
 }
 
 /* Tokens (bigger + "pops out") */
@@ -191,7 +201,7 @@
   gap: 8px;
 }
 @media (max-width: 640px){
-  [data-parasha-games] .mono-tokens{ bottom: -9px; right: 7px; gap: 7px; }
+  [data-parasha-games] .mono-tokens{ bottom: -9px; right: 6px; gap: 6px; }
 }
 
 [data-parasha-games] .mono-token{
@@ -209,9 +219,9 @@
 }
 @media (max-width: 640px){
   [data-parasha-games] .mono-token{
-    width: 28px;
-    height: 28px;
-    font-size: 15px;
+    width: 26px;
+    height: 26px;
+    font-size: 14px;
   }
 }
 
@@ -271,10 +281,10 @@
 .mono-modalOverlay .mono-btn:hover{ box-shadow: 0 6px 14px rgba(0,0,0,.06); }
 .mono-modalOverlay .mono-btn[disabled]{ opacity:.55; cursor:not-allowed; box-shadow:none !important; }
 
-/* Smaller modal (about half) */
+/* 3) מודאל גדול יותר כדי שכפתור "המשך" לא ייעלם (נייח+נייד) */
 .mono-modal{
-  width: min(320px, 92vw);
-  max-height: min(320px, 62vh);
+  width: min(380px, 94vw);
+  max-height: min(560px, 82vh);
   background:#fff;
   border:1px solid rgba(0,0,0,.12);
   border-radius:16px;
@@ -325,13 +335,16 @@
   margin-bottom: 8px;
   font-size: 13px;
   white-space: nowrap;
+  text-align: center;
 }
 
+/* 5) מירכוז טקסטים בחלוניות */
 .mono-cardText{
   font-weight: 800;
   color:#0f172a;
   line-height: 1.45;
   font-size: 14px;
+  text-align: center;
 }
 
 .mono-cardSub{
@@ -340,6 +353,7 @@
   color: rgba(15,23,42,.72);
   line-height: 1.45;
   font-size: 13px;
+  text-align: center;
 }
 
 .mono-cardReward{
@@ -351,6 +365,7 @@
   border-radius: 14px;
   padding: 8px 10px;
   display:inline-block;
+  text-align: center;
 }
 
 .mono-cardReward--big{
@@ -382,7 +397,7 @@
   cursor: pointer;
   font-weight: 900;
   font-size: 14px;
-  text-align: right;
+  text-align: center;
   box-shadow: 0 8px 18px rgba(0,0,0,.08);
 }
 .mono-ans:hover{ box-shadow: 0 12px 26px rgba(0,0,0,.10); }
