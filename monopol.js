@@ -179,7 +179,8 @@
       botScore: 0,
       activeCellIdx: 0,
       ended: false,
-      justRestarted: false
+      justRestarted: false,
+      lastHumanRoll: null
     };
 
     let activeModalOverlay = null;
@@ -282,6 +283,30 @@
       return randInt_(1, 6);
     }
 
+    function chooseBotDieValueAvoiding_(avoidValue) {
+      const score = state.botScore;
+      const pos = state.botPos;
+
+      if (score !== 0) {
+        const options = [1, 2, 3, 4, 5, 6].filter(v => v !== avoidValue);
+        if (!options.length) return randInt_(1, 6);
+        return options[randInt_(0, options.length - 1)];
+      }
+
+      const safe = [];
+      for (let v = 1; v <= 6; v++) {
+        if (v === avoidValue) continue;
+        const landed = Math.min(pos + v, 23);
+        const t = cellTypeByIndex_(landed);
+        if (t !== "trap") safe.push(v);
+      }
+      if (safe.length) return safe[randInt_(0, safe.length - 1)];
+
+      const any = [1, 2, 3, 4, 5, 6].filter(v => v !== avoidValue);
+      if (any.length) return any[randInt_(0, any.length - 1)];
+      return randInt_(1, 6);
+    }
+
     async function animateDieRoll_(finalValue, who) {
       state.rolling = true;
       setRollEnabled_(false);
@@ -299,7 +324,9 @@
       }
 
       elDieNum.textContent = String(finalValue);
-      setDieText_(`יצא: ${finalValue}`);
+
+      // לא מציגים "יצא X" – שדה התור נשאר/חוזר
+      setDieText_(who === "bot" ? "תור המחשב" : "תורך");
 
       await sleep_(900);
 
@@ -489,20 +516,6 @@
       setRollEnabled_(true);
     }
 
-    function prefixDidYouKnow_(text) {
-      const t = safeText_(text);
-      if (!t) return "הידעת?";
-      if (/^\s*הידעת\??/i.test(t)) return t;
-      return `הידעת? ${t}`;
-    }
-
-    function prefixOops_(text) {
-      const t = safeText_(text);
-      if (!t) return "אופס…";
-      if (/^\s*אופס/i.test(t)) return t;
-      return `אופס… ${t}`;
-    }
-
     function rewardLine_(who, reward, type) {
       const n = Number(reward || 0) || 0;
       if (!n) return "";
@@ -522,23 +535,20 @@
 
       let title = "תחנה";
       let bodyTextMain = rawText;
-      let subText = "";
 
       if (type === "station") {
         title = rawTitle || "תחנה";
-        bodyTextMain = prefixDidYouKnow_(rawText);
+        bodyTextMain = rawText;
       } else if (type === "bonus") {
         title = rawTitle || "בונוס";
-        bodyTextMain = "כל הכבוד! 🎉";
-        subText = rawText;
+        bodyTextMain = rawText;
       } else { // trap
         title = rawTitle || "מלכודת";
-        bodyTextMain = prefixOops_(rawText);
+        bodyTextMain = rawText;
       }
 
       const body = `
         <div class="mono-cardText">${bodyTextMain}</div>
-        ${subText ? `<div class="mono-cardSub">${subText}</div>` : ""}
         ${rline ? `<div class="mono-cardReward mono-cardReward--big">${rline}</div>` : ""}
         <div class="mono-cardActions">
           <button type="button" class="mono-btn mono-continue">המשך</button>
@@ -726,8 +736,16 @@
 
       setRollEnabled_(false);
 
-      const steps = chooseDieValue_(who);
+      let steps = chooseDieValue_(who);
+
+      // פתרון B: אם המחשב מגריל בדיוק כמו השחקן בסיבוב הקודם — reroll פעם אחת
+      if (who === "bot" && state.lastHumanRoll != null && steps === state.lastHumanRoll) {
+        steps = chooseBotDieValueAvoiding_(state.lastHumanRoll);
+      }
+
       await animateDieRoll_(steps, who);
+
+      if (who === "human") state.lastHumanRoll = steps;
 
       const landedIdx = await moveTokenStepByStep_(who, steps);
       await handleLanding_(who, landedIdx);
@@ -753,6 +771,7 @@
       state.activeCellIdx = 0;
       state.ended = false;
       state.justRestarted = true;
+      state.lastHumanRoll = null;
 
       setDieNum0_();
       updateScores_();
