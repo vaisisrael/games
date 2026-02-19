@@ -141,11 +141,11 @@
 
           <div class="mono-topbar">
             <div class="mono-actions">
+              <div class="mono-dieText" aria-live="polite">תורך</div>
               <button type="button" class="mono-btn mono-roll">🎲 זרוק קובייה</button>
               <div class="mono-die" aria-label="קובייה" role="status">
                 <span class="mono-dieNum">0</span>
               </div>
-              <div class="mono-dieText" aria-live="polite">תורך</div>
             </div>
 
             <div class="mono-score" aria-live="polite">
@@ -178,10 +178,10 @@
       humanScore: 0,
       botScore: 0,
       activeCellIdx: 0,
-      ended: false
+      ended: false,
+      justRestarted: false
     };
 
-    // Modal live references (to keep score line synced)
     let activeModalOverlay = null;
     let activeModalScoreEl = null;
 
@@ -208,9 +208,7 @@
     }
 
     function updateModalScore_() {
-      if (activeModalScoreEl) {
-        activeModalScoreEl.innerHTML = scoreLineHtml_();
-      }
+      if (activeModalScoreEl) activeModalScoreEl.innerHTML = scoreLineHtml_();
     }
 
     function cellTypeById_(id) {
@@ -269,7 +267,6 @@
     }
 
     function chooseDieValue_(who) {
-      // If player has 0 points: don't allow a roll that lands on a trap cell (if possible)
       const score = (who === "bot") ? state.botScore : state.humanScore;
       const pos = (who === "bot") ? state.botPos : state.humanPos;
 
@@ -281,7 +278,6 @@
         const t = cellTypeByIndex_(landed);
         if (t !== "trap") safe.push(v);
       }
-
       if (safe.length) return safe[randInt_(0, safe.length - 1)];
       return randInt_(1, 6);
     }
@@ -337,7 +333,6 @@
       if (!modalEl) return;
       const rect = modalEl.getBoundingClientRect();
 
-      // convert to fixed left/top without transform
       modalEl.style.transform = "none";
       modalEl.style.left = rect.left + "px";
       modalEl.style.top = rect.top + "px";
@@ -467,7 +462,6 @@
       activeModalOverlay = overlay;
       activeModalScoreEl = overlay.querySelector(".mono-modalScore");
 
-      // Clamp once after layout so it never starts outside screen
       const modalEl = overlay.querySelector(".mono-modal");
       requestAnimationFrame(() => clampModalToViewport_(modalEl));
 
@@ -490,27 +484,31 @@
         return;
       }
       setDieNum0_();
-      if (state.turn === "human") {
-        setDieText_("תורך");
-      } else {
-        setDieText_("תור המחשב — לחץ כדי להטיל");
-      }
+      if (state.turn === "human") setDieText_("תורך");
+      else setDieText_("תור המחשב");
       setRollEnabled_(true);
-    }
-
-    function rewardLine_(who, reward) {
-      const n = Number(reward || 0) || 0;
-      if (!n) return "";
-      if (n > 0) return (who === "bot") ? `המחשב קיבל ${n}⭐` : `קיבלת ${n}⭐`;
-      return (who === "bot") ? `המחשב הפסיד ${Math.abs(n)}⭐` : `הפסדת ${Math.abs(n)}⭐`;
     }
 
     function prefixDidYouKnow_(text) {
       const t = safeText_(text);
       if (!t) return "הידעת?";
-      // Avoid double "הידעת?"
       if (/^\s*הידעת\??/i.test(t)) return t;
       return `הידעת? ${t}`;
+    }
+
+    function prefixOops_(text) {
+      const t = safeText_(text);
+      if (!t) return "אופס…";
+      if (/^\s*אופס/i.test(t)) return t;
+      return `אופס… ${t}`;
+    }
+
+    function rewardLine_(who, reward, type) {
+      const n = Number(reward || 0) || 0;
+      if (!n) return "";
+      if (n > 0) return (who === "bot") ? `המחשב קיבל +${n}⭐` : `קיבלת +${n}⭐`;
+      if (type === "trap") return (who === "bot") ? `המחשב הפסיד ${Math.abs(n)}⭐` : `הפסדת ${Math.abs(n)}⭐`;
+      return "";
     }
 
     async function handleStationBonusTrap_(who, row) {
@@ -520,7 +518,7 @@
       const rawText = safeText_(row.text);
 
       const reward = Number(row.reward || 0) || 0;
-      const rline = rewardLine_(who, reward);
+      const rline = rewardLine_(who, reward, type);
 
       let title = "תחנה";
       let bodyTextMain = rawText;
@@ -531,12 +529,11 @@
         bodyTextMain = prefixDidYouKnow_(rawText);
       } else if (type === "bonus") {
         title = rawTitle || "בונוס";
-        // Bonus: focus on reward; text (if exists) becomes secondary
         bodyTextMain = "כל הכבוד! 🎉";
         subText = rawText;
       } else { // trap
         title = rawTitle || "מלכודת";
-        bodyTextMain = rawText || "אופס…";
+        bodyTextMain = prefixOops_(rawText);
       }
 
       const body = `
@@ -550,7 +547,6 @@
 
       const modal = openModal_(typeIcon_(type) + " " + title, body);
 
-      // Apply score immediately so score line is synced while the modal is open
       applyScore_(who, reward);
 
       modal.overlay.querySelector(".mono-continue").addEventListener("click", () => modal.close("continue"));
@@ -563,7 +559,7 @@
       const answers = [row.a1, row.a2, row.a3, row.a4].map(safeText_);
       const correct = safeText_(row.correct);
 
-      // Hard rule: quiz reward can only be positive; wrong answers never subtract points.
+      // Wrong answers never subtract points in quiz
       const rewardRaw = Number(row.reward || 0) || 0;
       const reward = Math.max(0, rewardRaw);
 
@@ -576,6 +572,7 @@
         <div class="mono-cardText">${qText}</div>
         <div class="mono-answers">${buttonsHtml}</div>
         <div class="mono-botLine" style="display:none">🤖 המחשב חושב…</div>
+        <div class="mono-quizFeedback" style="display:none"></div>
         <div class="mono-cardActions" style="display:none">
           <button type="button" class="mono-btn mono-continue">המשך</button>
         </div>
@@ -584,9 +581,9 @@
       let locked = false;
 
       const modal = openModal_("❓ " + qTitle, body);
-      const modalScore = modal.overlay.querySelector(".mono-modalScore");
       const ansBtns = Array.from(modal.overlay.querySelectorAll(".mono-ans"));
       const botLine = modal.overlay.querySelector(".mono-botLine");
+      const feedback = modal.overlay.querySelector(".mono-quizFeedback");
       const actions = modal.overlay.querySelector(".mono-cardActions");
       const btnContinue = modal.overlay.querySelector(".mono-continue");
 
@@ -603,6 +600,20 @@
       function findBtnByAnswer_(a) {
         const enc = encodeURIComponent(a || "");
         return ansBtns.find(b => (b.dataset.ans || "") === enc) || null;
+      }
+
+      function showFeedback_(isCorrect) {
+        if (!feedback) return;
+        feedback.style.display = "block";
+
+        if (who === "human") {
+          if (isCorrect) feedback.textContent = `כל הכבוד! תשובה נכונה ✅ קיבלת +${reward}⭐`;
+          else feedback.textContent = `לא הפעם ❌ התשובה הנכונה היא: ${correct} (לא ירדה נקודה)`;
+          return;
+        }
+
+        if (isCorrect) feedback.textContent = `המחשב צדק ✅ קיבל +${reward}⭐`;
+        else feedback.textContent = `המחשב טעה ❌ התשובה הנכונה היא: ${correct} (לא ירדה נקודה)`;
       }
 
       function reveal_(picked) {
@@ -622,15 +633,13 @@
           markAnswer_(correctBtn, "is-correct");
         }
 
-        if (modalScore) modalScore.innerHTML = scoreLineHtml_();
         if (botLine) botLine.style.display = "none";
+        showFeedback_(isCorrect);
         actions.style.display = "flex";
       }
 
-      // Bot turn: child must not be able to click answers while bot thinks
       if (who === "bot") {
         lockAnswers_();
-
         await sleep_(2000);
         if (botLine) botLine.style.display = "block";
         await sleep_(2500);
@@ -655,7 +664,6 @@
         return;
       }
 
-      // Human interaction
       ansBtns.forEach(btn => {
         btn.addEventListener("click", () => {
           if (locked) return;
@@ -690,20 +698,22 @@
 
         const body = `
           <div class="mono-cardText">הגעתם לסיום. המשחק נגמר.</div>
-          <div class="mono-endScores">👦 ${h}⭐ <span class="mono-scoreSep">|</span> 🤖 ${b}⭐</div>
           <div class="mono-endWinner">${winnerText}</div>
           <div class="mono-cardActions">
             <button type="button" class="mono-btn mono-restart">משחק חדש</button>
           </div>
         `.trim();
 
+        let didRestart = false;
         const modal = openModal_("🏆 סיום", body);
         modal.overlay.querySelector(".mono-restart").addEventListener("click", () => {
+          didRestart = true;
           modal.close("restart");
-          restart_();
         });
 
         await modal.closed;
+
+        if (didRestart) restart_();
         return;
       }
 
@@ -722,6 +732,11 @@
       const landedIdx = await moveTokenStepByStep_(who, steps);
       await handleLanding_(who, landedIdx);
 
+      if (state.justRestarted) {
+        state.justRestarted = false;
+        return;
+      }
+
       if (state.ended) return;
 
       state.turn = (state.turn === "human") ? "bot" : "human";
@@ -737,6 +752,7 @@
       state.botScore = 0;
       state.activeCellIdx = 0;
       state.ended = false;
+      state.justRestarted = true;
 
       setDieNum0_();
       updateScores_();
@@ -751,7 +767,6 @@
     setDieNum0_();
     setTurnUi_();
 
-    // Child always clicks the same button (even in bot turn)
     btnRoll.addEventListener("click", () => {
       if (state.rolling || state.ended) return;
       doTurn_(state.turn);
