@@ -76,10 +76,10 @@
       case "start": return "🏁";
       case "end": return "🏆";
       case "quiz": return "❓";
-      case "station": return "📘";
+      case "station": return "📄"; // ✅ שינוי: סמל תחנה
       case "bonus": return "⭐";
       case "trap": return "⚠️";
-      default: return "📘";
+      default: return "📄"; // ✅ שינוי: ברירת מחדל לתחנה
     }
   }
 
@@ -247,6 +247,7 @@
             <div class="mono-tokens" aria-hidden="true">
               <span class="mono-token mono-token--human" style="display:none">👦</span>
               <span class="mono-token mono-token--bot" style="display:none">🤖</span>
+              <span class="mono-token mono-token--both" style="display:none">👥</span>
             </div>
           `.trim();
 
@@ -255,14 +256,36 @@
       }
     }
 
+    function isMobile_() {
+      try { return window.matchMedia && window.matchMedia("(max-width: 640px)").matches; }
+      catch (_) { return false; }
+    }
+
     function updateTokensAndActive_() {
+      const mobile = isMobile_();
       const cells = Array.from(elBoard.querySelectorAll(".mono-cell"));
+
       cells.forEach(cell => {
         const idx = Number(cell.dataset.idx || 0);
+
         const th = cell.querySelector(".mono-token--human");
         const tb = cell.querySelector(".mono-token--bot");
-        if (th) th.style.display = (idx === state.humanPos) ? "inline-flex" : "none";
-        if (tb) tb.style.display = (idx === state.botPos) ? "inline-flex" : "none";
+        const tBoth = cell.querySelector(".mono-token--both");
+
+        const hasHuman = (idx === state.humanPos);
+        const hasBot = (idx === state.botPos);
+        const sameCell = hasHuman && hasBot;
+
+        if (mobile && sameCell) {
+          if (th) th.style.display = "none";
+          if (tb) tb.style.display = "none";
+          if (tBoth) tBoth.style.display = "inline-flex";
+        } else {
+          if (tBoth) tBoth.style.display = "none";
+          if (th) th.style.display = hasHuman ? "inline-flex" : "none";
+          if (tb) tb.style.display = hasBot ? "inline-flex" : "none";
+        }
+
         cell.classList.toggle("is-active", idx === state.activeCellIdx);
       });
     }
@@ -549,7 +572,7 @@
 
       const body = `
         <div class="mono-cardText">${bodyTextMain}</div>
-        ${rline ? `<div class="mono-cardReward mono-cardReward--big">${rline}</div>` : ""}
+        ${rline ? `<div class="mono-cardReward">${rline}</div>` : ""}
         <div class="mono-cardActions">
           <button type="button" class="mono-btn mono-continue">המשך</button>
         </div>
