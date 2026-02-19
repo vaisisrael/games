@@ -76,10 +76,10 @@
       case "start": return "🏁";
       case "end": return "🏆";
       case "quiz": return "❓";
-      case "station": return "📄"; // ✅ שינוי: סמל תחנה
+      case "station": return "🔎"; // ✅ שינוי: סמל תחנה
       case "bonus": return "⭐";
       case "trap": return "⚠️";
-      default: return "📄"; // ✅ שינוי: ברירת מחדל לתחנה
+      default: return "🔎"; // ✅ שינוי: ברירת מחדל לתחנה
     }
   }
 
