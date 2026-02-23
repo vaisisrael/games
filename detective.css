@@ -1,0 +1,205 @@
+/* קובץ מלא: detective.css – "חקי הבלש" UI (בסגנון דומה לזיכרון) */
+
+[data-parasha-games] .det-wrap{
+  --d-bg: #f6f7fb;
+  --d-surface: #ffffff;
+  --d-border: rgba(0,0,0,.10);
+  --d-text: #1f2937;
+  --d-muted: #6b7280;
+  --d-shadow: 0 10px 25px rgba(0,0,0,.08);
+
+  font-family: "Rubik", system-ui, -apple-system, "Segoe UI", Arial, "Noto Sans Hebrew", "Heebo", sans-serif !important;
+  color: var(--d-text);
+}
+
+[data-parasha-games] .det-wrap,
+[data-parasha-games] .det-wrap *{
+  font-family: inherit !important;
+}
+
+[data-parasha-games] .det-cardbox{
+  background: linear-gradient(180deg, var(--d-bg), #fff);
+  border: 1px solid var(--d-border);
+  border-radius: 16px;
+  box-shadow: var(--d-shadow);
+  padding: 12px;
+}
+
+[data-parasha-games] .det-title{
+  font-weight: 1000;
+  font-size: 16px;
+  line-height: 1.2;
+  margin: 2px 2px 10px;
+}
+
+[data-parasha-games] .det-topbar{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+[data-parasha-games] .det-steps{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  flex-wrap: wrap;
+}
+
+[data-parasha-games] .det-actions{
+  margin-inline-start: auto;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+[data-parasha-games] .det-btn{
+  border: 1px solid var(--d-border);
+  background: #eef2ff;
+  border-radius: 12px;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-weight: 900;
+  font-size: 14px;
+  user-select:none;
+
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+[data-parasha-games] .det-btn:hover{
+  box-shadow: 0 6px 14px rgba(0,0,0,.06);
+}
+
+[data-parasha-games] .det-step[aria-selected="true"]{
+  background: #dbeafe;
+  border-color: rgba(37,99,235,.35);
+}
+
+[data-parasha-games] .det-step.is-disabled{
+  opacity: .55;
+  cursor: default;
+}
+
+[data-parasha-games] .det-btn:disabled{
+  opacity: .55;
+  cursor: default;
+}
+
+[data-parasha-games] .det-panels{
+  margin-top: 6px;
+}
+
+[data-parasha-games] .det-card{
+  border: 1px solid rgba(0,0,0,.08);
+  background: rgba(255,255,255,.86);
+  border-radius: 16px;
+  box-shadow: 0 8px 18px rgba(0,0,0,.06);
+  padding: 12px;
+}
+
+[data-parasha-games] .det-card p{
+  margin: 0 0 8px;
+  line-height: 1.55;
+  font-weight: 700;
+}
+[data-parasha-games] .det-card p:last-child{
+  margin-bottom: 0;
+}
+
+[data-parasha-games] .det-empty{
+  color: var(--d-muted);
+  font-weight: 900;
+}
+
+[data-parasha-games] .det-evidence{
+  display:flex;
+  justify-content:center;
+}
+
+[data-parasha-games] .det-img{
+  max-width: 100%;
+  height: auto;
+  border-radius: 16px;
+  border: 1px solid rgba(0,0,0,.10);
+  box-shadow: 0 10px 25px rgba(0,0,0,.10);
+  background: #fff;
+}
+
+[data-parasha-games] .det-docLink{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,.10);
+  background: rgba(255,255,255,.90);
+  box-shadow: 0 10px 25px rgba(0,0,0,.08);
+  font-weight: 1000;
+  text-decoration: none;
+  color: inherit;
+}
+
+[data-parasha-games] .det-docLink:hover{
+  box-shadow: 0 14px 30px rgba(0,0,0,.10);
+}
+
+/* ===== old_text parchment ===== */
+[data-parasha-games] .det-paper{
+  width: min(820px, 100%);
+  border-radius: 18px;
+  border: 1px solid rgba(43,33,24,.18);
+  padding: 16px 16px 14px;
+  background:
+    radial-gradient(120% 120% at 12% 10%, rgba(255,255,255,.45), transparent 60%),
+    radial-gradient(120% 120% at 88% 92%, rgba(0,0,0,.06), transparent 55%),
+    linear-gradient(180deg, #f6ead1, #f1dab2);
+  box-shadow: 0 10px 25px rgba(0,0,0,.10);
+  overflow: hidden;
+  position: relative;
+}
+
+[data-parasha-games] .det-paper::before{
+  content:"";
+  position:absolute;
+  inset:-40px;
+  background:
+    radial-gradient(44px 44px at 20% 32%, rgba(0,0,0,.06), transparent 60%),
+    radial-gradient(66px 66px at 78% 58%, rgba(0,0,0,.05), transparent 62%),
+    radial-gradient(58px 58px at 34% 78%, rgba(0,0,0,.04), transparent 60%);
+  opacity:.55;
+  pointer-events:none;
+}
+
+[data-parasha-games] .det-ink{
+  position: relative;
+  color: #2b2118;
+  opacity: .96;
+
+  font-family: "Frank Ruhl Libre","David Libre","Noto Serif Hebrew","Times New Roman",serif !important;
+
+  font-size: 22px;
+  line-height: 1.55;
+  font-weight: 600;
+
+  transform: rotate(-4deg);
+  transform-origin: top right;
+}
+
+[data-parasha-games] .det-ink p{
+  margin: 0 0 10px;
+  font-weight: 650;
+}
+[data-parasha-games] .det-ink p:last-child{
+  margin-bottom: 0;
+}
+
+/* Mobile */
+@media (max-width: 420px){
+  [data-parasha-games] .det-ink{
+    font-size: 18px;
+    transform: rotate(-3deg);
+  }
+}
