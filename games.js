@@ -4,7 +4,7 @@
 
   // ====== CONFIG ======
   const CONTROL_API =
-    "https://script.google.com/macros/s/AKfycbzEBwtNyKXzn4nbqnu2KjG4sUCK_y786UwgkonVwWY_h5NNfzGYTP-hWqPgz856zEY7BQ/exec";
+    "https://script.google.com/macros/s/AKfycbxTa7MewrG4YpG1keqzYI7MX5bZbe1EdLoz8eeBcSsEaRW9-atrn_VpFYuq6PkdIzsZow/exec";
 
   // version for cache busting (also used when loading game modules)
   const BUILD_VERSION = (() => {
@@ -31,7 +31,8 @@
     { id: "wordstack", title: "🔤 בְּלִילוֹן", js: "wordstack.js", css: "wordstack.css" },
     { id: "classify", title: "🗄️ מגירון", js: "classify.js", css: "classify.css" },
     { id: "studio", title: "🎨 סטודיו", js: "studio.js", css: "studio.css" },
-    { id: "monopol", title: "🎲 חכמון", js: "monopol.js", css: "monopol.css" }
+    { id: "monopol", title: "🎲 חכמון", js: "monopol.js", css: "monopol.css" },
+    { id: "detective", title: "חקי הבלש 🕵️", js: "detective.js", css: "detective.css" }
   ];
 
   // ====== LOAD RUBIK FONT (no Blogger theme changes) ======
@@ -377,7 +378,6 @@
   BASE_URL,
   BUILD_VERSION
 };
-
 
       if (def && def.js && def.css) {
         bodyEl.innerHTML = "טוען...";
