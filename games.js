@@ -32,7 +32,7 @@
     { id: "classify", title: "🗄️ מגירון", js: "classify.js", css: "classify.css" },
     { id: "studio", title: "🎨 סטודיו", js: "studio.js", css: "studio.css" },
     { id: "monopol", title: "🎲 חכמון", js: "monopol.js", css: "monopol.css" },
-    { id: "detective", title: "חקי הבלש 🕵️", js: "detective.js", css: "detective.css" }
+    { id: "detective", title: "🕵️ חָקִי הבלש", js: "detective.js", css: "detective.css" }
   ];
 
   // ====== LOAD RUBIK FONT (no Blogger theme changes) ======
