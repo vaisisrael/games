@@ -1,0 +1,17 @@
+{
+  "zoom": { "x": 315, "y": 205, "w": 260, "h": 260 },
+  "palette": ["#60a5fa", "#1d4ed8", "#a78bfa", "#16a34a", "#f59e0b", "#ef4444", "#9ca3af", "#111827"],
+  "fills": {
+    "b3-top": 0,
+    "b3-mid": 1,
+    "b3-bot": 0,
+    "bm-left": 4,
+    "bm-mid": 5,
+    "bm-right": 4,
+    "bm-cap-l": 6,
+    "bm-cap-r": 6,
+    "s3-top": 6,
+    "s3-base": 7,
+    "s3-hole": 2
+  }
+}

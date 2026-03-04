@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" width="860" height="520">
+  <g fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M98 70 H762 Q780 70 780 88 V250 H98 Z" data-id="frame-top" data-name="מסגרת עליונה"/>
+    <path d="M98 250 H780 V412 Q780 430 762 430 H98 Z" data-id="frame-bot" data-name="מסגרת תחתונה"/>
+    <path d="M80 88 Q80 70 98 70 V430 H80 Z" data-id="frame-left" data-name="מסגרת שמאל"/>
+    <path d="M780 88 V70 Q780 70 780 88 V430 H780 Z" data-id="frame-right" data-name="מסגרת ימין"/>
+
+    <rect x="140" y="110" width="100" height="86" rx="10" data-id="b1-top" data-name="קרש 1 עליון"/>
+    <rect x="140" y="196" width="100" height="87" rx="10" data-id="b1-mid" data-name="קרש 1 אמצעי"/>
+    <rect x="140" y="283" width="100" height="87" rx="10" data-id="b1-bot" data-name="קרש 1 תחתון"/>
+
+    <rect x="250" y="110" width="100" height="86" rx="10" data-id="b2-top" data-name="קרש 2 עליון"/>
+    <rect x="250" y="196" width="100" height="87" rx="10" data-id="b2-mid" data-name="קרש 2 אמצעי"/>
+    <rect x="250" y="283" width="100" height="87" rx="10" data-id="b2-bot" data-name="קרש 2 תחתון"/>
+
+    <rect x="360" y="110" width="100" height="86" rx="10" data-id="b3-top" data-name="קרש 3 עליון"/>
+    <rect x="360" y="196" width="100" height="87" rx="10" data-id="b3-mid" data-name="קרש 3 אמצעי"/>
+    <rect x="360" y="283" width="100" height="87" rx="10" data-id="b3-bot" data-name="קרש 3 תחתון"/>
+
+    <rect x="470" y="110" width="100" height="86" rx="10" data-id="b4-top" data-name="קרש 4 עליון"/>
+    <rect x="470" y="196" width="100" height="87" rx="10" data-id="b4-mid" data-name="קרש 4 אמצעי"/>
+    <rect x="470" y="283" width="100" height="87" rx="10" data-id="b4-bot" data-name="קרש 4 תחתון"/>
+
+    <rect x="580" y="110" width="100" height="86" rx="10" data-id="b5-top" data-name="קרש 5 עליון"/>
+    <rect x="580" y="196" width="100" height="87" rx="10" data-id="b5-mid" data-name="קרש 5 אמצעי"/>
+    <rect x="580" y="283" width="100" height="87" rx="10" data-id="b5-bot" data-name="קרש 5 תחתון"/>
+
+    <rect x="150" y="370" width="80" height="30" rx="10" data-id="s1-top" data-name="אדן 1 עליון"/>
+    <rect x="150" y="400" width="80" height="25" rx="10" data-id="s1-base" data-name="אדן 1 בסיס"/>
+    <circle cx="190" cy="385" r="9" data-id="s1-hole" data-name="חור אבן 1"/>
+
+    <rect x="260" y="370" width="80" height="30" rx="10" data-id="s2-top" data-name="אדן 2 עליון"/>
+    <rect x="260" y="400" width="80" height="25" rx="10" data-id="s2-base" data-name="אדן 2 בסיס"/>
+    <circle cx="300" cy="385" r="9" data-id="s2-hole" data-name="חור אבן 2"/>
+
+    <rect x="370" y="370" width="80" height="30" rx="10" data-id="s3-top" data-name="אדן 3 עליון"/>
+    <rect x="370" y="400" width="80" height="25" rx="10" data-id="s3-base" data-name="אדן 3 בסיס"/>
+    <circle cx="410" cy="385" r="9" data-id="s3-hole" data-name="חור אבן 3"/>
+
+    <rect x="480" y="370" width="80" height="30" rx="10" data-id="s4-top" data-name="אדן 4 עליון"/>
+    <rect x="480" y="400" width="80" height="25" rx="10" data-id="s4-base" data-name="אדן 4 בסיס"/>
+    <circle cx="520" cy="385" r="9" data-id="s4-hole" data-name="חור אבן 4"/>
+
+    <rect x="590" y="370" width="80" height="30" rx="10" data-id="s5-top" data-name="אדן 5 עליון"/>
+    <rect x="590" y="400" width="80" height="25" rx="10" data-id="s5-base" data-name="אדן 5 בסיס"/>
+    <circle cx="630" cy="385" r="9" data-id="s5-hole" data-name="חור אבן 5"/>
+
+    <rect x="120" y="165" width="190" height="28" rx="12" data-id="bt-left" data-name="בריח עליון שמאל"/>
+    <rect x="310" y="165" width="220" height="28" rx="12" data-id="bt-mid" data-name="בריח עליון אמצע"/>
+    <rect x="530" y="165" width="210" height="28" rx="12" data-id="bt-right" data-name="בריח עליון ימין"/>
+    <rect x="112" y="169" width="16" height="20" rx="6" data-id="bt-cap-l" data-name="קצה בריח עליון שמאל"/>
+    <rect x="740" y="169" width="16" height="20" rx="6" data-id="bt-cap-r" data-name="קצה בריח עליון ימין"/>
+
+    <rect x="120" y="240" width="190" height="28" rx="12" data-id="bm-left" data-name="בריח אמצעי שמאל"/>
+    <rect x="310" y="240" width="220" height="28" rx="12" data-id="bm-mid" data-name="בריח אמצעי אמצע"/>
+    <rect x="530" y="240" width="210" height="28" rx="12" data-id="bm-right" data-name="בריח אמצעי ימין"/>
+    <rect x="112" y="244" width="16" height="20" rx="6" data-id="bm-cap-l" data-name="קצה בריח אמצעי שמאל"/>
+    <rect x="740" y="244" width="16" height="20" rx="6" data-id="bm-cap-r" data-name="קצה בריח אמצעי ימין"/>
+
+    <rect x="120" y="315" width="190" height="28" rx="12" data-id="bb-left" data-name="בריח תחתון שמאל"/>
+    <rect x="310" y="315" width="220" height="28" rx="12" data-id="bb-mid" data-name="בריח תחתון אמצע"/>
+    <rect x="530" y="315" width="210" height="28" rx="12" data-id="bb-right" data-name="בריח תחתון ימין"/>
+    <rect x="112" y="319" width="16" height="20" rx="6" data-id="bb-cap-l" data-name="קצה בריח תחתון שמאל"/>
+    <rect x="740" y="319" width="16" height="20" rx="6" data-id="bb-cap-r" data-name="קצה בריח תחתון ימין"/>
+
+    <path d="M70 450 H790" data-id="floor" data-name="קו רצפה"/>
+  </g>
+</svg>

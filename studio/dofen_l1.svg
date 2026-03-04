@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" width="860" height="520">
+  <g fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="80" y="70" width="700" height="360" rx="18" data-id="frame" data-name="מסגרת"/>
+    <rect x="140" y="110" width="100" height="260" rx="10" data-id="board-1" data-name="קרש 1"/>
+    <rect x="250" y="110" width="100" height="260" rx="10" data-id="board-2" data-name="קרש 2"/>
+    <rect x="360" y="110" width="100" height="260" rx="10" data-id="board-3" data-name="קרש 3"/>
+    <rect x="470" y="110" width="100" height="260" rx="10" data-id="board-4" data-name="קרש 4"/>
+    <rect x="580" y="110" width="100" height="260" rx="10" data-id="board-5" data-name="קרש 5"/>
+    <rect x="150" y="370" width="80" height="55" rx="10" data-id="socket-1" data-name="אדן 1"/>
+    <rect x="260" y="370" width="80" height="55" rx="10" data-id="socket-2" data-name="אדן 2"/>
+    <rect x="370" y="370" width="80" height="55" rx="10" data-id="socket-3" data-name="אדן 3"/>
+    <rect x="480" y="370" width="80" height="55" rx="10" data-id="socket-4" data-name="אדן 4"/>
+    <rect x="590" y="370" width="80" height="55" rx="10" data-id="socket-5" data-name="אדן 5"/>
+    <rect x="120" y="165" width="620" height="28" rx="12" data-id="bar-top" data-name="בריח עליון"/>
+    <rect x="120" y="240" width="620" height="28" rx="12" data-id="bar-mid" data-name="בריח אמצעי"/>
+    <rect x="120" y="315" width="620" height="28" rx="12" data-id="bar-bot" data-name="בריח תחתון"/>
+    <path d="M70 450 H790" data-id="floor" data-name="קו רצפה"/>
+  </g>
+</svg>
