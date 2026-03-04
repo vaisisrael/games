@@ -1,0 +1,353 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Studio Pack – ענן מכסה את המשכן (פקודי)</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; margin:16px; color:#111827}
+    .row{display:flex; gap:12px; flex-wrap:wrap; align-items:center}
+    button{padding:10px 12px; border:1px solid #d1d5db; background:#fff; border-radius:10px; cursor:pointer}
+    button.active{border-color:#111827}
+    .panel{margin-top:12px; border:1px solid #e5e7eb; border-radius:14px; padding:12px}
+    .svgwrap{max-width:980px; margin:auto}
+    svg{width:100%; height:auto; display:block}
+    h2{margin:14px 0 8px}
+    ol{margin:0; padding-right:20px}
+    .muted{color:#6b7280; font-size:12px}
+    .hr{height:1px; background:#e5e7eb; margin:12px 0}
+  </style>
+</head>
+<body>
+  <div class="row">
+    <button id="btn-l1" class="active" type="button">תצוגה: L1</button>
+    <button id="btn-l2" type="button">תצוגה: L2</button>
+    <span class="muted">פרשת פקודי · הנושא: הענן מכסה את המשכן</span>
+  </div>
+
+  <div class="row" style="margin-top:10px">
+    <button id="btn-inspire-l1" type="button">השראה (L1)</button>
+    <button id="btn-inspire-l2" type="button">השראה (L2)</button>
+    <button id="btn-reset" type="button">איפוס</button>
+  </div>
+
+  <div class="panel svgwrap" id="stage"></div>
+
+  <div class="panel">
+    <h2>רשימת חלקים בציור</h2>
+    <ol id="parts"></ol>
+  </div>
+
+  <script type="application/json" id="inspire-l1">{
+"zoom": { "x": 170, "y": 85, "w": 520, "h": 210 },
+"palette": ["#60a5fa", "#1d4ed8", "#a78bfa", "#16a34a", "#f59e0b", "#ef4444", "#9ca3af", "#111827"],
+"fills": {
+"cloud-1": 6,
+"cloud-2": 0,
+"cloud-3": 0,
+"cloud-4": 6,
+"cloud-5": 0
+}
+}</script>
+
+  <script type="application/json" id="inspire-l2">{
+"zoom": { "x": 170, "y": 85, "w": 520, "h": 210 },
+"palette": ["#60a5fa", "#1d4ed8", "#a78bfa", "#16a34a", "#f59e0b", "#ef4444", "#9ca3af", "#111827"],
+"fills": {
+"cloud-1": 6,
+"cloud-2": 0,
+"cloud-3": 0,
+"cloud-4": 6,
+"cloud-5": 0,
+"cloud-a": 6,
+"cloud-b": 0,
+"cloud-c": 6,
+"cloud-d": 0,
+"cloud-e": 6,
+"cloud-f": 0,
+"cloud-g": 6,
+"cloud-h": 0,
+"cloud-i": 6,
+"cloud-j": 0
+}
+}</script>
+
+  <template id="svg-l1">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520">
+  <g stroke="#111827" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Ground -->
+    <path data-id="ground" data-name="אדמה" stroke-width="4" d="M40 420 L820 420 L820 500 L40 500 Z"/>
+
+    <!-- Courtyard fence -->
+    <path data-id="fence-left" data-name="גדר החצר שמאל" stroke-width="4" d="M60 380 L300 380 L300 420 L60 420 Z"/>
+    <path data-id="fence-right" data-name="גדר החצר ימין" stroke-width="4" d="M560 380 L800 380 L800 420 L560 420 Z"/>
+
+    <!-- Courtyard gate curtain -->
+    <path data-id="gate-curtain" data-name="שער החצר" stroke-width="4" d="M300 372 L560 372 L560 420 L300 420 Z"/>
+    <path data-id="gate-strip-left" data-name="פס בשער שמאל" stroke-width="4" d="M318 372 L350 372 L350 420 L318 420 Z"/>
+    <path data-id="gate-strip-right" data-name="פס בשער ימין" stroke-width="4" d="M510 372 L542 372 L542 420 L510 420 Z"/>
+
+    <!-- Mishkan base -->
+    <path data-id="base" data-name="בסיס המשכן" stroke-width="4" d="M250 360 L610 360 L610 420 L250 420 Z"/>
+
+    <!-- Mishkan walls -->
+    <path data-id="wall-left" data-name="קיר המשכן שמאל" stroke-width="4" d="M270 210 L420 210 L420 360 L270 360 Z"/>
+    <path data-id="wall-right" data-name="קיר המשכן ימין" stroke-width="4" d="M440 210 L590 210 L590 360 L440 360 Z"/>
+
+    <!-- Roof -->
+    <path data-id="roof" data-name="גג המשכן" stroke-width="4" d="M255 210 L430 120 L605 210 L255 210 Z"/>
+
+    <!-- Entrance -->
+    <path data-id="entrance-frame" data-name="מסגרת הכניסה" stroke-width="4" d="M395 245 L465 245 L465 360 L395 360 Z"/>
+    <path data-id="entrance-curtain" data-name="פרוכת/מסך כניסה" stroke-width="4" d="M402 252 L458 252 L458 360 L402 360 Z"/>
+
+    <!-- Poles -->
+    <path data-id="pole-left" data-name="עמוד שמאל" stroke-width="4" d="M382 232 L398 232 L398 360 L382 360 Z"/>
+    <path data-id="pole-right" data-name="עמוד ימין" stroke-width="4" d="M462 232 L478 232 L478 360 L462 360 Z"/>
+    <path data-id="pole-base-left" data-name="בסיס עמוד שמאל" stroke-width="4" d="M376 360 L404 360 L404 384 L376 384 Z"/>
+    <path data-id="pole-base-right" data-name="בסיס עמוד ימין" stroke-width="4" d="M456 360 L484 360 L484 384 L456 384 Z"/>
+
+    <!-- Cloud covering the Mishkan (simple, large regions) -->
+    <path data-id="cloud-1" data-name="ענן 1" stroke-width="4" d="M210 170
+      C190 165, 185 140, 205 130
+      C215 110, 245 105, 260 120
+      C275 105, 310 110, 320 130
+      C345 128, 360 150, 345 168
+      C335 188, 305 194, 290 182
+      C275 198, 235 198, 225 180
+      C220 176, 215 172, 210 170 Z"/>
+    <path data-id="cloud-2" data-name="ענן 2" stroke-width="4" d="M330 140
+      C315 128, 320 110, 338 105
+      C352 88, 380 86, 394 104
+      C410 90, 440 95, 448 114
+      C472 112, 488 132, 476 150
+      C468 166, 442 170, 430 160
+      C418 176, 385 178, 372 162
+      C360 168, 340 160, 330 140 Z"/>
+    <path data-id="cloud-3" data-name="ענן 3" stroke-width="4" d="M470 150
+      C458 135, 468 118, 486 114
+      C500 96, 528 98, 540 116
+      C558 102, 588 110, 592 130
+      C614 132, 626 154, 612 170
+      C604 186, 578 190, 566 178
+      C552 196, 518 196, 504 178
+      C492 186, 476 176, 470 150 Z"/>
+    <path data-id="cloud-4" data-name="ענן 4" stroke-width="4" d="M270 230
+      C248 228, 236 206, 248 188
+      C255 170, 282 164, 296 176
+      C312 160, 342 164, 350 184
+      C374 182, 388 204, 374 222
+      C366 238, 338 244, 324 232
+      C312 246, 286 246, 270 230 Z"/>
+    <path data-id="cloud-5" data-name="ענן 5" stroke-width="4" d="M450 232
+      C430 230, 416 210, 428 192
+      C436 174, 464 168, 478 182
+      C494 164, 526 170, 534 190
+      C558 190, 572 212, 556 228
+      C548 244, 520 250, 506 236
+      C492 250, 466 248, 450 232 Z"/>
+  </g>
+</svg>
+
+  </template>
+
+  <template id="svg-l2">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520">
+  <g stroke="#111827" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Ground -->
+    <path data-id="ground" data-name="אדמה" stroke-width="3" d="M40 420 L820 420 L820 500 L40 500 Z"/>
+    <path data-id="ground-band" data-name="פס אדמה" stroke-width="3" d="M40 452 L820 452 L820 500 L40 500 Z"/>
+
+    <!-- Courtyard fence -->
+    <path data-id="fence-left" data-name="גדר החצר שמאל" stroke-width="3" d="M60 380 L300 380 L300 420 L60 420 Z"/>
+    <path data-id="fence-left-post1" data-name="עמוד גדר שמאל 1" stroke-width="3" d="M90 372 L105 372 L105 420 L90 420 Z"/>
+    <path data-id="fence-left-post2" data-name="עמוד גדר שמאל 2" stroke-width="3" d="M150 372 L165 372 L165 420 L150 420 Z"/>
+    <path data-id="fence-left-post3" data-name="עמוד גדר שמאל 3" stroke-width="3" d="M210 372 L225 372 L225 420 L210 420 Z"/>
+    <path data-id="fence-right" data-name="גדר החצר ימין" stroke-width="3" d="M560 380 L800 380 L800 420 L560 420 Z"/>
+    <path data-id="fence-right-post1" data-name="עמוד גדר ימין 1" stroke-width="3" d="M590 372 L605 372 L605 420 L590 420 Z"/>
+    <path data-id="fence-right-post2" data-name="עמוד גדר ימין 2" stroke-width="3" d="M650 372 L665 372 L665 420 L650 420 Z"/>
+    <path data-id="fence-right-post3" data-name="עמוד גדר ימין 3" stroke-width="3" d="M710 372 L725 372 L725 420 L710 420 Z"/>
+
+    <!-- Courtyard gate curtain + stripes -->
+    <path data-id="gate-curtain" data-name="שער החצר" stroke-width="3" d="M300 372 L560 372 L560 420 L300 420 Z"/>
+    <path data-id="gate-stripe1" data-name="פס בשער 1" stroke-width="3" d="M312 372 L340 372 L340 420 L312 420 Z"/>
+    <path data-id="gate-stripe2" data-name="פס בשער 2" stroke-width="3" d="M348 372 L376 372 L376 420 L348 420 Z"/>
+    <path data-id="gate-stripe3" data-name="פס בשער 3" stroke-width="3" d="M484 372 L512 372 L512 420 L484 420 Z"/>
+    <path data-id="gate-stripe4" data-name="פס בשער 4" stroke-width="3" d="M520 372 L548 372 L548 420 L520 420 Z"/>
+
+    <!-- Mishkan base -->
+    <path data-id="base" data-name="בסיס המשכן" stroke-width="3" d="M250 360 L610 360 L610 420 L250 420 Z"/>
+    <path data-id="base-band" data-name="פס בסיס" stroke-width="3" d="M250 392 L610 392 L610 420 L250 420 Z"/>
+
+    <!-- Mishkan walls (subdivided panels) -->
+    <path data-id="wall-left" data-name="קיר המשכן שמאל" stroke-width="3" d="M270 210 L420 210 L420 360 L270 360 Z"/>
+    <path data-id="wall-left-panel1" data-name="לוח שמאל 1" stroke-width="3" d="M270 210 L320 210 L320 360 L270 360 Z"/>
+    <path data-id="wall-left-panel2" data-name="לוח שמאל 2" stroke-width="3" d="M320 210 L370 210 L370 360 L320 360 Z"/>
+    <path data-id="wall-left-panel3" data-name="לוח שמאל 3" stroke-width="3" d="M370 210 L420 210 L420 360 L370 360 Z"/>
+
+    <path data-id="wall-right" data-name="קיר המשכן ימין" stroke-width="3" d="M440 210 L590 210 L590 360 L440 360 Z"/>
+    <path data-id="wall-right-panel1" data-name="לוח ימין 1" stroke-width="3" d="M440 210 L490 210 L490 360 L440 360 Z"/>
+    <path data-id="wall-right-panel2" data-name="לוח ימין 2" stroke-width="3" d="M490 210 L540 210 L540 360 L490 360 Z"/>
+    <path data-id="wall-right-panel3" data-name="לוח ימין 3" stroke-width="3" d="M540 210 L590 210 L590 360 L540 360 Z"/>
+
+    <!-- Roof (subdivided) -->
+    <path data-id="roof" data-name="גג המשכן" stroke-width="3" d="M255 210 L430 120 L605 210 L255 210 Z"/>
+    <path data-id="roof-panel-left" data-name="לוח גג שמאל" stroke-width="3" d="M255 210 L370 150 L430 120 L430 210 L255 210 Z"/>
+    <path data-id="roof-panel-mid" data-name="לוח גג אמצע" stroke-width="3" d="M430 120 L490 150 L490 210 L430 210 Z"/>
+    <path data-id="roof-panel-right" data-name="לוח גג ימין" stroke-width="3" d="M490 150 L605 210 L430 210 L430 120 L490 150 Z"/>
+
+    <!-- Entrance with inner folds -->
+    <path data-id="entrance-frame" data-name="מסגרת הכניסה" stroke-width="3" d="M395 245 L465 245 L465 360 L395 360 Z"/>
+    <path data-id="entrance-curtain" data-name="פרוכת/מסך כניסה" stroke-width="3" d="M402 252 L458 252 L458 360 L402 360 Z"/>
+    <path data-id="entrance-fold1" data-name="קפל מסך 1" stroke-width="3" d="M402 252 L420 252 L420 360 L402 360 Z"/>
+    <path data-id="entrance-fold2" data-name="קפל מסך 2" stroke-width="3" d="M420 252 L438 252 L438 360 L420 360 Z"/>
+    <path data-id="entrance-fold3" data-name="קפל מסך 3" stroke-width="3" d="M438 252 L458 252 L458 360 L438 360 Z"/>
+
+    <!-- Poles -->
+    <path data-id="pole-left" data-name="עמוד שמאל" stroke-width="3" d="M382 232 L398 232 L398 360 L382 360 Z"/>
+    <path data-id="pole-right" data-name="עמוד ימין" stroke-width="3" d="M462 232 L478 232 L478 360 L462 360 Z"/>
+    <path data-id="pole-cap-left" data-name="כותרת עמוד שמאל" stroke-width="3" d="M380 224 L400 224 L400 232 L380 232 Z"/>
+    <path data-id="pole-cap-right" data-name="כותרת עמוד ימין" stroke-width="3" d="M460 224 L480 224 L480 232 L460 232 Z"/>
+    <path data-id="pole-base-left" data-name="בסיס עמוד שמאל" stroke-width="3" d="M376 360 L404 360 L404 384 L376 384 Z"/>
+    <path data-id="pole-base-right" data-name="בסיס עמוד ימין" stroke-width="3" d="M456 360 L484 360 L484 384 L456 384 Z"/>
+
+    <!-- Cloud (same area, enriched with more regions) -->
+    <path data-id="cloud-1" data-name="ענן 1" stroke-width="3" d="M210 170
+      C190 165, 185 140, 205 130
+      C215 110, 245 105, 260 120
+      C275 105, 310 110, 320 130
+      C345 128, 360 150, 345 168
+      C335 188, 305 194, 290 182
+      C275 198, 235 198, 225 180
+      C220 176, 215 172, 210 170 Z"/>
+    <path data-id="cloud-2" data-name="ענן 2" stroke-width="3" d="M330 140
+      C315 128, 320 110, 338 105
+      C352 88, 380 86, 394 104
+      C410 90, 440 95, 448 114
+      C472 112, 488 132, 476 150
+      C468 166, 442 170, 430 160
+      C418 176, 385 178, 372 162
+      C360 168, 340 160, 330 140 Z"/>
+    <path data-id="cloud-3" data-name="ענן 3" stroke-width="3" d="M470 150
+      C458 135, 468 118, 486 114
+      C500 96, 528 98, 540 116
+      C558 102, 588 110, 592 130
+      C614 132, 626 154, 612 170
+      C604 186, 578 190, 566 178
+      C552 196, 518 196, 504 178
+      C492 186, 476 176, 470 150 Z"/>
+    <path data-id="cloud-4" data-name="ענן 4" stroke-width="3" d="M270 230
+      C248 228, 236 206, 248 188
+      C255 170, 282 164, 296 176
+      C312 160, 342 164, 350 184
+      C374 182, 388 204, 374 222
+      C366 238, 338 244, 324 232
+      C312 246, 286 246, 270 230 Z"/>
+    <path data-id="cloud-5" data-name="ענן 5" stroke-width="3" d="M450 232
+      C430 230, 416 210, 428 192
+      C436 174, 464 168, 478 182
+      C494 164, 526 170, 534 190
+      C558 190, 572 212, 556 228
+      C548 244, 520 250, 506 236
+      C492 250, 466 248, 450 232 Z"/>
+
+    <!-- Inner cloud divisions (extra regions, no tiny details) -->
+    <path data-id="cloud-a" data-name="ענן פנימי א" stroke-width="3" d="M240 160 C245 145, 270 140, 285 152 C290 165, 275 178, 258 176 C248 172, 242 167, 240 160 Z"/>
+    <path data-id="cloud-b" data-name="ענן פנימי ב" stroke-width="3" d="M290 150 C295 138, 315 138, 322 150 C325 162, 312 170, 300 168 C292 165, 288 158, 290 150 Z"/>
+    <path data-id="cloud-c" data-name="ענן פנימי ג" stroke-width="3" d="M360 130 C366 118, 386 116, 396 128 C402 140, 392 152, 378 150 C368 148, 358 142, 360 130 Z"/>
+    <path data-id="cloud-d" data-name="ענן פנימי ד" stroke-width="3" d="M412 130 C418 118, 438 120, 446 134 C450 146, 438 156, 424 152 C416 150, 410 142, 412 130 Z"/>
+    <path data-id="cloud-e" data-name="ענן פנימי ה" stroke-width="3" d="M500 140 C506 126, 528 126, 538 140 C544 154, 532 166, 516 162 C506 160, 498 152, 500 140 Z"/>
+    <path data-id="cloud-f" data-name="ענן פנימי ו" stroke-width="3" d="M552 142 C558 130, 576 132, 584 144 C588 156, 576 166, 562 162 C554 160, 550 152, 552 142 Z"/>
+    <path data-id="cloud-g" data-name="ענן פנימי ז" stroke-width="3" d="M292 214 C298 202, 320 202, 328 214 C332 226, 318 236, 304 232 C296 230, 290 224, 292 214 Z"/>
+    <path data-id="cloud-h" data-name="ענן פנימי ח" stroke-width="3" d="M326 206 C332 196, 350 198, 356 210 C358 220, 346 228, 334 224 C328 222, 324 214, 326 206 Z"/>
+    <path data-id="cloud-i" data-name="ענן פנימי ט" stroke-width="3" d="M476 214 C482 202, 504 202, 512 214 C516 226, 502 236, 488 232 C480 230, 474 224, 476 214 Z"/>
+    <path data-id="cloud-j" data-name="ענן פנימי י" stroke-width="3" d="M510 206 C516 196, 534 198, 540 210 C542 220, 530 228, 518 224 C512 222, 508 214, 510 206 Z"/>
+  </g>
+</svg>
+
+  </template>
+
+  <script>
+    const stage = document.getElementById('stage');
+    const partsOl = document.getElementById('parts');
+
+    function parseJSON(id){
+      return JSON.parse(document.getElementById(id).textContent.trim());
+    }
+
+    function mount(level){
+      stage.innerHTML = '';
+      const tpl = document.getElementById(level === 'l2' ? 'svg-l2' : 'svg-l1');
+      const node = tpl.content.cloneNode(true);
+      stage.appendChild(node);
+      const svg = stage.querySelector('svg');
+      svg.dataset.level = level;
+      svg.dataset.baseViewBox = svg.getAttribute('viewBox') || '0 0 860 520';
+      buildPartsList(svg);
+      resetFills(svg);
+    }
+
+    function buildPartsList(svg){
+      partsOl.innerHTML = '';
+      const els = svg.querySelectorAll('[data-id][data-name]');
+      els.forEach(el=>{
+        const li = document.createElement('li');
+        const name = el.getAttribute('data-name');
+        const id = el.getAttribute('data-id');
+        li.innerHTML = `${name} <span class="muted">(${id})</span>`;
+        partsOl.appendChild(li);
+      });
+    }
+
+    function resetFills(svg){
+      svg.setAttribute('viewBox', svg.dataset.baseViewBox);
+      const els = svg.querySelectorAll('[data-id]');
+      els.forEach(el=>{
+        el.setAttribute('fill','none');
+      });
+    }
+
+    function applyInspiration(kind){
+      const svg = stage.querySelector('svg');
+      if(!svg) return;
+
+      const insp = parseJSON(kind === 'l2' ? 'inspire-l2' : 'inspire-l1');
+      resetFills(svg);
+
+      const {x,y,w,h} = insp.zoom;
+      svg.setAttribute('viewBox', `${x} ${y} ${w} ${h}`);
+
+      const palette = insp.palette;
+      const fills = insp.fills || {};
+      Object.keys(fills).forEach(id=>{
+        const idx = fills[id];
+        const color = palette[idx];
+        const el = svg.querySelector(`[data-id="${CSS.escape(id)}"]`);
+        if(el) el.setAttribute('fill', color);
+      });
+    }
+
+    // UI
+    const btnL1 = document.getElementById('btn-l1');
+    const btnL2 = document.getElementById('btn-l2');
+
+    btnL1.addEventListener('click', ()=>{
+      btnL1.classList.add('active'); btnL2.classList.remove('active');
+      mount('l1');
+    });
+    btnL2.addEventListener('click', ()=>{
+      btnL2.classList.add('active'); btnL1.classList.remove('active');
+      mount('l2');
+    });
+
+    document.getElementById('btn-inspire-l1').addEventListener('click', ()=>applyInspiration('l1'));
+    document.getElementById('btn-inspire-l2').addEventListener('click', ()=>applyInspiration('l2'));
+    document.getElementById('btn-reset').addEventListener('click', ()=>{
+      const svg = stage.querySelector('svg'); if(svg) resetFills(svg);
+    });
+
+    // init
+    mount('l1');
+  </script>
+</body>
+</html>
