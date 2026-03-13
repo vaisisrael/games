@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520">
+  <g stroke="#111827" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" fill="none">
+    <path data-id="sky-frame" data-name="מסגרת שמים" d="M20 20H840V500H20Z"/>
+    <path data-id="ground" data-name="קרקע" d="M40 420H820V490H40Z"/>
+    <path data-id="altar-front" data-name="חזית המזבח" d="M260 220H600V390H260Z"/>
+    <path data-id="altar-top" data-name="ראש המזבח" d="M290 180H570V240H290Z"/>
+    <path data-id="altar-left-side" data-name="צד שמאל" d="M230 210L290 180V240L260 390L230 360Z"/>
+    <path data-id="altar-right-side" data-name="צד ימין" d="M570 180L630 210V360L600 390V240Z"/>
+    <path data-id="horn-front-left" data-name="קרן שמאל קדמית" d="M290 160H325V180H290Z"/>
+    <path data-id="horn-front-right" data-name="קרן ימין קדמית" d="M535 160H570V180H535Z"/>
+    <path data-id="horn-back-left" data-name="קרן שמאל אחורית" d="M255 180H290V205H255Z"/>
+    <path data-id="horn-back-right" data-name="קרן ימין אחורית" d="M570 180H605V205H570Z"/>
+    <path data-id="grate-front" data-name="רשת המזבח" d="M320 260H540V315H320Z"/>
+    <path data-id="wood-left" data-name="עץ שמאל" d="M330 300L430 335L420 355L320 320Z"/>
+    <path data-id="wood-right" data-name="עץ ימין" d="M430 270L535 305L525 325L420 290Z"/>
+    <path data-id="wood-center" data-name="עץ אמצעי" d="M355 270L470 250L475 270L360 290Z"/>
+    <path data-id="flame-left" data-name="אש שמאל" d="M350 170C330 145 340 120 365 100C360 125 382 145 390 170C380 185 360 188 350 170Z"/>
+    <path data-id="flame-center" data-name="אש אמצע" d="M405 155C390 120 410 90 435 65C430 100 458 120 468 155C455 178 420 182 405 155Z"/>
+    <path data-id="flame-right" data-name="אש ימין" d="M470 172C460 145 482 125 500 100C500 126 520 142 530 170C520 186 486 191 470 172Z"/>
+  </g>
+</svg>

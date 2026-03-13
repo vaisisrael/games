@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>esh studio pack</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; color: #111827; }
+  .controls { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 14px; }
+  button { padding: 10px 14px; border: 1px solid #cbd5e1; background: #f8fafc; border-radius: 10px; cursor: pointer; }
+  button.active { background: #e2e8f0; }
+  .viewer { border: 1px solid #cbd5e1; border-radius: 12px; padding: 10px; max-width: 900px; background: white; }
+  svg { width: 100%; height: auto; display: none; }
+  svg.active { display: block; }
+  h2 { margin-top: 24px; }
+  ol { line-height: 1.8; }
+  small { color: #475569; }
+</style>
+</head>
+<body>
+  <div class="controls">
+    <button id="show-l1" class="active" type="button">תצוגת L1</button>
+    <button id="show-l2" type="button">תצוגת L2</button>
+    <button id="apply-l1" type="button">השראה (L1)</button>
+    <button id="apply-l2" type="button">השראה (L2)</button>
+    <button id="reset-view" type="button">איפוס</button>
+  </div>
+
+  <div class="viewer">
+    <div id="svg-host">
+      <svg id="svg-l1" class="active" data-default-viewbox="0 0 860 520" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520">
+  <g stroke="#111827" stroke-width="4" stroke-linejoin="round" stroke-linecap="round" fill="none">
+    <path data-id="sky-frame" data-name="מסגרת שמים" d="M20 20H840V500H20Z"/>
+    <path data-id="ground" data-name="קרקע" d="M40 420H820V490H40Z"/>
+    <path data-id="altar-front" data-name="חזית המזבח" d="M260 220H600V390H260Z"/>
+    <path data-id="altar-top" data-name="ראש המזבח" d="M290 180H570V240H290Z"/>
+    <path data-id="altar-left-side" data-name="צד שמאל" d="M230 210L290 180V240L260 390L230 360Z"/>
+    <path data-id="altar-right-side" data-name="צד ימין" d="M570 180L630 210V360L600 390V240Z"/>
+    <path data-id="horn-front-left" data-name="קרן שמאל קדמית" d="M290 160H325V180H290Z"/>
+    <path data-id="horn-front-right" data-name="קרן ימין קדמית" d="M535 160H570V180H535Z"/>
+    <path data-id="horn-back-left" data-name="קרן שמאל אחורית" d="M255 180H290V205H255Z"/>
+    <path data-id="horn-back-right" data-name="קרן ימין אחורית" d="M570 180H605V205H570Z"/>
+    <path data-id="grate-front" data-name="רשת המזבח" d="M320 260H540V315H320Z"/>
+    <path data-id="wood-left" data-name="עץ שמאל" d="M330 300L430 335L420 355L320 320Z"/>
+    <path data-id="wood-right" data-name="עץ ימין" d="M430 270L535 305L525 325L420 290Z"/>
+    <path data-id="wood-center" data-name="עץ אמצעי" d="M355 270L470 250L475 270L360 290Z"/>
+    <path data-id="flame-left" data-name="אש שמאל" d="M350 170C330 145 340 120 365 100C360 125 382 145 390 170C380 185 360 188 350 170Z"/>
+    <path data-id="flame-center" data-name="אש אמצע" d="M405 155C390 120 410 90 435 65C430 100 458 120 468 155C455 178 420 182 405 155Z"/>
+    <path data-id="flame-right" data-name="אש ימין" d="M470 172C460 145 482 125 500 100C500 126 520 142 530 170C520 186 486 191 470 172Z"/>
+  </g>
+</svg>
+
+      <svg id="svg-l2" data-default-viewbox="0 0 860 520" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520">
+  <g stroke="#111827" stroke-width="3" stroke-linejoin="round" stroke-linecap="round" fill="none">
+    <path data-id="sky-frame" data-name="מסגרת שמים" d="M20 20H840V500H20Z"/>
+    <path data-id="ground-left" data-name="קרקע שמאל" d="M40 420H290V490H40Z"/>
+    <path data-id="ground-center" data-name="קרקע אמצע" d="M290 420H560V490H290Z"/>
+    <path data-id="ground-right" data-name="קרקע ימין" d="M560 420H820V490H560Z"/>
+
+    <path data-id="altar-front-top" data-name="חזית עליונה" d="M260 220H600V270H260Z"/>
+    <path data-id="altar-front-mid-left" data-name="חזית אמצע שמאל" d="M260 270H373V330H260Z"/>
+    <path data-id="altar-front-mid-center" data-name="חזית אמצע" d="M373 270H487V330H373Z"/>
+    <path data-id="altar-front-mid-right" data-name="חזית אמצע ימין" d="M487 270H600V330H487Z"/>
+    <path data-id="altar-front-bottom-left" data-name="חזית תחתונה שמאל" d="M260 330H373V390H260Z"/>
+    <path data-id="altar-front-bottom-center" data-name="חזית תחתונה אמצע" d="M373 330H487V390H373Z"/>
+    <path data-id="altar-front-bottom-right" data-name="חזית תחתונה ימין" d="M487 330H600V390H487Z"/>
+
+    <path data-id="altar-top-left" data-name="ראש המזבח שמאל" d="M290 180H385V240H290Z"/>
+    <path data-id="altar-top-center" data-name="ראש המזבח אמצע" d="M385 180H475V240H385Z"/>
+    <path data-id="altar-top-right" data-name="ראש המזבח ימין" d="M475 180H570V240H475Z"/>
+
+    <path data-id="altar-left-upper" data-name="צד שמאל עליון" d="M230 210L290 180V240L260 285L230 265Z"/>
+    <path data-id="altar-left-lower" data-name="צד שמאל תחתון" d="M230 265L260 285V390L230 360Z"/>
+    <path data-id="altar-right-upper" data-name="צד ימין עליון" d="M570 180L630 210V265L600 285V240Z"/>
+    <path data-id="altar-right-lower" data-name="צד ימין תחתון" d="M600 285L630 265V360L600 390Z"/>
+
+    <path data-id="horn-front-left" data-name="קרן שמאל קדמית" d="M290 160H325V180H290Z"/>
+    <path data-id="horn-front-right" data-name="קרן ימין קדמית" d="M535 160H570V180H535Z"/>
+    <path data-id="horn-back-left" data-name="קרן שמאל אחורית" d="M255 180H290V205H255Z"/>
+    <path data-id="horn-back-right" data-name="קרן ימין אחורית" d="M570 180H605V205H570Z"/>
+
+    <path data-id="grate-frame" data-name="מסגרת הרשת" d="M320 255H540V320H320Z"/>
+    <path data-id="grate-bar-1" data-name="פס רשת 1" d="M350 255H365V320H350Z"/>
+    <path data-id="grate-bar-2" data-name="פס רשת 2" d="M395 255H410V320H395Z"/>
+    <path data-id="grate-bar-3" data-name="פס רשת 3" d="M440 255H455V320H440Z"/>
+    <path data-id="grate-bar-4" data-name="פס רשת 4" d="M485 255H500V320H485Z"/>
+
+    <path data-id="wood-left-end" data-name="קצה עץ שמאל" d="M317 307L338 315L333 330L312 322Z"/>
+    <path data-id="wood-left-main" data-name="עץ שמאל" d="M338 315L430 345L420 365L333 330Z"/>
+    <path data-id="wood-right-main" data-name="עץ ימין" d="M430 273L525 305L517 325L422 293Z"/>
+    <path data-id="wood-right-end" data-name="קצה עץ ימין" d="M525 305L540 310L532 330L517 325Z"/>
+    <path data-id="wood-center-left" data-name="עץ אמצעי שמאל" d="M355 270L420 258L423 278L360 290Z"/>
+    <path data-id="wood-center-right" data-name="עץ אמצעי ימין" d="M420 258L470 250L475 270L423 278Z"/>
+
+    <path data-id="flame-left-outer" data-name="אש שמאל חיצונית" d="M338 175C322 150 332 124 358 102C355 127 376 145 385 170C377 188 350 192 338 175Z"/>
+    <path data-id="flame-left-inner" data-name="אש שמאל פנימית" d="M355 166C348 148 356 132 370 116C368 133 380 147 385 164C379 177 362 180 355 166Z"/>
+    <path data-id="flame-center-outer-left" data-name="אש אמצע שמאל" d="M392 160C382 130 400 98 424 72C421 98 438 123 445 152C435 171 404 178 392 160Z"/>
+    <path data-id="flame-center-core" data-name="לב האש" d="M417 152C410 128 421 108 438 88C436 110 449 126 454 149C447 162 425 166 417 152Z"/>
+    <path data-id="flame-center-outer-right" data-name="אש אמצע ימין" d="M442 162C436 137 451 116 468 95C468 117 480 131 486 155C478 170 453 176 442 162Z"/>
+    <path data-id="flame-right-outer" data-name="אש ימין חיצונית" d="M474 176C462 150 482 128 503 102C504 129 522 142 532 171C522 188 489 193 474 176Z"/>
+    <path data-id="flame-right-inner" data-name="אש ימין פנימית" d="M492 166C487 147 497 132 510 118C510 136 522 146 527 163C520 175 500 179 492 166Z"/>
+  </g>
+</svg>
+
+    </div>
+  </div>
+
+  <h2>רשימת חלקים בציור</h2>
+  <ol id="parts-list"></ol>
+
+  <script type="application/json" id="inspire-l1">{
+  "zoom": { "x": 300, "y": 50, "w": 250, "h": 170 },
+  "palette": ["#60a5fa", "#1d4ed8", "#a78bfa", "#16a34a", "#f59e0b", "#ef4444", "#9ca3af", "#111827"],
+  "fills": {
+    "flame-left": 4,
+    "flame-center": 5,
+    "flame-right": 4
+  }
+}
+</script>
+  <script type="application/json" id="inspire-l2">{
+  "zoom": { "x": 300, "y": 45, "w": 260, "h": 180 },
+  "palette": ["#60a5fa", "#1d4ed8", "#a78bfa", "#16a34a", "#f59e0b", "#ef4444", "#9ca3af", "#111827"],
+  "fills": {
+    "flame-left-outer": 4,
+    "flame-left-inner": 5,
+    "flame-center-outer-left": 4,
+    "flame-center-core": 5,
+    "flame-center-outer-right": 4,
+    "flame-right-outer": 4,
+    "flame-right-inner": 5
+  }
+}
+</script>
+
+<script>
+(function () {
+  const svgL1 = document.getElementById('svg-l1');
+  const svgL2 = document.getElementById('svg-l2');
+  const partsList = document.getElementById('parts-list');
+  const showL1Btn = document.getElementById('show-l1');
+  const showL2Btn = document.getElementById('show-l2');
+  let activeSvg = svgL1;
+
+  function clearPaint(svg) {
+    svg.querySelectorAll('[data-id]').forEach(el => {
+      el.setAttribute('fill', 'none');
+    });
+    svg.setAttribute('viewBox', svg.dataset.defaultViewbox || '0 0 860 520');
+  }
+
+  function rebuildPartsList(svg) {
+    partsList.innerHTML = '';
+    svg.querySelectorAll('[data-id][data-name]').forEach(el => {
+      const li = document.createElement('li');
+      const small = document.createElement('small');
+      li.textContent = el.getAttribute('data-name') + ' ';
+      small.textContent = '(' + el.getAttribute('data-id') + ')';
+      li.appendChild(small);
+      partsList.appendChild(li);
+    });
+  }
+
+  function activate(svg) {
+    [svgL1, svgL2].forEach(s => s.classList.remove('active'));
+    [showL1Btn, showL2Btn].forEach(b => b.classList.remove('active'));
+    activeSvg = svg;
+    activeSvg.classList.add('active');
+    if (svg === svgL1) showL1Btn.classList.add('active');
+    if (svg === svgL2) showL2Btn.classList.add('active');
+    rebuildPartsList(activeSvg);
+  }
+
+  function applyInspire(svg, scriptId) {
+    clearPaint(svg);
+    const data = JSON.parse(document.getElementById(scriptId).textContent);
+    const palette = data.palette || [];
+    Object.entries(data.fills || {}).forEach(([id, idx]) => {
+      const el = svg.querySelector('[data-id="' + id + '"]');
+      if (el && palette[idx]) el.setAttribute('fill', palette[idx]);
+    });
+    const z = data.zoom;
+    if (z) svg.setAttribute('viewBox', [z.x, z.y, z.w, z.h].join(' '));
+  }
+
+  document.getElementById('show-l1').addEventListener('click', () => activate(svgL1));
+  document.getElementById('show-l2').addEventListener('click', () => activate(svgL2));
+  document.getElementById('apply-l1').addEventListener('click', () => {
+    activate(svgL1);
+    applyInspire(svgL1, 'inspire-l1');
+  });
+  document.getElementById('apply-l2').addEventListener('click', () => {
+    activate(svgL2);
+    applyInspire(svgL2, 'inspire-l2');
+  });
+  document.getElementById('reset-view').addEventListener('click', () => {
+    clearPaint(svgL1);
+    clearPaint(svgL2);
+    activate(activeSvg);
+  });
+
+  clearPaint(svgL1);
+  clearPaint(svgL2);
+  activate(svgL1);
+})();
+</script>
+</body>
+</html>
