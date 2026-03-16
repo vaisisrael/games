@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" fill="none">
+  <g stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path data-id="body-main" data-name="גוף הדג" d="M200 260 C300 170 500 165 620 260 C500 355 300 350 200 260 Z"/>
+    <path data-id="body-band-top" data-name="פס גוף עליון" d="M255 228 C340 185 505 183 592 235"/>
+    <path data-id="body-band-bottom" data-name="פס גוף תחתון" d="M255 292 C340 335 505 337 592 285"/>
+    <path data-id="tail-top" data-name="זנב עליון" d="M620 260 L760 170 L730 255 Z"/>
+    <path data-id="tail-bottom" data-name="זנב תחתון" d="M620 260 L730 265 L760 350 Z"/>
+    <path data-id="tail-inner-top" data-name="פנים זנב עליון" d="M648 248 L724 190 L708 247 Z"/>
+    <path data-id="tail-inner-bottom" data-name="פנים זנב תחתון" d="M648 272 L708 273 L724 328 Z"/>
+    <path data-id="top-fin" data-name="סנפיר עליון" d="M365 175 L430 95 L495 180 Z"/>
+    <path data-id="top-fin-inner-left" data-name="פנים סנפיר עליון שמאל" d="M392 168 L430 121 L430 178 Z"/>
+    <path data-id="top-fin-inner-right" data-name="פנים סנפיר עליון ימין" d="M430 121 L468 168 L430 178 Z"/>
+    <path data-id="bottom-fin" data-name="סנפיר תחתון" d="M360 338 L450 410 L520 325 Z"/>
+    <path data-id="bottom-fin-inner-left" data-name="פנים סנפיר תחתון שמאל" d="M389 344 L446 390 L448 338 Z"/>
+    <path data-id="bottom-fin-inner-right" data-name="פנים סנפיר תחתון ימין" d="M448 338 L446 390 L500 335 Z"/>
+    <path data-id="mouth" data-name="פה" d="M205 260 Q178 250 162 260 Q178 270 205 260 Z"/>
+    <path data-id="lip-line-top" data-name="קו פה עליון" d="M172 258 Q186 249 199 253"/>
+    <path data-id="lip-line-bottom" data-name="קו פה תחתון" d="M172 262 Q186 271 199 267"/>
+    <circle data-id="eye-outer" data-name="עין" cx="285" cy="225" r="28"/>
+    <circle data-id="eye-ring" data-name="טבעת העין" cx="285" cy="225" r="18"/>
+    <circle data-id="eye-inner" data-name="אישון" cx="291" cy="227" r="11"/>
+    <circle data-id="eye-shine" data-name="ברק בעין" cx="296" cy="222" r="4"/>
+    <path data-id="gill" data-name="מכסה הזים" d="M350 195 Q322 258 353 320"/>
+    <path data-id="gill-inner" data-name="קו פנימי בזים" d="M338 205 Q318 258 340 309"/>
+    <path data-id="scale-1" data-name="קשקשת 1" d="M390 215 Q417 187 444 215 Q417 243 390 215 Z"/>
+    <path data-id="scale-1-inner" data-name="פנים קשקשת 1" d="M401 215 Q417 198 433 215 Q417 232 401 215 Z"/>
+    <path data-id="scale-2" data-name="קשקשת 2" d="M448 205 Q476 177 504 205 Q476 233 448 205 Z"/>
+    <path data-id="scale-2-inner" data-name="פנים קשקשת 2" d="M460 205 Q476 188 492 205 Q476 222 460 205 Z"/>
+    <path data-id="scale-3" data-name="קשקשת 3" d="M506 215 Q533 187 560 215 Q533 243 506 215 Z"/>
+    <path data-id="scale-3-inner" data-name="פנים קשקשת 3" d="M517 215 Q533 198 549 215 Q533 232 517 215 Z"/>
+    <path data-id="scale-4" data-name="קשקשת 4" d="M410 258 Q438 230 466 258 Q438 286 410 258 Z"/>
+    <path data-id="scale-4-inner" data-name="פנים קשקשת 4" d="M422 258 Q438 241 454 258 Q438 275 422 258 Z"/>
+    <path data-id="scale-5" data-name="קשקשת 5" d="M468 248 Q496 220 524 248 Q496 276 468 248 Z"/>
+    <path data-id="scale-5-inner" data-name="פנים קשקשת 5" d="M480 248 Q496 231 512 248 Q496 265 480 248 Z"/>
+    <path data-id="scale-6" data-name="קשקשת 6" d="M526 258 Q553 230 580 258 Q553 286 526 258 Z"/>
+    <path data-id="scale-6-inner" data-name="פנים קשקשת 6" d="M537 258 Q553 241 569 258 Q553 275 537 258 Z"/>
+    <path data-id="scale-7" data-name="קשקשת 7" d="M390 300 Q417 272 444 300 Q417 328 390 300 Z"/>
+    <path data-id="scale-7-inner" data-name="פנים קשקשת 7" d="M401 300 Q417 283 433 300 Q417 317 401 300 Z"/>
+    <path data-id="scale-8" data-name="קשקשת 8" d="M448 290 Q476 262 504 290 Q476 318 448 290 Z"/>
+    <path data-id="scale-8-inner" data-name="פנים קשקשת 8" d="M460 290 Q476 273 492 290 Q476 307 460 290 Z"/>
+    <path data-id="scale-9" data-name="קשקשת 9" d="M506 300 Q533 272 560 300 Q533 328 506 300 Z"/>
+    <path data-id="scale-9-inner" data-name="פנים קשקשת 9" d="M517 300 Q533 283 549 300 Q533 317 517 300 Z"/>
+    <path data-id="body-spot-front" data-name="כתם גוף קדמי" d="M350 245 Q370 228 390 245 Q370 262 350 245 Z"/>
+    <path data-id="body-spot-back" data-name="כתם גוף אחורי" d="M570 245 Q590 228 610 245 Q590 262 570 245 Z"/>
+  </g>
+</svg>

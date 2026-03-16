@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" fill="none">
+  <g stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path data-id="body-main" data-name="גוף הדג" d="M200 260 C300 170 500 165 620 260 C500 355 300 350 200 260 Z"/>
+    <path data-id="tail-top" data-name="זנב עליון" d="M620 260 L760 170 L730 255 Z"/>
+    <path data-id="tail-bottom" data-name="זנב תחתון" d="M620 260 L730 265 L760 350 Z"/>
+    <path data-id="top-fin" data-name="סנפיר עליון" d="M365 175 L430 95 L495 180 Z"/>
+    <path data-id="bottom-fin" data-name="סנפיר תחתון" d="M360 338 L450 410 L520 325 Z"/>
+    <path data-id="mouth" data-name="פה" d="M205 260 Q178 250 162 260 Q178 270 205 260 Z"/>
+    <circle data-id="eye-outer" data-name="עין" cx="285" cy="225" r="28"/>
+    <circle data-id="eye-inner" data-name="אישון" cx="291" cy="227" r="11"/>
+    <path data-id="gill" data-name="מכסה הזים" d="M350 195 Q322 258 353 320"/>
+    <path data-id="scale-1" data-name="קשקשת 1" d="M395 225 Q420 195 445 225 Q420 255 395 225 Z"/>
+    <path data-id="scale-2" data-name="קשקשת 2" d="M455 215 Q483 185 511 215 Q483 245 455 215 Z"/>
+    <path data-id="scale-3" data-name="קשקשת 3" d="M515 225 Q540 195 565 225 Q540 255 515 225 Z"/>
+    <path data-id="scale-4" data-name="קשקשת 4" d="M415 282 Q442 252 469 282 Q442 312 415 282 Z"/>
+    <path data-id="scale-5" data-name="קשקשת 5" d="M475 275 Q503 245 531 275 Q503 305 475 275 Z"/>
+    <path data-id="scale-6" data-name="קשקשת 6" d="M535 284 Q560 254 585 284 Q560 314 535 284 Z"/>
+  </g>
+</svg>

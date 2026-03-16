@@ -1,0 +1,215 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>dag studio pack</title>
+<style>
+  body { font-family: Arial, sans-serif; margin: 20px; color: #111827; }
+  .controls { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px; }
+  button { padding:8px 12px; border:1px solid #cbd5e1; background:#fff; border-radius:8px; cursor:pointer; }
+  button.active { border-color:#111827; font-weight:700; }
+  .stage { border:1px solid #e5e7eb; border-radius:12px; padding:12px; background:#fff; max-width:900px; }
+  svg { width:100%; height:auto; }
+  .hidden { display:none; }
+  h2 { margin-top:24px; }
+  ol { line-height:1.8; }
+  .small { color:#6b7280; font-size:0.9em; }
+</style>
+</head>
+<body>
+  <div class="controls">
+    <button id="show-l1" class="active">תצוגת L1</button>
+    <button id="show-l2">תצוגת L2</button>
+    <button id="apply-inspire-l1">השראה (L1)</button>
+    <button id="apply-inspire-l2">השראה (L2)</button>
+    <button id="reset-view">איפוס</button>
+  </div>
+
+  <div class="stage">
+    <div id="wrap-l1"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" fill="none">
+  <g stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path data-id="body-main" data-name="גוף הדג" d="M200 260 C300 170 500 165 620 260 C500 355 300 350 200 260 Z"/>
+    <path data-id="tail-top" data-name="זנב עליון" d="M620 260 L760 170 L730 255 Z"/>
+    <path data-id="tail-bottom" data-name="זנב תחתון" d="M620 260 L730 265 L760 350 Z"/>
+    <path data-id="top-fin" data-name="סנפיר עליון" d="M365 175 L430 95 L495 180 Z"/>
+    <path data-id="bottom-fin" data-name="סנפיר תחתון" d="M360 338 L450 410 L520 325 Z"/>
+    <path data-id="mouth" data-name="פה" d="M205 260 Q178 250 162 260 Q178 270 205 260 Z"/>
+    <circle data-id="eye-outer" data-name="עין" cx="285" cy="225" r="28"/>
+    <circle data-id="eye-inner" data-name="אישון" cx="291" cy="227" r="11"/>
+    <path data-id="gill" data-name="מכסה הזים" d="M350 195 Q322 258 353 320"/>
+    <path data-id="scale-1" data-name="קשקשת 1" d="M395 225 Q420 195 445 225 Q420 255 395 225 Z"/>
+    <path data-id="scale-2" data-name="קשקשת 2" d="M455 215 Q483 185 511 215 Q483 245 455 215 Z"/>
+    <path data-id="scale-3" data-name="קשקשת 3" d="M515 225 Q540 195 565 225 Q540 255 515 225 Z"/>
+    <path data-id="scale-4" data-name="קשקשת 4" d="M415 282 Q442 252 469 282 Q442 312 415 282 Z"/>
+    <path data-id="scale-5" data-name="קשקשת 5" d="M475 275 Q503 245 531 275 Q503 305 475 275 Z"/>
+    <path data-id="scale-6" data-name="קשקשת 6" d="M535 284 Q560 254 585 284 Q560 314 535 284 Z"/>
+  </g>
+</svg></div>
+    <div id="wrap-l2" class="hidden"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" fill="none">
+  <g stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path data-id="body-main" data-name="גוף הדג" d="M200 260 C300 170 500 165 620 260 C500 355 300 350 200 260 Z"/>
+    <path data-id="body-band-top" data-name="פס גוף עליון" d="M255 228 C340 185 505 183 592 235"/>
+    <path data-id="body-band-bottom" data-name="פס גוף תחתון" d="M255 292 C340 335 505 337 592 285"/>
+    <path data-id="tail-top" data-name="זנב עליון" d="M620 260 L760 170 L730 255 Z"/>
+    <path data-id="tail-bottom" data-name="זנב תחתון" d="M620 260 L730 265 L760 350 Z"/>
+    <path data-id="tail-inner-top" data-name="פנים זנב עליון" d="M648 248 L724 190 L708 247 Z"/>
+    <path data-id="tail-inner-bottom" data-name="פנים זנב תחתון" d="M648 272 L708 273 L724 328 Z"/>
+    <path data-id="top-fin" data-name="סנפיר עליון" d="M365 175 L430 95 L495 180 Z"/>
+    <path data-id="top-fin-inner-left" data-name="פנים סנפיר עליון שמאל" d="M392 168 L430 121 L430 178 Z"/>
+    <path data-id="top-fin-inner-right" data-name="פנים סנפיר עליון ימין" d="M430 121 L468 168 L430 178 Z"/>
+    <path data-id="bottom-fin" data-name="סנפיר תחתון" d="M360 338 L450 410 L520 325 Z"/>
+    <path data-id="bottom-fin-inner-left" data-name="פנים סנפיר תחתון שמאל" d="M389 344 L446 390 L448 338 Z"/>
+    <path data-id="bottom-fin-inner-right" data-name="פנים סנפיר תחתון ימין" d="M448 338 L446 390 L500 335 Z"/>
+    <path data-id="mouth" data-name="פה" d="M205 260 Q178 250 162 260 Q178 270 205 260 Z"/>
+    <path data-id="lip-line-top" data-name="קו פה עליון" d="M172 258 Q186 249 199 253"/>
+    <path data-id="lip-line-bottom" data-name="קו פה תחתון" d="M172 262 Q186 271 199 267"/>
+    <circle data-id="eye-outer" data-name="עין" cx="285" cy="225" r="28"/>
+    <circle data-id="eye-ring" data-name="טבעת העין" cx="285" cy="225" r="18"/>
+    <circle data-id="eye-inner" data-name="אישון" cx="291" cy="227" r="11"/>
+    <circle data-id="eye-shine" data-name="ברק בעין" cx="296" cy="222" r="4"/>
+    <path data-id="gill" data-name="מכסה הזים" d="M350 195 Q322 258 353 320"/>
+    <path data-id="gill-inner" data-name="קו פנימי בזים" d="M338 205 Q318 258 340 309"/>
+    <path data-id="scale-1" data-name="קשקשת 1" d="M390 215 Q417 187 444 215 Q417 243 390 215 Z"/>
+    <path data-id="scale-1-inner" data-name="פנים קשקשת 1" d="M401 215 Q417 198 433 215 Q417 232 401 215 Z"/>
+    <path data-id="scale-2" data-name="קשקשת 2" d="M448 205 Q476 177 504 205 Q476 233 448 205 Z"/>
+    <path data-id="scale-2-inner" data-name="פנים קשקשת 2" d="M460 205 Q476 188 492 205 Q476 222 460 205 Z"/>
+    <path data-id="scale-3" data-name="קשקשת 3" d="M506 215 Q533 187 560 215 Q533 243 506 215 Z"/>
+    <path data-id="scale-3-inner" data-name="פנים קשקשת 3" d="M517 215 Q533 198 549 215 Q533 232 517 215 Z"/>
+    <path data-id="scale-4" data-name="קשקשת 4" d="M410 258 Q438 230 466 258 Q438 286 410 258 Z"/>
+    <path data-id="scale-4-inner" data-name="פנים קשקשת 4" d="M422 258 Q438 241 454 258 Q438 275 422 258 Z"/>
+    <path data-id="scale-5" data-name="קשקשת 5" d="M468 248 Q496 220 524 248 Q496 276 468 248 Z"/>
+    <path data-id="scale-5-inner" data-name="פנים קשקשת 5" d="M480 248 Q496 231 512 248 Q496 265 480 248 Z"/>
+    <path data-id="scale-6" data-name="קשקשת 6" d="M526 258 Q553 230 580 258 Q553 286 526 258 Z"/>
+    <path data-id="scale-6-inner" data-name="פנים קשקשת 6" d="M537 258 Q553 241 569 258 Q553 275 537 258 Z"/>
+    <path data-id="scale-7" data-name="קשקשת 7" d="M390 300 Q417 272 444 300 Q417 328 390 300 Z"/>
+    <path data-id="scale-7-inner" data-name="פנים קשקשת 7" d="M401 300 Q417 283 433 300 Q417 317 401 300 Z"/>
+    <path data-id="scale-8" data-name="קשקשת 8" d="M448 290 Q476 262 504 290 Q476 318 448 290 Z"/>
+    <path data-id="scale-8-inner" data-name="פנים קשקשת 8" d="M460 290 Q476 273 492 290 Q476 307 460 290 Z"/>
+    <path data-id="scale-9" data-name="קשקשת 9" d="M506 300 Q533 272 560 300 Q533 328 506 300 Z"/>
+    <path data-id="scale-9-inner" data-name="פנים קשקשת 9" d="M517 300 Q533 283 549 300 Q533 317 517 300 Z"/>
+    <path data-id="body-spot-front" data-name="כתם גוף קדמי" d="M350 245 Q370 228 390 245 Q370 262 350 245 Z"/>
+    <path data-id="body-spot-back" data-name="כתם גוף אחורי" d="M570 245 Q590 228 610 245 Q590 262 570 245 Z"/>
+  </g>
+</svg></div>
+  </div>
+
+  <h2>רשימת חלקים בציור</h2>
+  <ol id="parts-list"></ol>
+
+  <script type="application/json" id="inspire-l1">{
+  &quot;zoom&quot;: {
+    &quot;x&quot;: 340,
+    &quot;y&quot;: 80,
+    &quot;w&quot;: 180,
+    &quot;h&quot;: 140
+  },
+  &quot;palette&quot;: [
+    &quot;#60a5fa&quot;,
+    &quot;#1d4ed8&quot;,
+    &quot;#a78bfa&quot;,
+    &quot;#16a34a&quot;,
+    &quot;#f59e0b&quot;,
+    &quot;#ef4444&quot;,
+    &quot;#9ca3af&quot;,
+    &quot;#111827&quot;
+  ],
+  &quot;fills&quot;: {
+    &quot;top-fin&quot;: 0
+  }
+}</script>
+  <script type="application/json" id="inspire-l2">{
+  &quot;zoom&quot;: {
+    &quot;x&quot;: 340,
+    &quot;y&quot;: 80,
+    &quot;w&quot;: 180,
+    &quot;h&quot;: 140
+  },
+  &quot;palette&quot;: [
+    &quot;#60a5fa&quot;,
+    &quot;#1d4ed8&quot;,
+    &quot;#a78bfa&quot;,
+    &quot;#16a34a&quot;,
+    &quot;#f59e0b&quot;,
+    &quot;#ef4444&quot;,
+    &quot;#9ca3af&quot;,
+    &quot;#111827&quot;
+  ],
+  &quot;fills&quot;: {
+    &quot;top-fin&quot;: 0,
+    &quot;top-fin-inner-left&quot;: 1,
+    &quot;top-fin-inner-right&quot;: 1
+  }
+}</script>
+
+<script>
+const wrapL1 = document.getElementById('wrap-l1');
+const wrapL2 = document.getElementById('wrap-l2');
+const btnShowL1 = document.getElementById('show-l1');
+const btnShowL2 = document.getElementById('show-l2');
+const btnInspireL1 = document.getElementById('apply-inspire-l1');
+const btnInspireL2 = document.getElementById('apply-inspire-l2');
+const btnReset = document.getElementById('reset-view');
+const partsList = document.getElementById('parts-list');
+
+function getActiveWrap() {
+  return wrapL2.classList.contains('hidden') ? wrapL1 : wrapL2;
+}
+
+function getSvg(wrap) {
+  return wrap.querySelector('svg');
+}
+
+function clearFills(wrap) {
+  wrap.querySelectorAll('[data-id]').forEach(el => el.setAttribute('fill', 'none'));
+}
+
+function resetWrap(wrap) {
+  clearFills(wrap);
+  const svg = getSvg(wrap);
+  svg.setAttribute('viewBox', '0 0 860 520');
+}
+
+function setMode(mode) {
+  const isL1 = mode === 'l1';
+  wrapL1.classList.toggle('hidden', !isL1);
+  wrapL2.classList.toggle('hidden', isL1);
+  btnShowL1.classList.toggle('active', isL1);
+  btnShowL2.classList.toggle('active', !isL1);
+  buildList();
+}
+
+function applyInspire(mode) {
+  const wrap = mode === 'l1' ? wrapL1 : wrapL2;
+  setMode(mode);
+  resetWrap(wrap);
+  const data = JSON.parse(document.getElementById('inspire-' + mode).textContent);
+  const svg = getSvg(wrap);
+  svg.setAttribute('viewBox', `${data.zoom.x} ${data.zoom.y} ${data.zoom.w} ${data.zoom.h}`);
+  Object.entries(data.fills).forEach(([id, paletteIndex]) => {
+    const el = wrap.querySelector(`[data-id="${id}"]`);
+    if (el) el.setAttribute('fill', data.palette[paletteIndex]);
+  });
+  buildList();
+}
+
+function buildList() {
+  const wrap = getActiveWrap();
+  partsList.innerHTML = '';
+  wrap.querySelectorAll('[data-id][data-name]').forEach(el => {
+    const li = document.createElement('li');
+    li.innerHTML = `${el.getAttribute('data-name')} <span class="small">(${el.getAttribute('data-id')})</span>`;
+    partsList.appendChild(li);
+  });
+}
+
+btnShowL1.addEventListener('click', () => setMode('l1'));
+btnShowL2.addEventListener('click', () => setMode('l2'));
+btnInspireL1.addEventListener('click', () => applyInspire('l1'));
+btnInspireL2.addEventListener('click', () => applyInspire('l2'));
+btnReset.addEventListener('click', () => { resetWrap(wrapL1); resetWrap(wrapL2); buildList(); });
+
+resetWrap(wrapL1); resetWrap(wrapL2); buildList();
+</script>
+</body>
+</html>
