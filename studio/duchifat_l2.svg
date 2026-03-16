@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" fill="none">
+  <g stroke="#111827" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+    <path data-id="sun-core" data-name="מרכז השמש" d="M719 62c0-23 18-41 41-41s41 18 41 41-18 41-41 41-41-18-41-41z"/>
+    <path data-id="sun-ring" data-name="טבעת השמש" d="M706 62c0-30 24-54 54-54s54 24 54 54-24 54-54 54-54-24-54-54z"/>
+    <path data-id="sun-ray-top" data-name="קרן שמש עליונה" d="M760 0v18"/>
+    <path data-id="sun-ray-bottom" data-name="קרן שמש תחתונה" d="M760 106v18"/>
+    <path data-id="sun-ray-left" data-name="קרן שמש שמאלית" d="M698 62h-18"/>
+    <path data-id="sun-ray-right" data-name="קרן שמש ימנית" d="M822 62h18"/>
+    <path data-id="cloud-left" data-name="ענן שמאל" d="M618 148c-23 0-42-17-42-39 0-9 3-12 19-17 8-24 40-34 61-19 5 10 6 21 3 33-20-5-41 8-48 28-3 7-4 10-4 14 0 0-9 0-9 0z"/>
+    <path data-id="cloud-mid" data-name="ענן אמצע" d="M641 101c8-16 31-22 48-11 15-3 32 7 36 22-6 8-13 14-21 19-13-9-31-10-46-1-6-9-14-19-17-29z"/>
+    <path data-id="cloud-right" data-name="ענן ימין" d="M704 101c18 0 33 14 33 31 0 18-15 33-33 33h36c18 0 33-15 33-33 0-17-15-31-33-31-12-16-25-21-36-22z"/>
+    <path data-id="branch-main" data-name="ענף ראשי" d="M88 378c110-9 214-2 329-5 102-2 208-8 351 3 14 1 24 10 24 22 0 13-11 23-25 23H115c-28 0-50-18-50-40 0-11 9-22 23-23z"/>
+    <path data-id="branch-band-1" data-name="פס ענף 1" d="M119 392c83-5 162-2 250-2"/>
+    <path data-id="branch-band-2" data-name="פס ענף 2" d="M391 392c93-1 195-5 304 1"/>
+    <path data-id="branch-band-3" data-name="פס ענף 3" d="M207 408c87 0 174-1 262-2"/>
+    <path data-id="leaf-left-main" data-name="עלה שמאלי" d="M182 336c-24-32-58-42-95-29 18 35 52 53 95 50"/>
+    <path data-id="leaf-left-vein" data-name="עורק עלה שמאלי" d="M113 316c24 7 45 15 66 35"/>
+    <path data-id="leaf-right-main" data-name="עלה ימני" d="M709 341c26-29 61-37 95-21-16 32-50 47-95 45"/>
+    <path data-id="leaf-right-vein" data-name="עורק עלה ימני" d="M774 324c-24 5-43 14-64 35"/>
+    <path data-id="tail-top" data-name="זנב עליון" d="M233 250c-40 4-71 20-95 45 36 9 71 2 101-14"/>
+    <path data-id="tail-mid" data-name="זנב אמצעי" d="M220 274c-34 8-60 26-79 50 42 5 77-11 103-31"/>
+    <path data-id="tail-low" data-name="זנב תחתון" d="M214 293c-27 10-47 27-62 48 33 1 63-12 86-30"/>
+    <path data-id="body-back" data-name="גב" d="M256 178c70-40 179-41 255 1 46 25 71 64 67 104-16-18-38-31-62-43-47-24-103-34-162-35-58-1-110 8-151 28-20 10-38 24-54 40-18-47-4-97 26-125z"/>
+    <path data-id="body-mid" data-name="מרכז הגוף" d="M269 273c16-16 34-30 54-40 41-20 93-29 151-28 59 1 115 11 162 35 24 12 46 25 62 43-5 58-62 108-165 111-87 2-161-35-183-91-3-10-5-20-6-30 0 0-75-0-75 0z" opacity="0"/>
+    <path data-id="belly-front" data-name="בטן קדמית" d="M330 233c52-17 125-15 177 8 30 13 53 37 58 64-39 41-88 57-152 57-59 0-108-12-144-38 4-41 24-75 61-91z"/>
+    <path data-id="belly-band-1" data-name="פס בטן 1" d="M312 280c43 19 85 28 142 28 43 0 82-6 118-18"/>
+    <path data-id="belly-band-2" data-name="פס בטן 2" d="M293 317c37 24 79 35 128 35 46 0 87-10 126-30"/>
+    <path data-id="wing-top" data-name="כנף עליונה" d="M334 194c62-19 139-11 192 23 14 9 27 21 37 33-49-5-103-2-151 10-44 11-83 28-114 50-6-6-11-13-15-20-5-34 0-72 19-96z"/>
+    <path data-id="wing-mid" data-name="כנף אמצע" d="M298 290c31-22 70-39 114-50 48-12 102-15 151-10 9 10 16 20 20 31-38 28-88 40-145 39-44-1-84-11-117-30-8-4-16-9-23-14z"/>
+    <path data-id="wing-feather-1" data-name="נוצת כנף 1" d="M352 222c21 5 40 18 57 40"/>
+    <path data-id="wing-feather-2" data-name="נוצת כנף 2" d="M404 211c22 5 46 18 68 40"/>
+    <path data-id="wing-feather-3" data-name="נוצת כנף 3" d="M464 213c21 4 43 18 60 36"/>
+    <path data-id="neck-front" data-name="צוואר קדמי" d="M542 184c22-34 59-55 101-58 16 14 24 34 22 56-4 22-19 43-38 60-31 2-61-11-82-34-1-9-2-16-3-24z"/>
+    <path data-id="neck-back" data-name="צוואר אחורי" d="M643 126c37-3 72 8 97 29-18 18-37 33-57 51-27 23-55 44-94 50 19-17 34-38 38-60 2-22-6-42-22-56 13-8 24-12 38-14z"/>
+    <path data-id="head-front" data-name="פנים" d="M610 115c24-4 47 2 66 15-10 19-12 41-7 63 4 18 13 35 27 49-17 1-34-2-50-9-27-13-47-34-58-60 2-25 10-45 22-58z"/>
+    <path data-id="head-back" data-name="אחורי הראש" d="M676 130c18 12 31 29 38 48 12 30 7 62-13 87-10 3-20 5-31 5-14-14-23-31-27-49-5-22-3-44 7-63 10-20 15-24 26-28z"/>
+    <path data-id="beak-top" data-name="מקור עליון" d="M706 169c52-7 96-1 128 17-39 15-84 21-134 20"/>
+    <path data-id="beak-bottom" data-name="מקור תחתון" d="M703 191c52 1 97 8 126 24-40 5-84 2-132-7"/>
+    <path data-id="eye-ring" data-name="טבעת העין" d="M650 175c0-11 9-20 20-20s20 9 20 20-9 20-20 20-20-9-20-20z"/>
+    <path data-id="eye-pupil" data-name="אישון" d="M664 175c0-4 3-7 6-7s6 3 6 7-3 7-6 7-6-3-6-7z"/>
+    <path data-id="crest-left" data-name="נוצה שמאלית בציצית" d="M624 101c-19-40-22-74-10-102 25 24 34 61 31 103"/>
+    <path data-id="crest-left-tip" data-name="קצה ציצית שמאל" d="M614 3c8-7 19-8 29-1-8 9-18 12-29 10"/>
+    <path data-id="crest-mid" data-name="נוצה אמצעית בציצית" d="M655 93c-4-43 7-76 31-98 10 30 4 68-15 106"/>
+    <path data-id="crest-mid-tip" data-name="קצה ציצית אמצע" d="M686 -2c9-4 19-2 28 7-10 6-20 6-30 0"/>
+    <path data-id="crest-right" data-name="נוצה ימנית בציצית" d="M683 97c13-41 37-67 67-80 0 31-17 65-50 95"/>
+    <path data-id="crest-right-tip" data-name="קצה ציצית ימין" d="M750 18c9 0 17 5 23 15-11 2-20 0-27-6"/>
+    <path data-id="leg-front" data-name="רגל קדמית" d="M478 344c5 30 5 55-1 78"/>
+    <path data-id="foot-front" data-name="כף רגל קדמית" d="M477 422c16-5 30-5 44 0m-26 0 10 10m-4-10 10 8"/>
+    <path data-id="leg-back" data-name="רגל אחורית" d="M413 345c1 32-4 57-13 79"/>
+    <path data-id="foot-back" data-name="כף רגל אחורית" d="M400 424c15-3 30-2 45 3m-25 0 10 8m-4-10 10 8"/>
+  </g>
+</svg>

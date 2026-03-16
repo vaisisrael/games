@@ -1,0 +1,28 @@
+{
+  "zoom": {
+    "x": 600,
+    "y": 0,
+    "w": 180,
+    "h": 125
+  },
+  "palette": [
+    "#60a5fa",
+    "#1d4ed8",
+    "#a78bfa",
+    "#16a34a",
+    "#f59e0b",
+    "#ef4444",
+    "#9ca3af",
+    "#111827"
+  ],
+  "fills": {
+    "crest-left": 4,
+    "crest-left-tip": 7,
+    "crest-mid": 5,
+    "crest-mid-tip": 7,
+    "crest-right": 4,
+    "crest-right-tip": 7,
+    "head-front": 6,
+    "head-back": 6
+  }
+}
