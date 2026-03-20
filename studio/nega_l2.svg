@@ -1,0 +1,91 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520">
+  <g stroke="#111827" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <rect data-id="ground" data-name="קרקע" x="70" y="430" width="720" height="40"/>
+    <line data-id="ground-line-1" data-name="קו קרקע" x1="90" y1="442" x2="770" y2="442"/>
+    <line data-id="ground-line-2" data-name="קו קרקע" x1="100" y1="455" x2="760" y2="455"/>
+
+    <rect data-id="house-wall" data-name="קיר הבית" x="180" y="150" width="420" height="220"/>
+    <line data-id="wall-brick-1" data-name="קו קיר" x1="180" y1="205" x2="600" y2="205"/>
+    <line data-id="wall-brick-2" data-name="קו קיר" x1="180" y1="260" x2="600" y2="260"/>
+    <line data-id="wall-brick-3" data-name="קו קיר" x1="180" y1="315" x2="600" y2="315"/>
+    <line data-id="wall-vert-1" data-name="קו קיר" x1="250" y1="150" x2="250" y2="370"/>
+    <line data-id="wall-vert-2" data-name="קו קיר" x1="320" y1="150" x2="320" y2="370"/>
+    <line data-id="wall-vert-3" data-name="קו קיר" x1="490" y1="150" x2="490" y2="370"/>
+    <line data-id="wall-vert-4" data-name="קו קיר" x1="560" y1="150" x2="560" y2="370"/>
+
+    <polygon data-id="roof" data-name="גג" points="150,150 390,70 630,150"/>
+    <line data-id="roof-line-1" data-name="קו גג" x1="182" y1="139" x2="390" y2="90"/>
+    <line data-id="roof-line-2" data-name="קו גג" x1="390" y1="90" x2="598" y2="139"/>
+
+    <rect data-id="door" data-name="דלת" x="330" y="250" width="90" height="120"/>
+    <rect data-id="door-panel-left" data-name="לוח דלת שמאל" x="342" y="262" width="28" height="96"/>
+    <rect data-id="door-panel-right" data-name="לוח דלת ימין" x="380" y="262" width="28" height="96"/>
+    <circle data-id="door-knob" data-name="ידית" cx="401" cy="311" r="4"/>
+
+    <rect data-id="window-left" data-name="חלון שמאלי" x="225" y="210" width="70" height="60"/>
+    <rect data-id="window-left-pane-1" data-name="זגוגית שמאלית" x="230" y="215" width="28" height="22"/>
+    <rect data-id="window-left-pane-2" data-name="זגוגית שמאלית" x="262" y="215" width="28" height="22"/>
+    <rect data-id="window-left-pane-3" data-name="זגוגית שמאלית" x="230" y="241" width="28" height="24"/>
+    <rect data-id="window-left-pane-4" data-name="זגוגית שמאלית" x="262" y="241" width="28" height="24"/>
+
+    <rect data-id="window-right" data-name="חלון ימני" x="485" y="210" width="70" height="60"/>
+    <rect data-id="window-right-pane-1" data-name="זגוגית ימנית" x="490" y="215" width="28" height="22"/>
+    <rect data-id="window-right-pane-2" data-name="זגוגית ימנית" x="522" y="215" width="28" height="22"/>
+    <rect data-id="window-right-pane-3" data-name="זגוגית ימנית" x="490" y="241" width="28" height="24"/>
+    <rect data-id="window-right-pane-4" data-name="זגוגית ימנית" x="522" y="241" width="28" height="24"/>
+
+    <circle data-id="sun" data-name="שמש" cx="710" cy="95" r="38"/>
+    <path data-id="sun-ray-1" data-name="קרן שמש" d="M710 40 L710 20"/>
+    <path data-id="sun-ray-2" data-name="קרן שמש" d="M710 170 L710 150"/>
+    <path data-id="sun-ray-3" data-name="קרן שמש" d="M655 95 L635 95"/>
+    <path data-id="sun-ray-4" data-name="קרן שמש" d="M785 95 L765 95"/>
+    <path data-id="sun-ray-5" data-name="קרן שמש" d="M672 57 L658 43"/>
+    <path data-id="sun-ray-6" data-name="קרן שמש" d="M748 133 L762 147"/>
+    <path data-id="sun-ray-7" data-name="קרן שמש" d="M748 57 L762 43"/>
+    <path data-id="sun-ray-8" data-name="קרן שמש" d="M672 133 L658 147"/>
+
+    <path data-id="path" data-name="שביל" d="M360 370 L315 470 L435 470 L390 370 Z"/>
+    <line data-id="path-line-1" data-name="קו שביל" x1="355" y1="385" x2="330" y2="468"/>
+    <line data-id="path-line-2" data-name="קו שביל" x1="395" y1="385" x2="420" y2="468"/>
+
+    <path data-id="stain-main" data-name="נגע בקיר" d="M430 170
+      C470 160,510 175,520 205
+      C530 235,505 255,470 258
+      C430 262,390 250,380 220
+      C370 190,390 175,430 170 Z"/>
+    <path data-id="stain-ring" data-name="מסגרת הנגע" d="M430 178
+      C463 170,496 182,505 206
+      C513 228,492 245,467 248
+      C431 252,399 241,390 220
+      C381 199,399 184,430 178 Z"/>
+    <path data-id="stain-top" data-name="חלק עליון בנגע" d="M425 182
+      C455 176,485 184,492 203
+      C497 220,478 230,452 232
+      C425 234,400 226,395 208
+      C391 194,401 186,425 182 Z"/>
+    <path data-id="stain-middle-left" data-name="חלק שמאלי בנגע" d="M405 204
+      C423 197,441 198,449 210
+      C455 220,447 228,431 231
+      C412 232,397 225,394 216
+      C391 210,396 206,405 204 Z"/>
+    <path data-id="stain-middle-right" data-name="חלק ימני בנגע" d="M452 205
+      C468 201,483 205,489 214
+      C494 223,487 231,472 233
+      C458 234,447 228,444 220
+      C441 214,444 208,452 205 Z"/>
+    <path data-id="stain-bottom" data-name="חלק תחתון בנגע" d="M418 218
+      C448 215,478 222,485 240
+      C490 252,474 260,450 262
+      C424 264,398 258,392 244
+      C387 232,396 221,418 218 Z"/>
+    <path data-id="stain-spot-1" data-name="כתם קטן" d="M418 191 C424 188,431 190,433 195 C435 201,430 205,423 205 C416 205,412 200,412 196 C412 194,414 192,418 191 Z"/>
+    <path data-id="stain-spot-2" data-name="כתם קטן" d="M472 188 C478 186,485 189,487 194 C489 199,484 203,478 203 C471 203,467 199,467 194 C467 191,469 189,472 188 Z"/>
+    <path data-id="stain-spot-3" data-name="כתם קטן" d="M404 232 C410 229,418 231,420 236 C422 242,417 246,410 246 C403 246,399 242,399 237 C399 235,401 233,404 232 Z"/>
+    <path data-id="stain-spot-4" data-name="כתם קטן" d="M462 236 C468 232,476 234,478 240 C480 246,475 250,468 250 C461 250,456 245,456 240 C456 238,458 236,462 236 Z"/>
+
+    <path data-id="grass-left" data-name="עשב שמאל" d="M130 430 Q138 405 146 430 Q154 404 162 430 Q170 408 178 430"/>
+    <path data-id="grass-left-2" data-name="עשב שמאל" d="M178 430 Q186 408 194 430 Q202 406 210 430"/>
+    <path data-id="grass-right" data-name="עשב ימין" d="M640 430 Q648 405 656 430 Q664 404 672 430 Q680 408 688 430"/>
+    <path data-id="grass-right-2" data-name="עשב ימין" d="M688 430 Q696 408 704 430 Q712 406 720 430"/>
+  </g>
+</svg>

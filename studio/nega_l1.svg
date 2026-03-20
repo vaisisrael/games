@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520">
+  <g stroke="#111827" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <rect data-id="ground" data-name="קרקע" x="70" y="430" width="720" height="40"/>
+    <rect data-id="house-wall" data-name="קיר הבית" x="180" y="150" width="420" height="220"/>
+    <polygon data-id="roof" data-name="גג" points="150,150 390,70 630,150"/>
+    <rect data-id="door" data-name="דלת" x="330" y="250" width="90" height="120"/>
+    <rect data-id="window-left" data-name="חלון שמאלי" x="225" y="210" width="70" height="60"/>
+    <rect data-id="window-right" data-name="חלון ימני" x="485" y="210" width="70" height="60"/>
+    <line data-id="window-left-cross-h" data-name="פס חלון שמאלי" x1="225" y1="240" x2="295" y2="240"/>
+    <line data-id="window-left-cross-v" data-name="פס חלון שמאלי" x1="260" y1="210" x2="260" y2="270"/>
+    <line data-id="window-right-cross-h" data-name="פס חלון ימני" x1="485" y1="240" x2="555" y2="240"/>
+    <line data-id="window-right-cross-v" data-name="פס חלון ימני" x1="520" y1="210" x2="520" y2="270"/>
+    <circle data-id="sun" data-name="שמש" cx="710" cy="95" r="38"/>
+    <path data-id="path" data-name="שביל" d="M360 370 L315 470 L435 470 L390 370 Z"/>
+    <path data-id="stain-main" data-name="נגע בקיר" d="M430 170
+      C470 160,510 175,520 205
+      C530 235,505 255,470 258
+      C430 262,390 250,380 220
+      C370 190,390 175,430 170 Z"/>
+    <path data-id="stain-top" data-name="חלק עליון בנגע" d="M425 182
+      C455 176,485 184,492 203
+      C497 220,478 230,452 232
+      C425 234,400 226,395 208
+      C391 194,401 186,425 182 Z"/>
+    <path data-id="stain-bottom" data-name="חלק תחתון בנגע" d="M418 218
+      C448 215,478 222,485 240
+      C490 252,474 260,450 262
+      C424 264,398 258,392 244
+      C387 232,396 221,418 218 Z"/>
+    <path data-id="grass-left" data-name="עשב שמאל" d="M130 430 Q138 405 146 430 Q154 404 162 430 Q170 408 178 430"/>
+    <path data-id="grass-right" data-name="עשב ימין" d="M640 430 Q648 405 656 430 Q664 404 672 430 Q680 408 688 430"/>
+  </g>
+</svg>

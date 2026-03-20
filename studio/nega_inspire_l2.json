@@ -1,0 +1,30 @@
+{
+  "zoom": {
+    "x": 360,
+    "y": 150,
+    "w": 190,
+    "h": 135
+  },
+  "palette": [
+    "#60a5fa",
+    "#1d4ed8",
+    "#a78bfa",
+    "#16a34a",
+    "#f59e0b",
+    "#ef4444",
+    "#9ca3af",
+    "#111827"
+  ],
+  "fills": {
+    "stain-main": 6,
+    "stain-ring": 7,
+    "stain-top": 0,
+    "stain-middle-left": 4,
+    "stain-middle-right": 4,
+    "stain-bottom": 1,
+    "stain-spot-1": 5,
+    "stain-spot-2": 5,
+    "stain-spot-3": 2,
+    "stain-spot-4": 2
+  }
+}
