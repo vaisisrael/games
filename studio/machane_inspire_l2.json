@@ -1,0 +1,30 @@
+{
+  "zoom": {
+    "x": 340,
+    "y": 135,
+    "w": 180,
+    "h": 190
+  },
+  "palette": [
+    "#60a5fa",
+    "#1d4ed8",
+    "#a78bfa",
+    "#16a34a",
+    "#f59e0b",
+    "#ef4444",
+    "#9ca3af",
+    "#111827"
+  ],
+  "fills": {
+    "mishkan-roof-left": 4,
+    "mishkan-roof-right": 4,
+    "mishkan-roof-front": 6,
+    "mishkan-wall-left": 0,
+    "mishkan-wall-center-left": 0,
+    "mishkan-wall-center-right": 1,
+    "mishkan-wall-right": 1,
+    "mishkan-curtain": 5,
+    "mishkan-base-left": 6,
+    "mishkan-base-right": 7
+  }
+}

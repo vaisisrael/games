@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+  <polygon data-id="mishkan-roof" data-name="גג המשכן" points="350,185 430,145 510,185 470,205 390,205"/>
+  <rect data-id="mishkan-body" data-name="קירות המשכן" x="390" y="205" width="80" height="95"/>
+  <rect data-id="mishkan-curtain" data-name="פתח המשכן" x="418" y="228" width="24" height="72"/>
+  <rect data-id="mishkan-base" data-name="בסיס המשכן" x="378" y="300" width="104" height="14"/>
+  <polygon data-id="levi-west-tent" data-name="אוהל לוי מערב" points="300,255.1 329.0,238 358,255.1 306,255.1 352,255.1 348,276 310,276"/>
+  <polygon data-id="levi-east-tent" data-name="אוהל לוי מזרח" points="502,255.1 531.0,238 560,255.1 508,255.1 554,255.1 550,276 512,276"/>
+  <polygon data-id="levi-north-tent" data-name="אוהל לוי צפון" points="402,133.3 430.0,118 458,133.3 408,133.3 452,133.3 448,152 412,152"/>
+  <polygon data-id="levi-south-tent" data-name="אוהל לוי דרום" points="402,347.3 430.0,332 458,347.3 408,347.3 452,347.3 448,366 412,366"/>
+  <polygon data-id="camp-north-tent" data-name="מחנה צפון" points="355,56.44 430.0,22 505,56.44 493,104 367,104"/>
+  <polygon data-id="camp-north-flag" data-name="דגל צפון" points="523,22 557,30 523,40"/>
+  <polygon data-id="camp-south-tent" data-name="מחנה דרום" points="355,430.44 430.0,396 505,430.44 493,478 367,478"/>
+  <polygon data-id="camp-south-flag" data-name="דגל דרום" points="337,406 303,414 337,424"/>
+  <polygon data-id="camp-west-tent" data-name="מחנה מערב" points="78,225.28 147.0,190 216,225.28 204,274 90,274"/>
+  <polygon data-id="camp-west-flag" data-name="דגל מערב" points="60,192 26,200 60,210"/>
+  <polygon data-id="camp-east-tent" data-name="מחנה מזרח" points="644,225.28 713.0,190 782,225.28 770,274 656,274"/>
+  <polygon data-id="camp-east-flag" data-name="דגל מזרח" points="800,192 834,200 800,210"/>
+</svg>

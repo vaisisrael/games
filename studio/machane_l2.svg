@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <polygon data-id="mishkan-roof-left" data-name="גג המשכן שמאל" points="350,185 430,145 430,185 390,205"/>
+  <polygon data-id="mishkan-roof-right" data-name="גג המשכן ימין" points="430,145 510,185 470,205 430,185"/>
+  <polygon data-id="mishkan-roof-front" data-name="חזית הגג" points="390,205 430,185 470,205 430,216"/>
+  <rect data-id="mishkan-wall-left" data-name="קיר המשכן שמאל" x="390" y="205" width="20" height="95"/>
+  <rect data-id="mishkan-wall-center-left" data-name="קיר אמצע שמאל" x="410" y="205" width="20" height="95"/>
+  <rect data-id="mishkan-wall-center-right" data-name="קיר אמצע ימין" x="430" y="205" width="20" height="95"/>
+  <rect data-id="mishkan-wall-right" data-name="קיר המשכן ימין" x="450" y="205" width="20" height="95"/>
+  <rect data-id="mishkan-curtain" data-name="פתח המשכן" x="420" y="228" width="20" height="72"/>
+  <rect data-id="mishkan-base-left" data-name="בסיס שמאל" x="378" y="300" width="52" height="14"/>
+  <rect data-id="mishkan-base-right" data-name="בסיס ימין" x="430" y="300" width="52" height="14"/>
+  <polygon data-id="levi-west-roof" data-name="אוהל לוי מערב גג" points="300,255.1 329.0,238 358,255.1"/>
+  <polygon data-id="levi-west-body-left" data-name="אוהל לוי מערב צד שמאל" points="306,255.1 329.0,255.1 327.0,276 310,276"/>
+  <polygon data-id="levi-west-body-right" data-name="אוהל לוי מערב צד ימין" points="329.0,255.1 352,255.1 348,276 331.0,276"/>
+  <polygon data-id="levi-east-roof" data-name="אוהל לוי מזרח גג" points="502,255.1 531.0,238 560,255.1"/>
+  <polygon data-id="levi-east-body-left" data-name="אוהל לוי מזרח צד שמאל" points="508,255.1 531.0,255.1 529.0,276 512,276"/>
+  <polygon data-id="levi-east-body-right" data-name="אוהל לוי מזרח צד ימין" points="531.0,255.1 554,255.1 550,276 533.0,276"/>
+  <polygon data-id="levi-north-roof" data-name="אוהל לוי צפון גג" points="402,133.3 430.0,118 458,133.3"/>
+  <polygon data-id="levi-north-body-left" data-name="אוהל לוי צפון צד שמאל" points="408,133.3 430.0,133.3 428.0,152 412,152"/>
+  <polygon data-id="levi-north-body-right" data-name="אוהל לוי צפון צד ימין" points="430.0,133.3 452,133.3 448,152 432.0,152"/>
+  <polygon data-id="levi-south-roof" data-name="אוהל לוי דרום גג" points="402,347.3 430.0,332 458,347.3"/>
+  <polygon data-id="levi-south-body-left" data-name="אוהל לוי דרום צד שמאל" points="408,347.3 430.0,347.3 428.0,366 412,366"/>
+  <polygon data-id="levi-south-body-right" data-name="אוהל לוי דרום צד ימין" points="430.0,347.3 452,347.3 448,366 432.0,366"/>
+  <polygon data-id="camp-north-roof-left" data-name="מחנה צפון גג שמאל" points="355,56.44 430.0,22 430.0,56.44"/>
+  <polygon data-id="camp-north-roof-right" data-name="מחנה צפון גג ימין" points="430.0,22 505,56.44 430.0,56.44"/>
+  <polygon data-id="camp-north-body-left" data-name="מחנה צפון צד שמאל" points="367,56.44 430.0,56.44 425.0,104 367,104"/>
+  <polygon data-id="camp-north-body-right" data-name="מחנה צפון צד ימין" points="430.0,56.44 493,56.44 493,104 435.0,104"/>
+  <polygon data-id="camp-south-roof-left" data-name="מחנה דרום גג שמאל" points="355,430.44 430.0,396 430.0,430.44"/>
+  <polygon data-id="camp-south-roof-right" data-name="מחנה דרום גג ימין" points="430.0,396 505,430.44 430.0,430.44"/>
+  <polygon data-id="camp-south-body-left" data-name="מחנה דרום צד שמאל" points="367,430.44 430.0,430.44 425.0,478 367,478"/>
+  <polygon data-id="camp-south-body-right" data-name="מחנה דרום צד ימין" points="430.0,430.44 493,430.44 493,478 435.0,478"/>
+  <polygon data-id="camp-west-roof-left" data-name="מחנה מערב גג שמאל" points="78,225.28 147.0,190 147.0,225.28"/>
+  <polygon data-id="camp-west-roof-right" data-name="מחנה מערב גג ימין" points="147.0,190 216,225.28 147.0,225.28"/>
+  <polygon data-id="camp-west-body-left" data-name="מחנה מערב צד שמאל" points="90,225.28 147.0,225.28 142.0,274 90,274"/>
+  <polygon data-id="camp-west-body-right" data-name="מחנה מערב צד ימין" points="147.0,225.28 204,225.28 204,274 152.0,274"/>
+  <polygon data-id="camp-east-roof-left" data-name="מחנה מזרח גג שמאל" points="644,225.28 713.0,190 713.0,225.28"/>
+  <polygon data-id="camp-east-roof-right" data-name="מחנה מזרח גג ימין" points="713.0,190 782,225.28 713.0,225.28"/>
+  <polygon data-id="camp-east-body-left" data-name="מחנה מזרח צד שמאל" points="656,225.28 713.0,225.28 708.0,274 656,274"/>
+  <polygon data-id="camp-east-body-right" data-name="מחנה מזרח צד ימין" points="713.0,225.28 770,225.28 770,274 718.0,274"/>
+  <polygon data-id="camp-north-flag" data-name="דגל צפון" points="523,22 557,30 523,40"/>
+  <polygon data-id="camp-south-flag" data-name="דגל דרום" points="337,406 303,414 337,424"/>
+  <polygon data-id="camp-west-flag" data-name="דגל מערב" points="60,192 26,200 60,210"/>
+  <polygon data-id="camp-east-flag" data-name="דגל מזרח" points="800,192 834,200 800,210"/>
+</svg>
