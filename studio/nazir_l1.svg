@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="1" y="1" width="858" height="518" data-id="frame" data-name="מסגרת"/>
+  <path d="M330 110 Q430 55 530 110 L530 150 Q430 120 330 150 Z" data-id="hair-top" data-name="שיער עליון"/>
+  <path d="M330 150 Q430 118 530 150 L516 206 Q430 180 344 206 Z" data-id="hair-side" data-name="שיער צדדים"/>
+  <ellipse cx="430" cy="190" rx="82" ry="72" data-id="face" data-name="פנים"/>
+  <path d="M390 175 Q430 160 470 175" data-id="brow" data-name="גבות"/>
+  <ellipse cx="400" cy="188" rx="10" ry="8" data-id="eye-left" data-name="עין שמאל"/>
+  <ellipse cx="460" cy="188" rx="10" ry="8" data-id="eye-right" data-name="עין ימין"/>
+  <path d="M430 192 L426 212 L434 212" data-id="nose" data-name="אף"/>
+  <path d="M402 232 Q430 246 458 232" data-id="mouth" data-name="פה"/>
+  <path d="M388 246 Q430 274 472 246 L466 292 Q430 308 394 292 Z" data-id="beard" data-name="זקן"/>
+  <path d="M402 264 Q430 280 458 264" data-id="beard-inner" data-name="מרכז הזקן"/>
+  <path d="M398 260 C350 292 336 352 340 420 L520 420 C524 352 510 292 462 260" data-id="robe" data-name="בגד"/>
+  <path d="M410 262 L430 292 L450 262" data-id="collar" data-name="צווארון"/>
+  <path d="M336 300 L290 358 L322 380 L350 338" data-id="arm-left" data-name="יד שמאל"/>
+  <path d="M524 300 L570 358 L538 380 L510 338" data-id="arm-right" data-name="יד ימין"/>
+  <path d="M280 355 Q250 382 240 424 L320 424 Q316 386 300 360 Z" data-id="grapes" data-name="אשכול ענבים"/>
+  <path d="M320 352 Q344 334 362 314" data-id="vine" data-name="גפן"/>
+</svg>

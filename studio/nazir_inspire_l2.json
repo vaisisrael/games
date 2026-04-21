@@ -1,0 +1,31 @@
+{
+  "zoom": {
+    "x": 225,
+    "y": 300,
+    "w": 165,
+    "h": 165
+  },
+  "palette": [
+    "#60a5fa",
+    "#1d4ed8",
+    "#a78bfa",
+    "#16a34a",
+    "#f59e0b",
+    "#ef4444",
+    "#9ca3af",
+    "#111827"
+  ],
+  "fills": {
+    "grape-1": 2,
+    "grape-2": 1,
+    "grape-3": 2,
+    "grape-4": 1,
+    "grape-5": 2,
+    "grape-6": 1,
+    "grape-7": 2,
+    "vine": 3,
+    "leaf-left": 3,
+    "leaf-right": 3,
+    "arm-left": 6
+  }
+}

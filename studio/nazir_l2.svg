@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" fill="none" stroke="#111827" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+  <rect x="1" y="1" width="858" height="518" data-id="frame" data-name="מסגרת"/>
+  <path d="M330 110 Q430 55 530 110 L478 126 Q430 106 382 126 Z" data-id="hair-top-center" data-name="שיער עליון אמצע"/>
+  <path d="M330 110 Q380 72 430 72 Q392 102 382 126 L330 150 Z" data-id="hair-top-left" data-name="שיער עליון שמאל"/>
+  <path d="M530 110 Q480 72 430 72 Q468 102 478 126 L530 150 Z" data-id="hair-top-right" data-name="שיער עליון ימין"/>
+  <path d="M344 150 Q368 138 392 136 L384 210 Q360 198 344 206 Z" data-id="hair-side-left-top" data-name="שיער צד שמאל עליון"/>
+  <path d="M392 136 Q430 128 468 136 L460 202 Q430 192 400 202 Z" data-id="hair-side-center" data-name="שיער צדדים אמצע"/>
+  <path d="M468 136 Q492 138 516 150 L516 206 Q500 198 476 210 Z" data-id="hair-side-right-top" data-name="שיער צד ימין עליון"/>
+  <path d="M352 208 Q368 202 384 210 L380 244 Q360 230 350 220 Z" data-id="hair-lock-left" data-name="קבוצת שיער שמאל"/>
+  <path d="M508 208 Q492 202 476 210 L480 244 Q500 230 510 220 Z" data-id="hair-lock-right" data-name="קבוצת שיער ימין"/>
+  <ellipse cx="430" cy="190" rx="82" ry="72" data-id="face" data-name="פנים"/>
+  <path d="M378 170 Q392 164 408 170" data-id="brow-left" data-name="גבה שמאל"/>
+  <path d="M452 170 Q468 164 482 170" data-id="brow-right" data-name="גבה ימין"/>
+  <ellipse cx="400" cy="188" rx="10" ry="8" data-id="eye-left" data-name="עין שמאל"/>
+  <ellipse cx="460" cy="188" rx="10" ry="8" data-id="eye-right" data-name="עין ימין"/>
+  <path d="M430 192 L426 212 L434 212" data-id="nose" data-name="אף"/>
+  <path d="M402 232 Q430 246 458 232" data-id="mouth" data-name="פה"/>
+  <path d="M388 246 Q409 258 430 260 Q451 258 472 246 L466 292 Q430 308 394 292 Z" data-id="beard-outline" data-name="זקן חיצוני"/>
+  <path d="M394 252 Q412 264 430 266 Q448 264 466 252 L460 276 Q430 292 400 276 Z" data-id="beard-mid" data-name="זקן אמצעי"/>
+  <path d="M402 264 Q430 280 458 264 L452 288 Q430 298 408 288 Z" data-id="beard-core" data-name="מרכז הזקן"/>
+  <path d="M398 260 C350 292 336 352 340 420 L430 420 L430 314 Q412 304 398 260" data-id="robe-left" data-name="בגד שמאל"/>
+  <path d="M462 260 C510 292 524 352 520 420 L430 420 L430 314 Q448 304 462 260" data-id="robe-right" data-name="בגד ימין"/>
+  <path d="M392 324 L430 356 L430 420 L356 420 Q356 358 392 324" data-id="robe-front-left" data-name="קדמת הבגד שמאל"/>
+  <path d="M468 324 L430 356 L430 420 L504 420 Q504 358 468 324" data-id="robe-front-right" data-name="קדמת הבגד ימין"/>
+  <path d="M410 262 L430 292 L450 262" data-id="collar" data-name="צווארון"/>
+  <path d="M430 292 L430 356" data-id="robe-fold-center" data-name="קפל אמצעי"/>
+  <path d="M336 300 L290 358 L322 380 L350 338" data-id="arm-left" data-name="יד שמאל"/>
+  <path d="M524 300 L570 358 L538 380 L510 338" data-id="arm-right" data-name="יד ימין"/>
+  <circle cx="278" cy="384" r="18" data-id="grape-1" data-name="ענב 1"/>
+  <circle cx="302" cy="380" r="18" data-id="grape-2" data-name="ענב 2"/>
+  <circle cx="262" cy="408" r="18" data-id="grape-3" data-name="ענב 3"/>
+  <circle cx="286" cy="408" r="18" data-id="grape-4" data-name="ענב 4"/>
+  <circle cx="310" cy="408" r="18" data-id="grape-5" data-name="ענב 5"/>
+  <circle cx="274" cy="432" r="18" data-id="grape-6" data-name="ענב 6"/>
+  <circle cx="298" cy="432" r="18" data-id="grape-7" data-name="ענב 7"/>
+  <path d="M320 352 Q344 334 362 314" data-id="vine" data-name="גפן"/>
+  <path d="M314 346 Q320 332 334 322" data-id="leaf-left" data-name="עלה שמאל"/>
+  <path d="M334 340 Q350 336 360 324" data-id="leaf-right" data-name="עלה ימין"/>
+</svg>
