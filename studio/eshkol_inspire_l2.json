@@ -1,0 +1,36 @@
+{
+  "zoom": {
+    "x": 333,
+    "y": 156,
+    "w": 190,
+    "h": 296
+  },
+  "palette": [
+    "#60a5fa",
+    "#1d4ed8",
+    "#a78bfa",
+    "#16a34a",
+    "#f59e0b",
+    "#ef4444",
+    "#9ca3af",
+    "#111827"
+  ],
+  "fills": {
+    "grape-stem": 4,
+    "grape-leaf-left": 3,
+    "grape-leaf-right": 3,
+    "grape-1": 2,
+    "grape-2": 2,
+    "grape-3": 2,
+    "grape-4": 2,
+    "grape-5": 2,
+    "grape-6": 2,
+    "grape-7": 1,
+    "grape-8": 2,
+    "grape-9": 2,
+    "grape-10": 1,
+    "grape-11": 2,
+    "grape-12": 1,
+    "grape-13": 2
+  }
+}

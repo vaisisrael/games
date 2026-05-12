@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" role="img" aria-label="שני המרגלים נושאים אשכול ענבים - רמת מתקדם" stroke="#111827" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+  <path data-id="ground" data-name="שביל" d="M70 448 C190 430 315 444 430 432 C560 420 672 436 790 418 L790 486 L70 486 Z" fill="none" stroke="#111827"/>
+  <path d="M112 462 C235 452 353 462 474 448" fill="none" stroke="#111827"/>
+  <path d="M530 452 C620 448 693 438 758 432" fill="none" stroke="#111827"/>
+  <path data-id="pole" data-name="המוט" d="M195 171 C321 154 480 150 645 170 C647 174 646 179 642 182 C478 162 322 166 198 179 C194 178 193 174 195 171 Z" fill="none" stroke="#111827"/>
+  <path d="M210 184 C336 169 472 166 628 184" fill="none" stroke="#111827"/>
+
+  <circle data-id="left-head" data-name="ראש המרגל השמאלי" cx="198" cy="110" r="31" fill="none" stroke="#111827"/>
+  <path data-id="left-hair" data-name="שיער המרגל השמאלי" d="M170 106 C172 79 193 68 219 79 C225 86 226 98 224 112 C210 101 190 101 170 106 Z" fill="none" stroke="#111827"/>
+  <path data-id="left-beard" data-name="זקן המרגל השמאלי" d="M183 132 C194 148 211 146 221 132 C214 161 190 162 183 132 Z" fill="none" stroke="#111827"/>
+  <path data-id="left-body" data-name="בגד המרגל השמאלי" d="M164 151 L232 151 C254 208 247 300 218 360 L180 360 C151 300 145 209 164 151 Z" fill="none" stroke="#111827"/>
+  <path data-id="left-belt" data-name="חגורת המרגל השמאלי" d="M166 250 C186 257 211 259 238 252 L239 270 C212 278 184 276 163 268 Z" fill="none" stroke="#111827"/>
+  <path data-id="left-sleeve" data-name="שרוול המרגל השמאלי" d="M230 165 C245 163 258 161 272 160 L276 184 C260 185 246 189 232 195 Z" fill="none" stroke="#111827"/>
+  <path data-id="left-arm" data-name="יד המרגל השמאלי" d="M274 160 C285 159 294 159 302 160 C311 164 313 176 305 184 C294 184 284 184 275 184 Z" fill="none" stroke="#111827"/>
+  <path data-id="left-leg-1" data-name="רגל שמאל של המרגל השמאלי" d="M180 360 C172 389 169 419 166 448 L195 448 C201 416 208 386 215 360 Z" fill="none" stroke="#111827"/>
+  <path data-id="left-leg-2" data-name="רגל ימין של המרגל השמאלי" d="M217 360 C234 386 240 418 247 448 L276 448 C268 413 259 384 244 360 Z" fill="none" stroke="#111827"/>
+  <path data-id="left-sandal-1" data-name="סנדל שמאל של המרגל השמאלי" d="M160 448 L198 448 L202 462 L159 462 Z" fill="none" stroke="#111827"/>
+  <path data-id="left-sandal-2" data-name="סנדל ימין של המרגל השמאלי" d="M242 448 L281 448 L287 462 L244 462 Z" fill="none" stroke="#111827"/>
+
+  <circle data-id="right-head" data-name="ראש המרגל הימני" cx="642" cy="116" r="31" fill="none" stroke="#111827"/>
+  <path data-id="right-hair" data-name="שיער המרגל הימני" d="M617 105 C623 82 643 73 668 82 C678 91 678 107 671 119 C654 105 635 102 617 105 Z" fill="none" stroke="#111827"/>
+  <path data-id="right-beard" data-name="זקן המרגל הימני" d="M625 137 C637 154 657 153 666 136 C661 164 630 165 625 137 Z" fill="none" stroke="#111827"/>
+  <path data-id="right-body" data-name="בגד המרגל הימני" d="M607 156 L675 156 C696 216 688 303 660 363 L622 363 C594 303 588 216 607 156 Z" fill="none" stroke="#111827"/>
+  <path data-id="right-belt" data-name="חגורת המרגל הימני" d="M603 253 C623 260 651 262 681 255 L682 273 C652 281 621 279 601 271 Z" fill="none" stroke="#111827"/>
+  <path data-id="right-sleeve" data-name="שרוול המרגל הימני" d="M607 174 C590 170 577 168 562 166 L559 190 C575 192 590 198 604 204 Z" fill="none" stroke="#111827"/>
+  <path data-id="right-arm" data-name="יד המרגל הימני" d="M562 166 C543 165 528 165 516 166 C508 171 507 181 514 188 C529 188 544 189 559 190 Z" fill="none" stroke="#111827"/>
+  <path data-id="right-leg-1" data-name="רגל שמאל של המרגל הימני" d="M622 363 C606 390 597 420 591 449 L621 449 C630 418 638 389 650 363 Z" fill="none" stroke="#111827"/>
+  <path data-id="right-leg-2" data-name="רגל ימין של המרגל הימני" d="M654 363 C671 389 681 419 690 449 L720 449 C712 414 701 385 682 363 Z" fill="none" stroke="#111827"/>
+  <path data-id="right-sandal-1" data-name="סנדל שמאל של המרגל הימני" d="M585 449 L624 449 L628 463 L584 463 Z" fill="none" stroke="#111827"/>
+  <path data-id="right-sandal-2" data-name="סנדל ימין של המרגל הימני" d="M687 449 L724 449 L731 463 L688 463 Z" fill="none" stroke="#111827"/>
+
+  <path data-id="grape-stem" data-name="גבעול האשכול" d="M420 167 C416 190 412 207 407 225 L415 226 C419 207 423 190 427 168 Z" fill="none" stroke="#111827"/>
+  <path data-id="grape-leaf-left" data-name="עלה שמאלי של האשכול" d="M428 182 C445 166 463 166 474 184 C459 193 442 194 428 182 Z" fill="none" stroke="#111827"/>
+  <path data-id="grape-leaf-right" data-name="עלה ימני של האשכול" d="M470 184 C485 173 498 181 505 199 C489 205 477 198 470 184 Z" fill="none" stroke="#111827"/>
+  <ellipse data-id="grape-1" data-name="ענב 1" cx="383" cy="236" rx="23" ry="25" fill="none" stroke="#111827"/>
+  <ellipse data-id="grape-2" data-name="ענב 2" cx="421" cy="231" rx="23" ry="25" fill="none" stroke="#111827"/>
+  <ellipse data-id="grape-3" data-name="ענב 3" cx="455" cy="246" rx="23" ry="25" fill="none" stroke="#111827"/>
+  <ellipse data-id="grape-4" data-name="ענב 4" cx="363" cy="279" rx="24" ry="26" fill="none" stroke="#111827"/>
+  <ellipse data-id="grape-5" data-name="ענב 5" cx="402" cy="279" rx="24" ry="26" fill="none" stroke="#111827"/>
+  <ellipse data-id="grape-6" data-name="ענב 6" cx="442" cy="284" rx="24" ry="26" fill="none" stroke="#111827"/>
+  <ellipse data-id="grape-7" data-name="ענב 7" cx="480" cy="293" rx="22" ry="25" fill="none" stroke="#111827"/>
+  <ellipse data-id="grape-8" data-name="ענב 8" cx="382" cy="323" rx="24" ry="27" fill="none" stroke="#111827"/>
+  <ellipse data-id="grape-9" data-name="ענב 9" cx="422" cy="326" rx="25" ry="27" fill="none" stroke="#111827"/>
+  <ellipse data-id="grape-10" data-name="ענב 10" cx="461" cy="332" rx="24" ry="27" fill="none" stroke="#111827"/>
+  <ellipse data-id="grape-11" data-name="ענב 11" cx="401" cy="371" rx="24" ry="28" fill="none" stroke="#111827"/>
+  <ellipse data-id="grape-12" data-name="ענב 12" cx="442" cy="372" rx="24" ry="28" fill="none" stroke="#111827"/>
+  <ellipse data-id="grape-13" data-name="ענב 13" cx="421" cy="416" rx="22" ry="27" fill="none" stroke="#111827"/>
+</svg>

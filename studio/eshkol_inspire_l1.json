@@ -1,0 +1,28 @@
+{
+  "zoom": {
+    "x": 326,
+    "y": 155,
+    "w": 205,
+    "h": 270
+  },
+  "palette": [
+    "#60a5fa",
+    "#1d4ed8",
+    "#a78bfa",
+    "#16a34a",
+    "#f59e0b",
+    "#ef4444",
+    "#9ca3af",
+    "#111827"
+  ],
+  "fills": {
+    "grape-stem": 4,
+    "grape-leaf": 3,
+    "grape-1": 2,
+    "grape-2": 2,
+    "grape-3": 2,
+    "grape-4": 2,
+    "grape-5": 2,
+    "grape-6": 2
+  }
+}
