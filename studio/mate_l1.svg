@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" role="img" aria-label="פריחת מטה אהרון - L1">
+  <g stroke="#111827" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path data-id="ground" data-name="אדמה" d="M80 424 C190 398 305 444 430 420 C555 396 665 438 780 416 L780 470 L80 470 Z" stroke-width="3.6" fill="none"/>
+    <path data-id="matte-main" data-name="המטה המרכזי" d="M404 420 C413 330 418 244 418 102 C418 87 443 87 443 102 C443 243 448 330 456 420 Z" stroke-width="3.6" fill="none"/>
+    <path data-id="matte-top" data-name="ראש המטה" d="M408 100 C414 72 447 72 454 100 C446 112 417 112 408 100 Z" stroke-width="3.6" fill="none"/>
+    <path data-id="branch-left-low" data-name="ענף שמאלי תחתון" d="M411 332 C360 316 324 291 286 256 C277 248 286 232 299 240 C340 263 374 285 418 292 Z" stroke-width="3.6" fill="none"/>
+    <path data-id="branch-right-low" data-name="ענף ימני תחתון" d="M449 332 C501 317 537 291 575 256 C584 248 575 232 562 240 C520 264 486 286 442 293 Z" stroke-width="3.6" fill="none"/>
+    <path data-id="branch-left-high" data-name="ענף שמאלי עליון" d="M412 230 C365 216 337 194 310 165 C301 155 313 141 325 150 C356 171 382 188 419 194 Z" stroke-width="3.6" fill="none"/>
+    <path data-id="branch-right-high" data-name="ענף ימני עליון" d="M448 229 C495 216 523 194 550 165 C559 155 547 141 535 150 C504 171 478 188 441 194 Z" stroke-width="3.6" fill="none"/>
+    <ellipse data-id="flower-left-a" data-name="פרח שמאלי גדול" cx="284" cy="253" rx="28" ry="30" stroke-width="3.6" fill="none"/>
+    <ellipse data-id="flower-left-b" data-name="פרח שמאלי עליון" cx="309" cy="160" rx="25" ry="27" stroke-width="3.6" fill="none"/>
+    <ellipse data-id="flower-right-a" data-name="פרח ימני גדול" cx="576" cy="253" rx="28" ry="30" stroke-width="3.6" fill="none"/>
+    <ellipse data-id="flower-right-b" data-name="פרח ימני עליון" cx="551" cy="160" rx="25" ry="27" stroke-width="3.6" fill="none"/>
+    <ellipse data-id="almond-left-a" data-name="שקד שמאלי" cx="344" cy="300" rx="18" ry="28" transform="rotate(-46 344 300)" stroke-width="3.6" fill="none"/>
+    <ellipse data-id="almond-left-b" data-name="שקד שמאלי עליון" cx="360" cy="198" rx="16" ry="25" transform="rotate(-52 360 198)" stroke-width="3.6" fill="none"/>
+    <ellipse data-id="almond-right-a" data-name="שקד ימני" cx="516" cy="300" rx="18" ry="28" transform="rotate(46 516 300)" stroke-width="3.6" fill="none"/>
+    <ellipse data-id="almond-right-b" data-name="שקד ימני עליון" cx="500" cy="198" rx="16" ry="25" transform="rotate(52 500 198)" stroke-width="3.6" fill="none"/>
+    <path data-id="leaf-left" data-name="עלה שמאלי" d="M371 356 C326 350 303 327 295 292 C337 291 366 314 371 356 Z" stroke-width="3.6" fill="none"/>
+    <path data-id="leaf-right" data-name="עלה ימני" d="M489 356 C534 350 557 327 565 292 C523 291 494 314 489 356 Z" stroke-width="3.6" fill="none"/>
+    <path data-id="tent-back" data-name="אוהל מועד ברקע" d="M112 420 L248 218 L384 420 Z M248 218 L248 420" stroke-width="3.6" fill="none"/>
+  </g>
+</svg>

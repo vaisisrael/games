@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" role="img" aria-label="פריחת מטה אהרון - L2">
+  <g stroke="#111827" stroke-linecap="round" stroke-linejoin="round" fill="none">
+    <path data-id="ground-left" data-name="אדמה שמאלית" d="M80 424 C190 398 305 444 430 420 L430 470 L80 470 Z" stroke-width="2.4" fill="none"/>
+    <path data-id="ground-right" data-name="אדמה ימנית" d="M430 420 C555 396 665 438 780 416 L780 470 L430 470 Z" stroke-width="2.4" fill="none"/>
+    <path data-id="matte-main-left" data-name="צד שמאל של המטה" d="M404 420 C413 330 418 244 418 102 C418 90 430 86 432 96 C432 230 432 335 430 420 Z" stroke-width="2.4" fill="none"/>
+    <path data-id="matte-main-right" data-name="צד ימין של המטה" d="M430 420 C432 335 432 230 432 96 C435 86 443 90 443 102 C443 243 448 330 456 420 Z" stroke-width="2.4" fill="none"/>
+    <path data-id="matte-top-left" data-name="ראש המטה שמאל" d="M408 100 C413 76 430 72 432 96 C426 108 416 109 408 100 Z" stroke-width="2.4" fill="none"/>
+    <path data-id="matte-top-right" data-name="ראש המטה ימין" d="M432 96 C437 72 450 78 454 100 C448 109 438 108 432 96 Z" stroke-width="2.4" fill="none"/>
+    <path data-id="branch-left-low-main" data-name="ענף שמאלי תחתון" d="M411 332 C360 316 324 291 286 256 C277 248 286 232 299 240 C340 263 374 285 418 292 Z" stroke-width="2.4" fill="none"/>
+    <path data-id="branch-left-low-inner" data-name="פס בענף שמאלי תחתון" d="M404 312 C362 296 331 275 298 248 C332 269 365 289 414 299 Z" stroke-width="2.4" fill="none"/>
+    <path data-id="branch-right-low-main" data-name="ענף ימני תחתון" d="M449 332 C501 317 537 291 575 256 C584 248 575 232 562 240 C520 264 486 286 442 293 Z" stroke-width="2.4" fill="none"/>
+    <path data-id="branch-right-low-inner" data-name="פס בענף ימני תחתון" d="M456 312 C498 296 529 275 562 248 C528 269 495 289 446 299 Z" stroke-width="2.4" fill="none"/>
+    <path data-id="branch-left-high-main" data-name="ענף שמאלי עליון" d="M412 230 C365 216 337 194 310 165 C301 155 313 141 325 150 C356 171 382 188 419 194 Z" stroke-width="2.4" fill="none"/>
+    <path data-id="branch-left-high-inner" data-name="פס בענף שמאלי עליון" d="M406 214 C371 200 346 181 319 157 C344 178 376 195 416 202 Z" stroke-width="2.4" fill="none"/>
+    <path data-id="branch-right-high-main" data-name="ענף ימני עליון" d="M448 229 C495 216 523 194 550 165 C559 155 547 141 535 150 C504 171 478 188 441 194 Z" stroke-width="2.4" fill="none"/>
+    <path data-id="branch-right-high-inner" data-name="פס בענף ימני עליון" d="M454 214 C489 200 514 181 541 157 C516 178 484 195 444 202 Z" stroke-width="2.4" fill="none"/>
+    <path data-id="flower-left-a-petal-top" data-name="עלי כותרת שמאל גדול עליון" d="M284 222 C301 234 301 249 284 258 C267 249 267 234 284 222 Z" stroke-width="2.4" fill="none"/>
+    <path data-id="flower-left-a-petal-left" data-name="עלי כותרת שמאל גדול צד" d="M256 253 C269 237 284 238 292 253 C284 269 269 269 256 253 Z" stroke-width="2.4" fill="none"/>
+    <path data-id="flower-left-a-petal-right" data-name="עלי כותרת שמאל גדול ימין" d="M312 253 C299 237 284 238 276 253 C284 269 299 269 312 253 Z" stroke-width="2.4" fill="none"/>
+    <ellipse data-id="flower-left-a-center" data-name="לב פרח שמאלי גדול" cx="284" cy="253" rx="9" ry="10" stroke-width="2.4" fill="none"/>
+    <path data-id="flower-left-b-petal-top" data-name="פרח שמאלי עליון עלה עליון" d="M309 132 C324 143 323 157 309 165 C294 157 294 143 309 132 Z" stroke-width="2.4" fill="none"/>
+    <path data-id="flower-left-b-petal-side" data-name="פרח שמאלי עליון צדדים" d="M284 160 C296 146 322 146 334 160 C322 174 296 174 284 160 Z" stroke-width="2.4" fill="none"/>
+    <ellipse data-id="flower-left-b-center" data-name="לב פרח שמאלי עליון" cx="309" cy="160" rx="8" ry="9" stroke-width="2.4" fill="none"/>
+    <path data-id="flower-right-a-petal-top" data-name="עלי כותרת ימין גדול עליון" d="M576 222 C593 234 593 249 576 258 C559 249 559 234 576 222 Z" stroke-width="2.4" fill="none"/>
+    <path data-id="flower-right-a-petal-left" data-name="עלי כותרת ימין גדול צד" d="M548 253 C561 237 576 238 584 253 C576 269 561 269 548 253 Z" stroke-width="2.4" fill="none"/>
+    <path data-id="flower-right-a-petal-right" data-name="עלי כותרת ימין גדול ימין" d="M604 253 C591 237 576 238 568 253 C576 269 591 269 604 253 Z" stroke-width="2.4" fill="none"/>
+    <ellipse data-id="flower-right-a-center" data-name="לב פרח ימני גדול" cx="576" cy="253" rx="9" ry="10" stroke-width="2.4" fill="none"/>
+    <path data-id="flower-right-b-petal-top" data-name="פרח ימני עליון עלה עליון" d="M551 132 C566 143 566 157 551 165 C536 157 536 143 551 132 Z" stroke-width="2.4" fill="none"/>
+    <path data-id="flower-right-b-petal-side" data-name="פרח ימני עליון צדדים" d="M526 160 C538 146 564 146 576 160 C564 174 538 174 526 160 Z" stroke-width="2.4" fill="none"/>
+    <ellipse data-id="flower-right-b-center" data-name="לב פרח ימני עליון" cx="551" cy="160" rx="8" ry="9" stroke-width="2.4" fill="none"/>
+    <ellipse data-id="almond-left-a-shell" data-name="קליפת שקד שמאלי" cx="344" cy="300" rx="18" ry="28" transform="rotate(-46 344 300)" stroke-width="2.4" fill="none"/>
+    <path data-id="almond-left-a-line" data-name="קו פנימי שקד שמאלי" d="M332 312 C341 301 349 290 356 276" stroke-width="2.4" fill="none"/>
+    <ellipse data-id="almond-left-b-shell" data-name="קליפת שקד שמאלי עליון" cx="360" cy="198" rx="16" ry="25" transform="rotate(-52 360 198)" stroke-width="2.4" fill="none"/>
+    <path data-id="almond-left-b-line" data-name="קו פנימי שקד שמאלי עליון" d="M350 209 C358 199 365 188 371 176" stroke-width="2.4" fill="none"/>
+    <ellipse data-id="almond-right-a-shell" data-name="קליפת שקד ימני" cx="516" cy="300" rx="18" ry="28" transform="rotate(46 516 300)" stroke-width="2.4" fill="none"/>
+    <path data-id="almond-right-a-line" data-name="קו פנימי שקד ימני" d="M528 312 C519 301 511 290 504 276" stroke-width="2.4" fill="none"/>
+    <ellipse data-id="almond-right-b-shell" data-name="קליפת שקד ימני עליון" cx="500" cy="198" rx="16" ry="25" transform="rotate(52 500 198)" stroke-width="2.4" fill="none"/>
+    <path data-id="almond-right-b-line" data-name="קו פנימי שקד ימני עליון" d="M510 209 C502 199 495 188 489 176" stroke-width="2.4" fill="none"/>
+    <path data-id="leaf-left-main" data-name="עלה שמאלי" d="M371 356 C326 350 303 327 295 292 C337 291 366 314 371 356 Z" stroke-width="2.4" fill="none"/>
+    <path data-id="leaf-left-vein" data-name="עורק עלה שמאלי" d="M302 299 C329 316 350 335 368 353" stroke-width="2.4" fill="none"/>
+    <path data-id="leaf-right-main" data-name="עלה ימני" d="M489 356 C534 350 557 327 565 292 C523 291 494 314 489 356 Z" stroke-width="2.4" fill="none"/>
+    <path data-id="leaf-right-vein" data-name="עורק עלה ימני" d="M558 299 C531 316 510 335 492 353" stroke-width="2.4" fill="none"/>
+    <path data-id="tent-left" data-name="צד שמאל של האוהל" d="M112 420 L248 218 L248 420 Z" stroke-width="2.4" fill="none"/>
+    <path data-id="tent-right" data-name="צד ימין של האוהל" d="M248 218 L384 420 L248 420 Z" stroke-width="2.4" fill="none"/>
+    <path data-id="tent-door" data-name="פתח האוהל" d="M214 420 C218 355 232 298 248 248 C264 298 278 355 282 420 Z" stroke-width="2.4" fill="none"/>
+  </g>
+</svg>

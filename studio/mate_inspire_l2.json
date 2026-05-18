@@ -1,0 +1,28 @@
+{
+  "zoom": {
+    "x": 532,
+    "y": 209,
+    "w": 88,
+    "h": 105
+  },
+  "palette": [
+    "#60a5fa",
+    "#1d4ed8",
+    "#a78bfa",
+    "#16a34a",
+    "#f59e0b",
+    "#ef4444",
+    "#9ca3af",
+    "#111827"
+  ],
+  "fills": {
+    "flower-right-a-petal-top": 2,
+    "flower-right-a-petal-left": 2,
+    "flower-right-a-petal-right": 0,
+    "flower-right-a-center": 4,
+    "branch-right-low-main": 3,
+    "branch-right-low-inner": 3,
+    "almond-right-a-shell": 4,
+    "almond-right-a-line": 5
+  }
+}
