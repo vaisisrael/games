@@ -97,11 +97,11 @@
   background: rgba(251,191,36,.16);
 }
 
+/* אזור התמונות */
 [data-parasha-games] .diff-scroll{
   width: 100%;
-  overflow-x: auto;
-  overflow-y: hidden;
-  -webkit-overflow-scrolling: touch;
+  overflow-x: visible;
+  overflow-y: visible;
   border-radius: 16px;
   padding-bottom: 4px;
 }
@@ -109,24 +109,25 @@
 [data-parasha-games] .diff-images{
   direction: ltr;
   display: flex;
-  gap: 12px;
+  gap: 10px;
   justify-content: center;
   align-items: flex-start;
-  min-width: 832px;
+  width: 100%;
   padding: 2px;
 }
 
+/* בנייח: שתי התמונות זו לצד זו, קטנות מספיק */
 [data-parasha-games] .diff-imgbox{
   position: relative;
-  width: 400px;
+  width: min(260px, calc((100% - 10px) / 2));
   aspect-ratio: 4 / 5;
-  flex: 0 0 400px;
+  flex: 0 1 min(260px, calc((100% - 10px) / 2));
   border-radius: 16px;
   border: 1px solid var(--diff-border);
   overflow: hidden;
   background: #fff;
   box-shadow: 0 8px 18px rgba(0,0,0,.06);
-  touch-action: pan-x pan-y pinch-zoom;
+  touch-action: manipulation;
   user-select: none;
 }
 
@@ -136,7 +137,7 @@
   right: 8px;
   z-index: 3;
   direction: rtl;
-  background: rgba(255,255,255,.82);
+  background: rgba(255,255,255,.86);
   border: 1px solid rgba(0,0,0,.08);
   border-radius: 999px;
   padding: 4px 9px;
@@ -217,10 +218,19 @@
   display: none !important;
 }
 
+/* מובייל: תמונה מתחת לתמונה */
 @media (max-width: 520px){
   [data-parasha-games] .diff-images{
+    direction: rtl;
+    flex-direction: column;
+    align-items: center;
     justify-content: flex-start;
-    min-width: 832px;
+    gap: 12px;
+  }
+
+  [data-parasha-games] .diff-imgbox{
+    width: min(340px, 100%);
+    flex: 0 0 auto;
   }
 
   [data-parasha-games] .diff-title{
