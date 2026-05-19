@@ -11,6 +11,16 @@
   font-family: system-ui, -apple-system, "Segoe UI", "Rubik", Arial, "Noto Sans Hebrew", "Heebo", sans-serif;
   color: var(--diff-text);
   direction: rtl;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+[data-parasha-games] .diff-wrap *,
+[data-parasha-games] .diff-wrap *::before,
+[data-parasha-games] .diff-wrap *::after{
+  box-sizing: border-box;
 }
 
 [data-parasha-games] .diff-card{
@@ -19,6 +29,9 @@
   border-radius: 16px;
   box-shadow: var(--diff-shadow);
   padding: 12px;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 [data-parasha-games] .diff-topbar{
@@ -97,31 +110,36 @@
   background: rgba(251,191,36,.16);
 }
 
-/* אזור התמונות */
+/* אזור התמונות — בלי גלילה אופקית */
 [data-parasha-games] .diff-scroll{
   width: 100%;
-  overflow-x: visible;
-  overflow-y: visible;
+  max-width: 100%;
+  overflow: hidden;
   border-radius: 16px;
   padding-bottom: 4px;
 }
 
+/* בנייח: שתי תמונות זו לצד זו */
 [data-parasha-games] .diff-images{
-  direction: ltr;
+  direction: rtl;
   display: flex;
+  flex-direction: row;
   gap: 10px;
   justify-content: center;
   align-items: flex-start;
   width: 100%;
+  max-width: 100%;
   padding: 2px;
+  overflow: hidden;
 }
 
-/* בנייח: שתי התמונות זו לצד זו, קטנות מספיק */
 [data-parasha-games] .diff-imgbox{
   position: relative;
-  width: min(260px, calc((100% - 10px) / 2));
+  flex: 1 1 0;
+  width: auto;
+  max-width: 240px;
+  min-width: 0;
   aspect-ratio: 4 / 5;
-  flex: 0 1 min(260px, calc((100% - 10px) / 2));
   border-radius: 16px;
   border: 1px solid var(--diff-border);
   overflow: hidden;
@@ -218,18 +236,26 @@
   display: none !important;
 }
 
+/* מסכים רחבים יותר — אפשר להגדיל מעט */
+@media (min-width: 760px){
+  [data-parasha-games] .diff-imgbox{
+    max-width: 300px;
+  }
+}
+
 /* מובייל: תמונה מתחת לתמונה */
 @media (max-width: 520px){
   [data-parasha-games] .diff-images{
-    direction: rtl;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
     gap: 12px;
+    overflow: visible;
   }
 
   [data-parasha-games] .diff-imgbox{
     width: min(340px, 100%);
+    max-width: 100%;
     flex: 0 0 auto;
   }
 
