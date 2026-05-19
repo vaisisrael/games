@@ -1,0 +1,233 @@
+/* קובץ מלא: differences.css */
+
+[data-parasha-games] .diff-wrap{
+  --diff-bg: #f6f7fb;
+  --diff-surface: #fff;
+  --diff-border: rgba(0,0,0,.10);
+  --diff-text: #1f2937;
+  --diff-muted: #6b7280;
+  --diff-shadow: 0 10px 25px rgba(0,0,0,.08);
+
+  font-family: system-ui, -apple-system, "Segoe UI", "Rubik", Arial, "Noto Sans Hebrew", "Heebo", sans-serif;
+  color: var(--diff-text);
+  direction: rtl;
+}
+
+[data-parasha-games] .diff-card{
+  background: linear-gradient(180deg, var(--diff-bg), #fff);
+  border: 1px solid var(--diff-border);
+  border-radius: 16px;
+  box-shadow: var(--diff-shadow);
+  padding: 12px;
+}
+
+[data-parasha-games] .diff-topbar{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+  direction: rtl;
+}
+
+[data-parasha-games] .diff-actions{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  order: 0;
+}
+
+[data-parasha-games] .diff-stats{
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 900;
+  color: var(--diff-muted);
+  white-space: nowrap;
+  order: 1;
+}
+
+[data-parasha-games] .diff-btn{
+  border: 1px solid var(--diff-border);
+  background: #eef2ff;
+  border-radius: 12px;
+  padding: 8px 10px;
+  cursor: pointer;
+  font-weight: 900;
+  font-size: 14px;
+  user-select: none;
+  font-family: inherit;
+}
+
+[data-parasha-games] .diff-btn:hover{
+  box-shadow: 0 6px 14px rgba(0,0,0,.06);
+}
+
+[data-parasha-games] .diff-title{
+  font-weight: 900;
+  font-size: 20px;
+  text-align: center;
+  margin: 4px 0 2px;
+}
+
+[data-parasha-games] .diff-subtitle{
+  font-weight: 700;
+  color: var(--diff-muted);
+  text-align: center;
+  margin: 0 0 10px;
+}
+
+[data-parasha-games] .diff-message{
+  width: min(760px, 100%);
+  margin: 0 auto 10px;
+  text-align: center;
+  padding: 9px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,.07);
+  background: rgba(255,255,255,.78);
+  font-weight: 800;
+}
+
+[data-parasha-games] .diff-message[data-kind="hit"]{
+  background: rgba(34,197,94,.10);
+}
+
+[data-parasha-games] .diff-message[data-kind="miss"]{
+  background: rgba(251,191,36,.16);
+}
+
+[data-parasha-games] .diff-scroll{
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  border-radius: 16px;
+  padding-bottom: 4px;
+}
+
+[data-parasha-games] .diff-images{
+  direction: ltr;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: flex-start;
+  min-width: 832px;
+  padding: 2px;
+}
+
+[data-parasha-games] .diff-imgbox{
+  position: relative;
+  width: 400px;
+  aspect-ratio: 4 / 5;
+  flex: 0 0 400px;
+  border-radius: 16px;
+  border: 1px solid var(--diff-border);
+  overflow: hidden;
+  background: #fff;
+  box-shadow: 0 8px 18px rgba(0,0,0,.06);
+  touch-action: pan-x pan-y pinch-zoom;
+  user-select: none;
+}
+
+[data-parasha-games] .diff-label{
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 3;
+  direction: rtl;
+  background: rgba(255,255,255,.82);
+  border: 1px solid rgba(0,0,0,.08);
+  border-radius: 999px;
+  padding: 4px 9px;
+  font-size: 13px;
+  font-weight: 900;
+  color: var(--diff-text);
+  pointer-events: none;
+}
+
+[data-parasha-games] .diff-img{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: fill;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+[data-parasha-games] .diff-marks{
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+}
+
+[data-parasha-games] .diff-circle{
+  fill: none;
+  stroke: rgba(37,99,235,.95);
+  stroke-width: 5;
+  vector-effect: non-scaling-stroke;
+  filter: drop-shadow(0 2px 3px rgba(0,0,0,.20));
+}
+
+[data-parasha-games] .diff-found-title{
+  font-weight: 900;
+  margin: 12px 0 6px;
+  text-align: center;
+  color: var(--diff-muted);
+}
+
+[data-parasha-games] .diff-list{
+  width: min(760px, 100%);
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+
+[data-parasha-games] .diff-list li{
+  border: 1px solid rgba(0,0,0,.07);
+  background: rgba(255,255,255,.76);
+  border-radius: 12px;
+  padding: 8px 10px;
+  font-weight: 800;
+}
+
+[data-parasha-games] .diff-list li.is-found{
+  background: rgba(34,197,94,.10);
+}
+
+[data-parasha-games] .diff-banner{
+  margin: 10px auto 0;
+  width: min(760px, 100%);
+  text-align: center;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(0,0,0,.08);
+  background: rgba(34,197,94,.10);
+  font-weight: 900;
+}
+
+[data-parasha-games] .diff-banner[hidden]{
+  display: none !important;
+}
+
+@media (max-width: 520px){
+  [data-parasha-games] .diff-images{
+    justify-content: flex-start;
+    min-width: 832px;
+  }
+
+  [data-parasha-games] .diff-title{
+    font-size: 18px;
+  }
+
+  [data-parasha-games] .diff-subtitle{
+    font-size: 14px;
+  }
+}
