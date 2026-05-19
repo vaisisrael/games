@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" width="860" height="520" role="img" aria-label="נחש הנחושת" fill="none" stroke="#111827" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+  <rect data-id="bg-sky" data-name="שמים" x="20" y="20" width="820" height="300" rx="24" fill="none" stroke="#111827"/>
+  <path data-id="sun-core" data-name="מרכז השמש" d="M735 76a40 40 0 1 0 0.1 0" fill="none" stroke="#111827"/>
+  <path data-id="sun-ray-top" data-name="קרן שמש עליונה" d="M735 18 L735 2 L735 18 Z" fill="none" stroke="#111827"/>
+  <path data-id="sun-ray-right" data-name="קרן שמש ימנית" d="M790 76 L810 76 L790 76 Z" fill="none" stroke="#111827"/>
+  <path data-id="sun-ray-left" data-name="קרן שמש שמאלית" d="M680 76 L660 76 L680 76 Z" fill="none" stroke="#111827"/>
+  <path data-id="sun-ray-bottom" data-name="קרן שמש תחתונה" d="M735 132 L735 150 L735 132 Z" fill="none" stroke="#111827"/>
+  <path data-id="cloud-left" data-name="ענן שמאלי" d="M78 116 C93 91 128 93 140 119 C161 111 184 126 184 149 H60 C58 132 64 121 78 116 Z" fill="none" stroke="#111827"/>
+  <path data-id="cloud-right" data-name="ענן ימני" d="M590 130 C606 102 646 105 657 132 C681 123 708 139 706 164 H570 C568 146 575 135 590 130 Z" fill="none" stroke="#111827"/>
+  <path data-id="hill-left-front" data-name="גבעה שמאלית קדמית" d="M24 344 C150 276 236 286 350 344 Z" fill="none" stroke="#111827"/>
+  <path data-id="hill-left-inner" data-name="קו בגבעה שמאלית" d="M92 337 C164 307 245 310 318 344 Z" fill="none" stroke="#111827"/>
+  <path data-id="hill-right-front" data-name="גבעה ימנית קדמית" d="M310 346 C470 250 640 270 834 346 Z" fill="none" stroke="#111827"/>
+  <path data-id="hill-right-inner" data-name="קו בגבעה ימנית" d="M418 337 C530 292 665 301 792 346 Z" fill="none" stroke="#111827"/>
+  <path data-id="ground" data-name="אדמה" d="M28 346 H832 V500 H28 Z" fill="none" stroke="#111827"/>
+  <path data-id="ground-front" data-name="אדמה קדמית" d="M28 452 C185 425 286 449 421 452 C555 454 688 428 832 455 V500 H28 Z" fill="none" stroke="#111827"/>
+  <path data-id="path-front" data-name="שביל" d="M330 500 C358 438 385 392 421 348 C455 394 490 440 536 500 Z" fill="none" stroke="#111827"/>
+  <path data-id="path-left-band" data-name="צד שמאל של השביל" d="M330 500 C358 438 385 392 421 348 C404 407 392 455 382 500 Z" fill="none" stroke="#111827"/>
+  <path data-id="path-right-band" data-name="צד ימין של השביל" d="M421 348 C455 394 490 440 536 500 H475 C463 452 446 404 421 348 Z" fill="none" stroke="#111827"/>
+  <path data-id="pole-left" data-name="צד שמאל של המוט" d="M418 126 H433 V430 H418 Z" fill="none" stroke="#111827"/>
+  <path data-id="pole-right" data-name="צד ימין של המוט" d="M433 126 H448 V430 H433 Z" fill="none" stroke="#111827"/>
+  <path data-id="pole-base" data-name="בסיס המוט" d="M390 430 H476 L492 466 H374 Z" fill="none" stroke="#111827"/>
+  <path data-id="pole-top-main" data-name="ראש המוט" d="M386 110 H480 V138 H386 Z" fill="none" stroke="#111827"/>
+  <path data-id="pole-top-inner" data-name="מסגרת ראש המוט" d="M402 120 H464 V132 H402 Z" fill="none" stroke="#111827"/>
+  <path data-id="snake-head-main" data-name="ראש הנחש" d="M505 158 C545 154 570 180 552 210 C535 237 488 229 476 199 C468 178 482 163 505 158 Z" fill="none" stroke="#111827"/>
+  <path data-id="snake-head-light" data-name="לחי הנחש" d="M507 170 C531 170 548 185 542 203 C535 218 506 216 493 199 C484 185 491 173 507 170 Z" fill="none" stroke="#111827"/>
+  <path data-id="snake-eye" data-name="עין הנחש" d="M535 188a4 4 0 1 0 0.1 0" fill="none" stroke="#111827"/>
+  <path data-id="snake-tongue" data-name="לשון הנחש" d="M553 203 C574 210 585 204 598 193 M575 209 L592 219" fill="none" stroke="#111827"/>
+  <path data-id="snake-neck-main" data-name="צוואר הנחש" d="M480 198 C438 194 410 217 415 249 C420 282 472 291 499 265 C525 240 516 208 480 198 Z" fill="none" stroke="#111827"/>
+  <path data-id="snake-neck-band" data-name="פס בצוואר הנחש" d="M428 224 C454 235 488 235 510 221 C517 236 512 250 497 263 C473 249 444 248 418 238 C420 232 423 227 428 224 Z" fill="none" stroke="#111827"/>
+  <path data-id="snake-body-upper-main" data-name="גוף הנחש העליון" d="M482 264 C538 279 550 337 505 367 C461 396 391 383 369 336 C348 291 387 255 442 259 C456 260 470 262 482 264 Z" fill="none" stroke="#111827"/>
+  <path data-id="snake-body-upper-light" data-name="אור בגוף העליון" d="M465 280 C507 290 519 328 490 348 C455 371 405 363 389 331 C375 304 400 281 444 281 C452 281 459 281 465 280 Z" fill="none" stroke="#111827"/>
+  <path data-id="snake-body-middle-band" data-name="פס אמצעי בנחש" d="M376 326 C412 340 463 342 520 325 C520 343 512 356 499 367 C449 377 399 364 370 340 C369 335 371 330 376 326 Z" fill="none" stroke="#111827"/>
+  <path data-id="snake-body-lower-main" data-name="גוף הנחש התחתון" d="M369 337 C337 378 363 431 424 440 C490 449 548 407 531 357 C515 378 490 393 460 397 C421 402 389 382 369 337 Z" fill="none" stroke="#111827"/>
+  <path data-id="snake-body-lower-light" data-name="אור בגוף התחתון" d="M383 362 C371 389 392 414 430 420 C478 427 516 402 518 371 C500 389 477 401 451 405 C420 409 397 392 383 362 Z" fill="none" stroke="#111827"/>
+  <path data-id="snake-tail-main" data-name="זנב הנחש" d="M424 439 C397 464 359 465 338 446 C367 443 392 437 424 439 Z" fill="none" stroke="#111827"/>
+  <path data-id="snake-tail-tip" data-name="קצה הזנב" d="M360 447 C354 456 344 456 338 446 C347 446 354 446 360 447 Z" fill="none" stroke="#111827"/>
+  <path data-id="rock-left-main" data-name="סלע שמאל" d="M104 432 C125 404 169 407 190 434 C175 461 122 464 104 432 Z" fill="none" stroke="#111827"/>
+  <path data-id="rock-left-part" data-name="חלק בסלע שמאל" d="M125 424 C141 414 164 416 180 434 C167 443 143 443 125 424 Z" fill="none" stroke="#111827"/>
+  <path data-id="rock-right-main" data-name="סלע ימין" d="M666 421 C697 392 748 402 764 438 C738 465 685 460 666 421 Z" fill="none" stroke="#111827"/>
+  <path data-id="rock-right-part" data-name="חלק בסלע ימין" d="M692 419 C715 404 746 413 756 438 C734 444 707 439 692 419 Z" fill="none" stroke="#111827"/>
+  <path data-id="small-tent-main" data-name="אוהל קטן" d="M88 345 L158 262 L231 345 Z" fill="none" stroke="#111827"/>
+  <path data-id="small-tent-door" data-name="פתח האוהל" d="M143 345 L158 296 L179 345 Z" fill="none" stroke="#111827"/>
+  <path data-id="small-tent-side" data-name="צד האוהל" d="M158 262 L179 345 H231 Z" fill="none" stroke="#111827"/>
+</svg>

@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" width="860" height="520" role="img" aria-label="נחש הנחושת" fill="none" stroke="#111827" stroke-width="5" stroke-linecap="round" stroke-linejoin="round">
+  <rect data-id="bg-sky" data-name="שמים" x="20" y="20" width="820" height="300" rx="24" fill="none" stroke="#111827"/>
+  <path data-id="sun" data-name="שמש" d="M735 76a48 48 0 1 0 0.1 0" fill="none" stroke="#111827"/>
+  <path data-id="hill-left" data-name="גבעה שמאלית" d="M24 344 C150 276 236 286 350 344 Z" fill="none" stroke="#111827"/>
+  <path data-id="hill-right" data-name="גבעה ימנית" d="M310 346 C470 250 640 270 834 346 Z" fill="none" stroke="#111827"/>
+  <path data-id="ground" data-name="אדמה" d="M28 346 H832 V500 H28 Z" fill="none" stroke="#111827"/>
+  <path data-id="path-front" data-name="שביל" d="M330 500 C358 438 385 392 421 348 C455 394 490 440 536 500 Z" fill="none" stroke="#111827"/>
+  <path data-id="pole" data-name="מוט" d="M418 126 H448 V430 H418 Z" fill="none" stroke="#111827"/>
+  <path data-id="pole-top" data-name="ראש המוט" d="M386 110 H480 V138 H386 Z" fill="none" stroke="#111827"/>
+  <path data-id="snake-head" data-name="ראש הנחש" d="M505 158 C545 154 570 180 552 210 C535 237 488 229 476 199 C468 178 482 163 505 158 Z" fill="none" stroke="#111827"/>
+  <path data-id="snake-neck" data-name="צוואר הנחש" d="M480 198 C438 194 410 217 415 249 C420 282 472 291 499 265 C525 240 516 208 480 198 Z" fill="none" stroke="#111827"/>
+  <path data-id="snake-body-upper" data-name="גוף הנחש העליון" d="M482 264 C538 279 550 337 505 367 C461 396 391 383 369 336 C348 291 387 255 442 259 C456 260 470 262 482 264 Z" fill="none" stroke="#111827"/>
+  <path data-id="snake-body-lower" data-name="גוף הנחש התחתון" d="M369 337 C337 378 363 431 424 440 C490 449 548 407 531 357 C515 378 490 393 460 397 C421 402 389 382 369 337 Z" fill="none" stroke="#111827"/>
+  <path data-id="snake-tail" data-name="זנב הנחש" d="M424 439 C397 464 359 465 338 446 C367 443 392 437 424 439 Z" fill="none" stroke="#111827"/>
+  <path data-id="rock-left" data-name="סלע שמאל" d="M104 432 C125 404 169 407 190 434 C175 461 122 464 104 432 Z" fill="none" stroke="#111827"/>
+  <path data-id="rock-right" data-name="סלע ימין" d="M666 421 C697 392 748 402 764 438 C738 465 685 460 666 421 Z" fill="none" stroke="#111827"/>
+  <path data-id="small-tent" data-name="אוהל קטן" d="M88 345 L158 262 L231 345 Z" fill="none" stroke="#111827"/>
+</svg>
