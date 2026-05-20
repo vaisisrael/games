@@ -267,3 +267,8 @@
     font-size: 14px;
   }
 }
+
+/* הסתרת תוויות תמונה 1 / תמונה 2 */
+[data-parasha-games] .diff-label{
+  display: none !important;
+}
