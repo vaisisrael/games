@@ -114,6 +114,15 @@
     });
   }
 
+  function renderGamesLoader(text) {
+    return `
+<div class="pg-loading" role="status" aria-live="polite">
+  <div class="pg-loading-spinner" aria-hidden="true"></div>
+  <div class="pg-loading-text">${text || "טוען..."}</div>
+</div>
+    `.trim();
+  }
+
   // ====== TABS CSS (Injected + enforced briefly) ======
   function ensureTabsStyleExists() {
     const id = "pg-tabs-style";
@@ -164,6 +173,7 @@
   margin: 10px 0 !important;
 
   display: flex !important;
+  flex-wrap: wrap !important;
   gap: 6px !important;
   align-items: center !important;
   justify-content: flex-start !important; /* RTL: start = right */
@@ -224,6 +234,40 @@
 /* "מגירון" מנהל padding פנימי משלו */
 [data-parasha-games][data-pg-tabs="1"] .game-body.game-body--classify{
   padding: 0 !important;
+}
+
+[data-parasha-games] .pg-loading{
+  min-height: 130px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 10px !important;
+  text-align: center !important;
+  direction: rtl !important;
+  font-family: system-ui, -apple-system, "Segoe UI", "Rubik", Arial, "Noto Sans Hebrew", "Heebo", sans-serif !important;
+  color: #4f7f87 !important;
+  font-weight: 900 !important;
+  font-size: 16px !important;
+}
+
+[data-parasha-games] .pg-loading-spinner{
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 50% !important;
+  border: 4px solid rgba(79,127,135,.18) !important;
+  border-top-color: #4f7f87 !important;
+  animation: pgGamesSpin .85s linear infinite !important;
+}
+
+[data-parasha-games] .pg-loading-text{
+  line-height: 1.4 !important;
+}
+
+@keyframes pgGamesSpin{
+  to{
+    transform: rotate(360deg);
+  }
 }
     `.trim();
   }
@@ -341,18 +385,29 @@
     const root = document.querySelector("[data-parasha-games]");
     if (!root) return;
 
+    root.innerHTML = renderGamesLoader("טוען משחקים...");
+
     const parashaLabel = extractParashaLabel();
-    if (!parashaLabel) return;
+    if (!parashaLabel) {
+      root.innerHTML = "";
+      return;
+    }
 
     const res = await fetch(`${CONTROL_API}?parasha=${encodeURIComponent(parashaLabel)}`);
     const data = await res.json();
-    if (!data.row) return;
+    if (!data.row) {
+      root.innerHTML = "";
+      return;
+    }
 
     const activeIds = GAMES_DEFINITION
       .map(g => g.id)
       .filter(id => data.row[id] === true);
 
-    if (activeIds.length === 0) return;
+    if (activeIds.length === 0) {
+      root.innerHTML = "";
+      return;
+    }
 
     buildGames(root, activeIds);
     enforceTabsCssForAWhile();
@@ -381,7 +436,7 @@
 };
 
       if (def && def.js && def.css) {
-        bodyEl.innerHTML = "טוען...";
+        bodyEl.innerHTML = renderGamesLoader("טוען משחק...");
 
         try {
           await loadCssOnce(def.css);
