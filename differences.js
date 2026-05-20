@@ -22,6 +22,8 @@
 
       const imageBase = String(row.image || "").trim();
       const changesRaw = String(row.changes || "").trim();
+      const desc = String(row.desc || "").trim();
+      const startMessage = desc || "התחילו לחפש את ההבדלים.";
 
       if (!imageBase) {
         rootEl.innerHTML = `<div>חסר שם בסיס לתמונות.</div>`;
@@ -115,11 +117,8 @@
               </div>
             </div>
 
-            <div class="diff-title">מה השתנה בפרשה?</div>
-            <div class="diff-subtitle">מצאו את ההבדלים ולחצו עליהם בתמונה המתאימה 🔍</div>
-
             <div class="diff-message" aria-live="polite">
-              התחילו לחפש את ההבדלים.
+              ${escapeHtml(startMessage)}
             </div>
 
             <div class="diff-scroll">
@@ -231,7 +230,7 @@
         renderList();
         renderMarks();
 
-        setMessage("התחילו לחפש את ההבדלים.", "");
+        setMessage(startMessage, "");
       }
 
       function getClickPointInBaseCoords(box, clientX, clientY) {
