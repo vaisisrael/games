@@ -1,0 +1,28 @@
+{
+  "zoom": {
+    "x": 210,
+    "y": 220,
+    "w": 410,
+    "h": 250
+  },
+  "palette": [
+    "#60a5fa",
+    "#1d4ed8",
+    "#a78bfa",
+    "#16a34a",
+    "#f59e0b",
+    "#ef4444",
+    "#9ca3af",
+    "#111827"
+  ],
+  "fills": {
+    "donkey-body": 6,
+    "donkey-head": 6,
+    "donkey-ear-left": 6,
+    "donkey-ear-right": 6,
+    "donkey-front-leg": 6,
+    "donkey-back-leg": 6,
+    "tail": 7,
+    "saddle": 4
+  }
+}

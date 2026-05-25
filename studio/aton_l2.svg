@@ -1,0 +1,47 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" fill="none" stroke="#111827" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+  <path data-id="hill-left" data-name="גבעה שמאלית" d="M30 442 C130 388 250 388 355 442" />
+  <path data-id="hill-left-line" data-name="קו עומק בגבעה שמאלית" d="M82 430 C154 410 240 414 318 439" />
+  <path data-id="hill-right" data-name="גבעה ימנית" d="M500 442 C620 370 760 380 835 442" />
+  <path data-id="hill-right-line" data-name="קו עומק בגבעה ימנית" d="M562 428 C650 396 754 407 812 447" />
+  <path data-id="ground" data-name="שביל במדבר" d="M35 452 C180 470 340 462 470 450 C620 435 735 440 830 460" />
+  <path data-id="sun" data-name="שמש" d="M720 52 m-32 0 a32 32 0 1 0 64 0 a32 32 0 1 0 -64 0" />
+  <path data-id="cloud" data-name="ענן קטן" d="M89 86 C96 66 121 63 133 78 C145 57 177 64 180 89 C204 88 211 121 186 127 L91 127 C62 124 63 91 89 86 Z" />
+  <path data-id="angel-body" data-name="מלאך עומד" d="M585 176 C555 220 550 286 576 335 C607 319 632 320 662 335 C686 283 680 221 650 176 C630 193 606 193 585 176 Z" />
+  <path data-id="angel-robe-line-left" data-name="קפל שמלה שמאלי של המלאך" d="M590 205 C580 244 582 292 590 326" />
+  <path data-id="angel-robe-line-right" data-name="קפל שמלה ימני של המלאך" d="M641 205 C651 245 649 294 640 327" />
+  <path data-id="angel-belt" data-name="חגורת המלאך" d="M578 257 C604 249 636 249 662 257" />
+  <path data-id="angel-head" data-name="ראש המלאך" d="M586 130 m-31 0 a31 31 0 1 0 62 0 a31 31 0 1 0 -62 0" />
+  <path data-id="angel-hair" data-name="שיער המלאך" d="M562 118 C577 102 599 103 614 119" />
+  <path data-id="angel-halo" data-name="הילה מעל המלאך" d="M557 89 C575 77 603 77 621 89" />
+  <path data-id="angel-left-wing" data-name="כנף שמאלית" d="M570 193 C511 173 468 207 461 270 C503 257 543 243 574 218" />
+  <path data-id="angel-left-wing-feather1" data-name="נוצה שמאלית עליונה" d="M548 202 C520 207 495 225 476 256" />
+  <path data-id="angel-left-wing-feather2" data-name="נוצה שמאלית תחתונה" d="M566 220 C535 226 508 240 486 264" />
+  <path data-id="angel-right-wing" data-name="כנף ימנית" d="M655 193 C716 172 759 207 765 270 C723 257 682 243 651 218" />
+  <path data-id="angel-right-wing-feather1" data-name="נוצה ימנית עליונה" d="M676 202 C706 207 733 226 752 256" />
+  <path data-id="angel-right-wing-feather2" data-name="נוצה ימנית תחתונה" d="M658 220 C690 226 718 241 742 264" />
+  <path data-id="sword" data-name="חרב המלאך" d="M661 122 L759 224 M750 213 L780 243 M746 229 L766 209" />
+  <path data-id="donkey-body" data-name="גוף האתון" d="M234 286 C298 236 432 239 500 291 C515 318 497 356 456 363 L286 361 C244 359 217 324 234 286 Z" />
+  <path data-id="donkey-belly-line" data-name="קו בטן האתון" d="M292 340 C345 353 419 350 469 336" />
+  <path data-id="donkey-back-line" data-name="קו גב האתון" d="M269 283 C326 259 418 263 477 291" />
+  <path data-id="donkey-head" data-name="ראש האתון" d="M500 289 C548 272 590 290 599 328 C580 352 538 351 508 329" />
+  <path data-id="donkey-muzzle" data-name="חרטום האתון" d="M558 323 C573 318 588 321 599 328" />
+  <path data-id="donkey-eye" data-name="עין האתון" d="M542 304 m-4 0 a4 4 0 1 0 8 0 a4 4 0 1 0 -8 0" />
+  <path data-id="donkey-ear-left" data-name="אוזן אתון שמאלית" d="M526 283 C523 245 547 226 558 267" />
+  <path data-id="donkey-ear-left-inner" data-name="פנים אוזן שמאלית" d="M539 270 C540 253 548 243 553 264" />
+  <path data-id="donkey-ear-right" data-name="אוזן אתון ימנית" d="M556 288 C565 252 594 242 586 286" />
+  <path data-id="donkey-ear-right-inner" data-name="פנים אוזן ימנית" d="M570 276 C576 260 587 254 582 283" />
+  <path data-id="donkey-front-leg" data-name="רגל קדמית של האתון" d="M455 360 C462 391 457 418 440 442 L407 442 C422 418 426 390 418 363" />
+  <path data-id="donkey-front-hoof" data-name="פרסה קדמית" d="M405 442 L443 442" />
+  <path data-id="donkey-back-leg" data-name="רגל אחורית של האתון" d="M294 360 C303 391 294 421 270 442 L237 442 C256 415 262 388 254 360" />
+  <path data-id="donkey-back-hoof" data-name="פרסה אחורית" d="M235 442 L272 442" />
+  <path data-id="tail" data-name="זנב האתון" d="M235 300 C185 287 164 307 149 340 C177 335 204 326 230 313" />
+  <path data-id="tail-tuft" data-name="קצה זנב" d="M148 340 C136 347 130 360 132 374" />
+  <path data-id="saddle" data-name="אוכף" d="M318 235 C355 219 411 221 449 242 C443 274 331 274 318 235 Z" />
+  <path data-id="saddle-line" data-name="מסגרת האוכף" d="M334 242 C365 234 407 235 435 247" />
+  <path data-id="balaam-body" data-name="גוף בלעם" d="M352 145 C323 180 318 222 335 258 C365 276 405 274 431 255 C432 217 414 176 389 145 C377 153 365 153 352 145 Z" />
+  <path data-id="balaam-robe-line" data-name="קפל בבגד בלעם" d="M371 160 C362 192 361 229 370 262" />
+  <path data-id="balaam-arm" data-name="יד בלעם" d="M425 196 C459 203 474 223 466 249" />
+  <path data-id="balaam-head" data-name="ראש בלעם" d="M341 111 m-31 0 a31 31 0 1 0 62 0 a31 31 0 1 0 -62 0" />
+  <path data-id="balaam-beard" data-name="זקן בלעם" d="M323 133 C337 152 356 152 369 133" />
+  <path data-id="balaam-headcloth" data-name="כיסוי ראש בלעם" d="M313 101 C330 82 360 84 374 105" />
+</svg>
