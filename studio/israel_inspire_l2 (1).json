@@ -1,0 +1,15 @@
+{
+  "zoom": { "x": 55, "y": 285, "w": 220, "h": 220 },
+  "palette": ["#60a5fa", "#1d4ed8", "#a78bfa", "#16a34a", "#f59e0b", "#ef4444", "#9ca3af", "#111827"],
+  "fills": {
+    "compass-center": 7,
+    "compass-n": 4,
+    "compass-ne": 0,
+    "compass-e": 1,
+    "compass-se": 2,
+    "compass-s": 3,
+    "compass-sw": 6,
+    "compass-w": 5,
+    "compass-nw": 0
+  }
+}
