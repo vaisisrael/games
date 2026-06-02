@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" role="img" aria-label="הגעלת כלים - רמה 1">
+  <g stroke="#111827" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path data-id="hill-left" data-name="גבעה שמאלית" d="M0 430 Q125 305 250 430 Z"/>
+    <path data-id="hill-right" data-name="גבעה ימנית" d="M210 430 Q470 245 730 430 Z"/>
+    <path data-id="ground" data-name="אדמה" d="M0 430 H860 V520 H0 Z"/>
+
+    <circle data-id="skin-face" data-name="פנים" cx="150" cy="160" r="38"/>
+    <circle data-id="skin-hand" data-name="יד" cx="236" cy="246" r="18"/>
+    <ellipse data-id="turban" data-name="מצנפת" cx="150" cy="123" rx="52" ry="22"/>
+    <path data-id="beard" data-name="זקן" d="M123 182 Q135 245 150 270 Q165 245 177 182 Q165 195 150 197 Q135 195 123 182 Z"/>
+    <path data-id="robe" data-name="בגד" d="M106 205 Q92 285 102 360 L112 420 H198 L208 360 Q218 285 194 205 Z"/>
+    <rect data-id="sash" data-name="אבנט" x="108" y="302" width="88" height="24" rx="6"/>
+    <path data-id="tongs" data-name="מלקחיים" d="M210 229 L263 220 L268 229 L216 238 Z M217 247 L270 256 L266 264 L212 255 Z"/>
+
+    <path data-id="cauldron-body" data-name="סיר גדול" d="M342 258 Q410 220 478 258 L460 344 Q410 384 360 344 Z"/>
+    <ellipse data-id="water" data-name="מים בסיר" cx="410" cy="260" rx="56" ry="16"/>
+    <path data-id="fire" data-name="אש" d="M360 395 Q350 367 366 348 Q380 365 374 392 Z M396 405 Q380 365 408 332 Q435 365 420 405 Z M438 394 Q432 370 448 350 Q464 370 454 394 Z"/>
+    <path data-id="tripod" data-name="מעמד" d="M366 340 L352 410 M454 340 L468 410 M380 342 H440"/>
+
+    <path data-id="table" data-name="שולחן" d="M570 300 H790 L780 410 H580 Z"/>
+    <path data-id="jug" data-name="קנקן" d="M615 210 Q608 186 626 176 H656 Q674 186 667 210 L662 282 Q650 298 631 298 Q612 298 620 282 Z M667 198 Q693 204 689 226 Q685 248 665 244"/>
+    <path data-id="bowl" data-name="קערה" d="M700 258 Q730 236 760 258 Q754 286 730 290 Q706 286 700 258 Z"/>
+    <path data-id="cup" data-name="כוס" d="M778 232 H812 L806 288 H784 Z"/>
+  </g>
+</svg>

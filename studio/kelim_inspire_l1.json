@@ -1,0 +1,27 @@
+{
+  "zoom": {
+    "x": 72,
+    "y": 88,
+    "w": 220,
+    "h": 350
+  },
+  "palette": [
+    "#60a5fa",
+    "#1d4ed8",
+    "#a78bfa",
+    "#16a34a",
+    "#f59e0b",
+    "#ef4444",
+    "#9ca3af",
+    "#111827"
+  ],
+  "fills": {
+    "skin-face": 4,
+    "skin-hand": 4,
+    "turban": 0,
+    "beard": 6,
+    "robe": 3,
+    "sash": 2,
+    "tongs": 7
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "zoom": {
+    "x": 72,
+    "y": 88,
+    "w": 220,
+    "h": 350
+  },
+  "palette": [
+    "#60a5fa",
+    "#1d4ed8",
+    "#a78bfa",
+    "#16a34a",
+    "#f59e0b",
+    "#ef4444",
+    "#9ca3af",
+    "#111827"
+  ],
+  "fills": {
+    "skin-face": 4,
+    "skin-neck": 4,
+    "skin-hand": 4,
+    "turban-front": 0,
+    "turban-top": 1,
+    "beard-left": 6,
+    "beard-right": 7,
+    "robe-upper": 3,
+    "robe-lower": 0,
+    "sleeve": 3,
+    "sash-left": 2,
+    "sash-right": 5,
+    "tongs-arm1": 7,
+    "tongs-arm2": 6
+  }
+}

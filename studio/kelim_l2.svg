@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" role="img" aria-label="הגעלת כלים - רמה 2">
+  <g stroke="#111827" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <path data-id="hill-left" data-name="גבעה שמאלית" d="M0 430 Q125 305 250 430 Z"/>
+    <path data-id="hill-right" data-name="גבעה ימנית" d="M210 430 Q470 245 730 430 Z"/>
+    <path data-id="ground" data-name="אדמה" d="M0 430 H860 V520 H0 Z"/>
+
+    <circle data-id="skin-face" data-name="פנים" cx="150" cy="160" r="38"/>
+    <path data-id="skin-neck" data-name="צוואר" d="M138 194 H162 L160 213 H140 Z"/>
+    <circle data-id="skin-hand" data-name="יד" cx="236" cy="246" r="18"/>
+    <ellipse data-id="turban-front" data-name="מצנפת קדמית" cx="150" cy="126" rx="50" ry="20"/>
+    <path data-id="turban-top" data-name="מצנפת עליונה" d="M112 119 Q150 85 188 119 L176 104 Q150 87 124 104 Z"/>
+    <path data-id="beard-left" data-name="זקן שמאלי" d="M123 182 Q135 246 150 270 Q150 223 147 194 Q136 192 123 182 Z"/>
+    <path data-id="beard-right" data-name="זקן ימני" d="M177 182 Q165 246 150 270 Q150 223 153 194 Q164 192 177 182 Z"/>
+    <path data-id="robe-upper" data-name="בגד עליון" d="M106 205 Q95 255 101 316 H201 Q207 255 194 205 Z"/>
+    <path data-id="robe-lower" data-name="בגד תחתון" d="M101 316 L112 420 H198 L209 316 Z"/>
+    <path data-id="sleeve" data-name="שרוול" d="M179 220 L212 228 L205 260 L171 250 Z"/>
+    <rect data-id="sash-left" data-name="אבנט שמאלי" x="108" y="302" width="42" height="24" rx="6"/>
+    <rect data-id="sash-right" data-name="אבנט ימני" x="154" y="302" width="42" height="24" rx="6"/>
+    <path data-id="tongs-arm1" data-name="מלקח ימין" d="M210 229 L263 220 L268 229 L216 238 Z"/>
+    <path data-id="tongs-arm2" data-name="מלקח שמאל" d="M217 247 L270 256 L266 264 L212 255 Z"/>
+
+    <path data-id="cauldron-left" data-name="סיר צד שמאל" d="M342 258 Q376 220 410 240 L410 360 Q380 375 360 344 Z"/>
+    <path data-id="cauldron-right" data-name="סיר צד ימין" d="M410 240 Q444 220 478 258 L460 344 Q440 375 410 360 Z"/>
+    <ellipse data-id="cauldron-rim" data-name="שפת הסיר" cx="410" cy="258" rx="68" ry="16"/>
+    <ellipse data-id="cauldron-handle-left" data-name="ידית שמאלית" cx="336" cy="278" rx="12" ry="18"/>
+    <ellipse data-id="cauldron-handle-right" data-name="ידית ימנית" cx="484" cy="278" rx="12" ry="18"/>
+    <ellipse data-id="water-main" data-name="מים בסיר" cx="410" cy="260" rx="56" ry="16"/>
+    <circle data-id="bubble-1" data-name="בועה קטנה" cx="390" cy="252" r="5"/>
+    <circle data-id="bubble-2" data-name="בועה בינונית" cx="428" cy="254" r="7"/>
+
+    <path data-id="flame-left" data-name="להבה שמאלית" d="M360 395 Q350 367 366 348 Q380 365 374 392 Z"/>
+    <path data-id="flame-middle" data-name="להבה אמצעית" d="M396 405 Q380 365 408 332 Q435 365 420 405 Z"/>
+    <path data-id="flame-right" data-name="להבה ימנית" d="M438 394 Q432 370 448 350 Q464 370 454 394 Z"/>
+    <ellipse data-id="ember" data-name="גחלת" cx="410" cy="408" rx="36" ry="8"/>
+    <path data-id="tripod-left" data-name="רגל מעמד שמאל" d="M366 340 L352 410 L360 410 L374 340 Z"/>
+    <path data-id="tripod-right" data-name="רגל מעמד ימין" d="M454 340 L446 340 L460 410 L468 410 Z"/>
+    <rect data-id="tripod-bar" data-name="קורה עליונה" x="380" y="338" width="60" height="8" rx="3"/>
+
+    <rect data-id="table-top" data-name="משטח שולחן" x="570" y="300" width="220" height="28" rx="4"/>
+    <rect data-id="table-leg-left" data-name="רגל שולחן שמאל" x="590" y="328" width="22" height="82" rx="3"/>
+    <rect data-id="table-leg-right" data-name="רגל שולחן ימין" x="748" y="328" width="22" height="82" rx="3"/>
+    <path data-id="jug-body" data-name="גוף הקנקן" d="M620 210 Q613 188 629 179 H655 Q671 188 664 210 L660 280 Q650 296 632 296 Q614 296 624 280 Z"/>
+    <path data-id="jug-neck" data-name="צוואר הקנקן" d="M628 179 H656 L650 162 H634 Z"/>
+    <path data-id="jug-handle" data-name="ידית הקנקן" d="M666 198 Q692 204 688 226 Q684 248 664 244 Q674 225 666 198 Z"/>
+    <path data-id="bowl-outer" data-name="קערה חיצונית" d="M700 258 Q730 236 760 258 Q754 286 730 290 Q706 286 700 258 Z"/>
+    <ellipse data-id="bowl-inner" data-name="קערה פנימית" cx="730" cy="258" rx="22" ry="8"/>
+    <path data-id="cup-body" data-name="גוף הכוס" d="M778 232 H812 L806 288 H784 Z"/>
+    <rect data-id="cup-top" data-name="שפת הכוס" x="778" y="232" width="34" height="8" rx="3"/>
+  </g>
+</svg>
