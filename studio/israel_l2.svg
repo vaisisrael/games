@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" width="860" height="520">
+  <path data-id="frame-top" data-name="מסגרת עליונה" fill="none" stroke="#111827" stroke-width="3"
+    d="M 44 20 L 816 20 Q 840 20 840 44 L 840 70 L 20 70 L 20 44 Q 20 20 44 20 Z"/>
+  <path data-id="frame-right" data-name="מסגרת ימנית" fill="none" stroke="#111827" stroke-width="3"
+    d="M 790 20 L 816 20 Q 840 20 840 44 L 840 476 Q 840 500 816 500 L 790 500 Z"/>
+  <path data-id="frame-bottom" data-name="מסגרת תחתונה" fill="none" stroke="#111827" stroke-width="3"
+    d="M 20 450 L 840 450 L 840 476 Q 840 500 816 500 L 44 500 Q 20 500 20 476 Z"/>
+  <path data-id="frame-left" data-name="מסגרת שמאלית" fill="none" stroke="#111827" stroke-width="3"
+    d="M 20 44 Q 20 20 44 20 L 70 20 L 70 500 L 44 500 Q 20 500 20 476 Z"/>
+
+  <path data-id="sea-upper" data-name="ים התיכון עליון" fill="none" stroke="#111827" stroke-width="3"
+    d="M 40 50 L 320 50 L 350 88 L 345 125 L 358 162 L 300 162 L 40 162 Z"/>
+  <path data-id="sea-middle" data-name="ים התיכון אמצעי" fill="none" stroke="#111827" stroke-width="3"
+    d="M 40 162 L 300 162 L 350 205 L 360 250 L 355 300 L 290 300 L 40 300 Z"/>
+  <path data-id="sea-lower" data-name="ים התיכון תחתון" fill="none" stroke="#111827" stroke-width="3"
+    d="M 40 300 L 290 300 L 368 350 L 385 405 L 405 460 L 415 480 L 40 480 Z"/>
+
+  <path data-id="coast-north" data-name="מישור החוף צפוני" fill="none" stroke="#111827" stroke-width="3"
+    d="M 350 88 L 385 88 L 392 130 L 400 165 L 368 165 L 358 162 L 345 125 Z"/>
+  <path data-id="coast-center" data-name="מישור החוף מרכזי" fill="none" stroke="#111827" stroke-width="3"
+    d="M 368 165 L 400 165 L 398 210 L 405 250 L 405 300 L 375 300 L 360 250 L 350 205 Z"/>
+  <path data-id="coast-south" data-name="מישור החוף דרומי" fill="none" stroke="#111827" stroke-width="3"
+    d="M 375 300 L 405 300 L 412 345 L 425 395 L 440 445 L 445 465 L 415 480 L 405 460 L 385 405 L 368 350 Z"/>
+
+  <path data-id="upper-galilee-west" data-name="גליל עליון מערב" fill="none" stroke="#111827" stroke-width="3"
+    d="M 385 88 L 430 76 L 438 140 L 408 135 L 392 130 Z"/>
+  <path data-id="upper-galilee-east" data-name="גליל עליון מזרח" fill="none" stroke="#111827" stroke-width="3"
+    d="M 430 76 L 470 65 L 495 100 L 505 140 L 475 145 L 438 140 Z"/>
+
+  <path data-id="lower-galilee-west" data-name="גליל תחתון מערב" fill="none" stroke="#111827" stroke-width="3"
+    d="M 392 130 L 408 135 L 438 140 L 440 182 L 420 188 L 398 170 Z"/>
+  <path data-id="lower-galilee-east" data-name="גליל תחתון מזרח" fill="none" stroke="#111827" stroke-width="3"
+    d="M 438 140 L 475 145 L 505 140 L 516 178 L 490 195 L 455 195 L 440 182 Z"/>
+
+  <ellipse data-id="kinneret-outer" data-name="כנרת חיצונית" cx="488" cy="187" rx="24" ry="34" fill="none" stroke="#111827" stroke-width="3"/>
+  <ellipse data-id="kinneret-inner" data-name="כנרת פנימית" cx="488" cy="187" rx="12" ry="18" fill="none" stroke="#111827" stroke-width="3"/>
+
+  <path data-id="jordan-upper" data-name="ירדן עליון" fill="none" stroke="#111827" stroke-width="3"
+    d="M 492 220 C 500 235 505 250 500 268 L 486 268 C 490 250 485 236 476 220 Z"/>
+  <path data-id="jordan-middle" data-name="ירדן אמצעי" fill="none" stroke="#111827" stroke-width="3"
+    d="M 486 268 L 500 268 C 495 286 504 300 500 317 L 486 317 C 491 301 482 286 486 268 Z"/>
+  <path data-id="jordan-lower" data-name="ירדן תחתון" fill="none" stroke="#111827" stroke-width="3"
+    d="M 486 317 L 500 317 C 495 335 506 350 500 370 C 497 380 497 392 498 406 L 484 406 C 483 392 484 380 486 370 C 492 351 480 336 486 317 Z"/>
+
+  <path data-id="shomron-west" data-name="שומרון מערב" fill="none" stroke="#111827" stroke-width="3"
+    d="M 398 170 L 420 188 L 440 195 L 440 260 L 425 300 L 405 250 L 398 210 Z"/>
+  <path data-id="shomron-east" data-name="שומרון מזרח" fill="none" stroke="#111827" stroke-width="3"
+    d="M 440 195 L 455 195 L 470 220 L 476 250 L 476 288 L 455 302 L 425 300 L 440 260 Z"/>
+
+  <path data-id="judea-west" data-name="יהודה מערב" fill="none" stroke="#111827" stroke-width="3"
+    d="M 405 250 L 425 300 L 442 300 L 438 395 L 412 345 Z"/>
+  <path data-id="judea-east" data-name="יהודה מזרח" fill="none" stroke="#111827" stroke-width="3"
+    d="M 442 300 L 455 302 L 476 288 L 484 325 L 480 360 L 462 390 L 438 395 Z"/>
+
+  <path data-id="dead-sea-west" data-name="ים המלח מערב" fill="none" stroke="#111827" stroke-width="3"
+    d="M 497 319 C 485 324 477 342 477 365 C 477 388 485 406 497 411 L 497 319 Z"/>
+  <path data-id="dead-sea-east" data-name="ים המלח מזרח" fill="none" stroke="#111827" stroke-width="3"
+    d="M 497 319 C 509 324 517 342 517 365 C 517 388 509 406 497 411 L 497 319 Z"/>
+
+  <path data-id="negev-nw" data-name="נגב צפון מערב" fill="none" stroke="#111827" stroke-width="3"
+    d="M 412 345 L 425 375 L 438 395 L 430 430 L 420 405 Z"/>
+  <path data-id="negev-ne" data-name="נגב צפון מזרח" fill="none" stroke="#111827" stroke-width="3"
+    d="M 438 395 L 462 390 L 480 360 L 500 410 L 472 432 L 430 430 Z"/>
+  <path data-id="negev-center" data-name="נגב מרכזי" fill="none" stroke="#111827" stroke-width="3"
+    d="M 430 430 L 472 432 L 485 446 L 470 465 L 445 465 L 438 442 Z"/>
+  <path data-id="negev-sw" data-name="נגב דרום מערב" fill="none" stroke="#111827" stroke-width="3"
+    d="M 438 442 L 445 465 L 475 472 L 465 488 L 440 478 L 430 455 Z"/>
+  <path data-id="negev-se" data-name="נגב דרום מזרח" fill="none" stroke="#111827" stroke-width="3"
+    d="M 485 446 L 525 455 L 505 480 L 475 472 L 470 465 Z"/>
+
+  <path data-id="arava-west" data-name="ערבה מערב" fill="none" stroke="#111827" stroke-width="3"
+    d="M 500 410 L 512 395 L 520 420 L 510 442 L 500 430 Z"/>
+  <path data-id="arava-east" data-name="ערבה מזרח" fill="none" stroke="#111827" stroke-width="3"
+    d="M 512 395 L 532 380 L 548 420 L 525 455 L 510 442 L 520 420 Z"/>
+
+  <path data-id="jerusalem-main" data-name="ירושלים גוף" fill="none" stroke="#111827" stroke-width="3"
+    d="M 430 320 L 452 302 L 474 320 L 474 346 L 430 346 Z"/>
+  <path data-id="jerusalem-roof" data-name="ירושלים גג" fill="none" stroke="#111827" stroke-width="3"
+    d="M 430 320 L 452 310 L 474 320 L 452 302 Z"/>
+
+  <path data-id="beer-main" data-name="באר שבע גוף" fill="none" stroke="#111827" stroke-width="3"
+    d="M 432 420 L 455 400 L 478 420 L 478 448 L 432 448 Z"/>
+  <path data-id="beer-roof" data-name="באר שבע גג" fill="none" stroke="#111827" stroke-width="3"
+    d="M 432 420 L 455 410 L 478 420 L 455 400 Z"/>
+
+  <circle data-id="compass-center" data-name="מרכז מצפן" cx="160" cy="390" r="22" fill="none" stroke="#111827" stroke-width="3"/>
+  <path data-id="compass-n" data-name="מצפן צפון" fill="none" stroke="#111827" stroke-width="3" d="M 160 300 L 176 356 L 160 368 L 144 356 Z"/>
+  <path data-id="compass-ne" data-name="מצפן צפון מזרח" fill="none" stroke="#111827" stroke-width="3" d="M 205 345 L 194 374 L 176 380 L 182 362 Z"/>
+  <path data-id="compass-e" data-name="מצפן מזרח" fill="none" stroke="#111827" stroke-width="3" d="M 250 390 L 194 406 L 182 390 L 194 374 Z"/>
+  <path data-id="compass-se" data-name="מצפן דרום מזרח" fill="none" stroke="#111827" stroke-width="3" d="M 205 435 L 182 418 L 176 400 L 194 406 Z"/>
+  <path data-id="compass-s" data-name="מצפן דרום" fill="none" stroke="#111827" stroke-width="3" d="M 160 480 L 176 424 L 160 412 L 144 424 Z"/>
+  <path data-id="compass-sw" data-name="מצפן דרום מערב" fill="none" stroke="#111827" stroke-width="3" d="M 115 435 L 126 406 L 144 400 L 138 418 Z"/>
+  <path data-id="compass-w" data-name="מצפן מערב" fill="none" stroke="#111827" stroke-width="3" d="M 70 390 L 126 374 L 138 390 L 126 406 Z"/>
+  <path data-id="compass-nw" data-name="מצפן צפון מערב" fill="none" stroke="#111827" stroke-width="3" d="M 115 345 L 138 362 L 144 380 L 126 374 Z"/>
+</svg>
