@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520">
+  <g stroke="#111827" fill="none" stroke-width="4" stroke-linecap="round" stroke-linejoin="round">
+    <circle data-id="sun" data-name="שמש" cx="110" cy="90" r="34"/>
+    <path data-id="wing-left" data-name="כנף שמאל" d="M410 160 C350 105 270 92 175 130 C225 165 275 205 345 228 C390 242 410 205 410 160 Z"/>
+    <path data-id="wing-right" data-name="כנף ימין" d="M450 160 C510 105 590 92 685 130 C635 165 585 205 515 228 C470 242 450 205 450 160 Z"/>
+    <ellipse data-id="eagle-head" data-name="ראש הנשר" cx="430" cy="118" rx="38" ry="34"/>
+    <path data-id="eagle-beak" data-name="מקור הנשר" d="M463 118 L500 104 L492 121 L500 138 L463 130 Z"/>
+    <path data-id="eagle-body" data-name="גוף הנשר" d="M430 145 C470 145 500 180 500 228 C500 285 468 320 430 335 C392 320 360 285 360 228 C360 180 390 145 430 145 Z"/>
+    <path data-id="eagle-tail" data-name="זנב הנשר" d="M395 318 L430 378 L465 318 Z"/>
+    <path data-id="leg-left" data-name="רגל שמאל" d="M407 320 L418 320 L414 364 L403 364 Z"/>
+    <path data-id="leg-right" data-name="רגל ימין" d="M442 320 L453 320 L457 364 L446 364 Z"/>
+    <path data-id="nest" data-name="קן" d="M300 360 C330 338 530 338 560 360 C582 376 584 408 559 422 C520 444 340 444 301 422 C276 408 278 376 300 360 Z"/>
+    <path data-id="branch" data-name="ענף" d="M260 424 C360 418 500 418 600 424 C610 430 610 441 600 447 C500 454 360 454 260 447 C250 441 250 430 260 424 Z"/>
+    <ellipse data-id="chick-left-body" data-name="גוזל שמאל" cx="360" cy="355" rx="36" ry="34"/>
+    <path data-id="chick-left-beak" data-name="מקור גוזל שמאל" d="M330 352 L304 344 L307 357 L304 370 L330 362 Z"/>
+    <ellipse data-id="chick-center-body" data-name="גוף גוזל מרכזי" cx="430" cy="347" rx="45" ry="42"/>
+    <path data-id="chick-center-wing" data-name="כנף גוזל מרכזי" d="M409 337 C394 342 390 358 400 370 C414 383 432 381 440 365 C432 350 423 341 409 337 Z"/>
+    <ellipse data-id="chick-center-belly" data-name="בטן גוזל מרכזי" cx="432" cy="360" rx="18" ry="14"/>
+    <path data-id="chick-center-beak-upper" data-name="מקור עליון גוזל מרכזי" d="M467 342 L493 334 L482 345 L467 347 Z"/>
+    <path data-id="chick-center-beak-lower" data-name="מקור תחתון גוזל מרכזי" d="M467 347 L482 345 L493 358 L467 354 Z"/>
+    <ellipse data-id="chick-right-body" data-name="גוזל ימין" cx="500" cy="355" rx="36" ry="34"/>
+    <path data-id="chick-right-beak" data-name="מקור גוזל ימין" d="M530 352 L556 344 L553 357 L556 370 L530 362 Z"/>
+  </g>
+</svg>

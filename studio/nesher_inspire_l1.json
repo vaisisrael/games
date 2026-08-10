@@ -1,0 +1,25 @@
+{
+  "zoom": {
+    "x": 368,
+    "y": 298,
+    "w": 140,
+    "h": 120
+  },
+  "palette": [
+    "#60a5fa",
+    "#1d4ed8",
+    "#a78bfa",
+    "#16a34a",
+    "#f59e0b",
+    "#ef4444",
+    "#9ca3af",
+    "#111827"
+  ],
+  "fills": {
+    "chick-center-body": 4,
+    "chick-center-wing": 2,
+    "chick-center-belly": 0,
+    "chick-center-beak-upper": 5,
+    "chick-center-beak-lower": 7
+  }
+}
