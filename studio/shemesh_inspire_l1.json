@@ -1,0 +1,26 @@
+{
+  "zoom": {
+    "x": 600,
+    "y": 0,
+    "w": 230,
+    "h": 230
+  },
+  "palette": [
+    "#fde68a",
+    "#f59e0b",
+    "#fbbf24",
+    "#fef3c7",
+    "#fb923c",
+    "#ef4444",
+    "#9ca3af",
+    "#111827"
+  ],
+  "fills": {
+    "sun-outer": 0,
+    "sun-inner": 1,
+    "ray-top": 2,
+    "ray-right": 2,
+    "ray-bottom": 2,
+    "ray-left": 2
+  }
+}

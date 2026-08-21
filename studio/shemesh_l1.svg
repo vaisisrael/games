@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" fill="none">
+  <path d="M25 430 C180 380 305 385 430 430 C565 478 700 478 835 430 L835 505 L25 505 Z" fill="none" stroke="#111827" stroke-width="4" data-id="ground-main" data-name="האדמה"/>
+  <path d="M480 438 C590 410 715 418 820 448 L820 505 L480 505 Z" fill="none" stroke="#111827" stroke-width="4" data-id="ground-right" data-name="גבעת חול"/>
+  <circle cx="715" cy="110" r="54" fill="none" stroke="#111827" stroke-width="4" data-id="sun-outer" data-name="השמש"/>
+  <circle cx="715" cy="110" r="28" fill="none" stroke="#111827" stroke-width="4" data-id="sun-inner" data-name="לב השמש"/>
+  <path d="M715 16 L706 38 L715 60 L724 38 Z" fill="none" stroke="#111827" stroke-width="4" data-id="ray-top" data-name="קרן עליונה"/>
+  <path d="M715 160 L706 182 L715 204 L724 182 Z" fill="none" stroke="#111827" stroke-width="4" data-id="ray-bottom" data-name="קרן תחתונה"/>
+  <path d="M621 110 L643 101 L665 110 L643 119 Z" fill="none" stroke="#111827" stroke-width="4" data-id="ray-left" data-name="קרן שמאלית"/>
+  <path d="M765 110 L787 101 L809 110 L787 119 Z" fill="none" stroke="#111827" stroke-width="4" data-id="ray-right" data-name="קרן ימנית"/>
+  <path d="M105 350 C95 300 120 250 170 232 C220 215 280 250 286 308 C290 352 258 390 206 394 C160 398 117 382 105 350 Z" fill="none" stroke="#111827" stroke-width="4" data-id="tree-crown" data-name="צמרת העץ"/>
+  <path d="M185 394 L185 475 L222 475 L222 394 Z" fill="none" stroke="#111827" stroke-width="4" data-id="tree-trunk" data-name="גזע העץ"/>
+  <path d="M272 400 L395 195 L490 400 Z" fill="none" stroke="#111827" stroke-width="4" data-id="tent-left" data-name="צד שמאל של האהל"/>
+  <path d="M395 195 L565 212 L650 400 L490 400 Z" fill="none" stroke="#111827" stroke-width="4" data-id="tent-right" data-name="צד ימין של האהל"/>
+  <path d="M420 248 L500 248 L545 400 L375 400 Z" fill="none" stroke="#111827" stroke-width="4" data-id="tent-front" data-name="פתח האהל"/>
+  <path d="M332 404 L620 404 L640 431 L352 431 Z" fill="none" stroke="#111827" stroke-width="4" data-id="tent-mat" data-name="שטיח האהל"/>
+  <circle cx="430" cy="328" r="24" fill="none" stroke="#111827" stroke-width="4" data-id="avraham-head" data-name="ראש אברהם"/>
+  <path d="M412 352 C402 372 403 410 405 444 L468 444 C468 410 466 374 452 352 Z" fill="none" stroke="#111827" stroke-width="4" data-id="avraham-body" data-name="בגד אברהם"/>
+  <path d="M402 379 L356 411 L364 423 L410 392 Z" fill="none" stroke="#111827" stroke-width="4" data-id="avraham-arm-left" data-name="יד שמאל של אברהם"/>
+  <path d="M455 381 L505 413 L497 425 L447 393 Z" fill="none" stroke="#111827" stroke-width="4" data-id="avraham-arm-right" data-name="יד ימין של אברהם"/>
+  <path d="M422 444 L415 490 L438 490 L442 444 Z" fill="none" stroke="#111827" stroke-width="4" data-id="avraham-leg-left" data-name="רגל שמאל של אברהם"/>
+  <path d="M445 444 L454 490 L479 490 L470 444 Z" fill="none" stroke="#111827" stroke-width="4" data-id="avraham-leg-right" data-name="רגל ימין של אברהם"/>
+</svg>

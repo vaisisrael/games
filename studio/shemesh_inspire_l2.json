@@ -1,0 +1,31 @@
+{
+  "zoom": {
+    "x": 590,
+    "y": 0,
+    "w": 250,
+    "h": 230
+  },
+  "palette": [
+    "#fde68a",
+    "#f59e0b",
+    "#fbbf24",
+    "#fef3c7",
+    "#fb923c",
+    "#ef4444",
+    "#9ca3af",
+    "#111827"
+  ],
+  "fills": {
+    "sun-outer": 3,
+    "sun-ring": 0,
+    "sun-core": 1,
+    "ray-top": 2,
+    "ray-bottom": 2,
+    "ray-left": 4,
+    "ray-right": 4,
+    "ray-top-left": 2,
+    "ray-top-right": 2,
+    "ray-bottom-left": 4,
+    "ray-bottom-right": 4
+  }
+}
