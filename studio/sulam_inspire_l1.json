@@ -1,0 +1,12 @@
+{
+  "zoom": { "x": 360, "y": 40, "w": 350, "h": 350 },
+  "palette": ["#60a5fa", "#1d4ed8", "#a78bfa", "#16a34a", "#f59e0b", "#ef4444", "#9ca3af", "#111827"],
+  "fills": {
+    "ladder-left": 4,
+    "ladder-right": 4,
+    "rung-1": 6,
+    "rung-2": 6,
+    "rung-3": 6,
+    "rung-4": 6
+  }
+}

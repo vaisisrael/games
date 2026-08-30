@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" fill="none" stroke="#111827" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+  <path data-id="hill-left" data-name="גבעה שמאלית" fill="none" stroke="#111827" d="M0 430 Q90 350 190 390 T380 390 V520 H0 Z"/>
+  <path data-id="hill-right" data-name="גבעה ימנית" fill="none" stroke="#111827" d="M360 400 Q500 330 650 390 T860 380 V520 H360 Z"/>
+  <path data-id="ground" data-name="קרקע" fill="none" stroke="#111827" d="M0 448 Q170 430 310 442 T600 440 T860 448 V520 H0 Z"/>
+  <path data-id="rock-left" data-name="סלע שמאלי" fill="none" stroke="#111827" d="M88 420 L116 404 L141 416 L129 438 L96 440 Z"/>
+  <path data-id="rock-right" data-name="סלע ימני" fill="none" stroke="#111827" d="M736 420 L764 404 L790 414 L780 438 L747 440 Z"/>
+
+  <path data-id="mat" data-name="מחצלת" fill="none" stroke="#111827" d="M155 360 Q235 336 312 358 L298 405 Q223 428 147 405 Z"/>
+  <path data-id="pillow" data-name="אבן לראש" fill="none" stroke="#111827" d="M180 312 L225 296 L247 323 L199 339 Z"/>
+  <ellipse data-id="jacob-face" data-name="פני יעקב" fill="none" stroke="#111827" cx="228" cy="314" rx="23" ry="20"/>
+  <path data-id="jacob-hair" data-name="שיער יעקב" fill="none" stroke="#111827" d="M208 304 Q214 285 231 286 Q246 286 251 301 Q237 301 225 311 Q215 310 208 304 Z"/>
+  <path data-id="jacob-beard" data-name="זקן יעקב" fill="none" stroke="#111827" d="M212 323 Q227 338 244 327 Q239 344 224 347 Q212 339 212 323 Z"/>
+  <path data-id="jacob-upper-robe" data-name="גלימה עליונה" fill="none" stroke="#111827" d="M206 334 Q250 324 286 340 Q290 357 280 371 Q234 378 191 366 Q193 344 206 334 Z"/>
+  <path data-id="jacob-sleeve" data-name="שרוול" fill="none" stroke="#111827" d="M244 346 Q268 349 280 366 Q261 374 241 370 Q237 356 244 346 Z"/>
+  <path data-id="jacob-hand" data-name="כף יד" fill="none" stroke="#111827" d="M279 365 Q290 364 297 373 Q289 381 278 378 Q271 371 279 365 Z"/>
+  <path data-id="jacob-lower-robe" data-name="גלימה תחתונה" fill="none" stroke="#111827" d="M193 366 Q249 374 286 372 Q304 388 299 405 Q238 418 176 406 Q170 387 193 366 Z"/>
+  <path data-id="jacob-belt" data-name="חגורה" fill="none" stroke="#111827" d="M198 374 Q242 382 286 378 Q279 389 266 393 Q220 392 191 383 Z"/>
+  <path data-id="jacob-leg-left" data-name="רגל שמאלית" fill="none" stroke="#111827" d="M174 374 Q146 378 127 392 Q148 405 179 401 Q189 387 174 374 Z"/>
+  <path data-id="jacob-leg-right" data-name="רגל ימנית" fill="none" stroke="#111827" d="M188 386 Q159 397 145 411 Q170 417 200 410 Q207 396 188 386 Z"/>
+  <path data-id="jacob-foot-left" data-name="כף רגל שמאל" fill="none" stroke="#111827" d="M121 393 Q108 395 101 404 Q113 411 128 408 Q134 398 121 393 Z"/>
+  <path data-id="jacob-foot-right" data-name="כף רגל ימנית" fill="none" stroke="#111827" d="M143 411 Q132 414 126 422 Q137 428 151 425 Q157 417 143 411 Z"/>
+
+  <path data-id="ladder-left" data-name="קורת סולם שמאלית" fill="none" stroke="#111827" d="M382 345 L429 320 L632 58 L585 83 Z"/>
+  <path data-id="ladder-right" data-name="קורת סולם ימנית" fill="none" stroke="#111827" d="M430 370 L477 345 L680 83 L633 108 Z"/>
+  <path data-id="rung-1" data-name="שלב סולם 1" fill="none" stroke="#111827" d="M396 343 L444 318 L463 342 L415 367 Z"/>
+  <path data-id="rung-2" data-name="שלב סולם 2" fill="none" stroke="#111827" d="M428 302 L476 277 L495 301 L447 326 Z"/>
+  <path data-id="rung-3" data-name="שלב סולם 3" fill="none" stroke="#111827" d="M460 261 L508 236 L527 260 L479 285 Z"/>
+  <path data-id="rung-4" data-name="שלב סולם 4" fill="none" stroke="#111827" d="M492 220 L540 195 L559 219 L511 244 Z"/>
+  <path data-id="rung-5" data-name="שלב סולם 5" fill="none" stroke="#111827" d="M524 179 L572 154 L591 178 L543 203 Z"/>
+  <path data-id="rung-6" data-name="שלב סולם 6" fill="none" stroke="#111827" d="M556 138 L604 113 L623 137 L575 162 Z"/>
+  <path data-id="rung-7" data-name="שלב סולם 7" fill="none" stroke="#111827" d="M588 97 L636 72 L655 96 L607 121 Z"/>
+  <path data-id="rung-8" data-name="שלב סולם 8" fill="none" stroke="#111827" d="M620 56 L668 31 L687 55 L639 80 Z"/>
+
+  <path data-id="cloud-left" data-name="ענן שמאלי" fill="none" stroke="#111827" d="M471 83 Q486 62 511 66 Q520 44 546 48 Q571 44 583 66 Q593 66 601 77 Q596 98 573 100 H500 Q478 99 471 83 Z"/>
+  <path data-id="cloud-mid" data-name="ענן אמצעי" fill="none" stroke="#111827" d="M545 58 Q558 37 584 40 Q595 19 621 25 Q649 21 661 43 Q686 43 695 62 Q692 88 663 89 H571 Q550 89 545 58 Z"/>
+  <path data-id="cloud-right" data-name="ענן ימני" fill="none" stroke="#111827" d="M629 78 Q642 57 666 59 Q677 41 701 47 Q728 44 742 62 Q760 64 768 80 Q762 100 736 103 H656 Q635 101 629 78 Z"/>
+  <path data-id="cloud-low" data-name="ענן תחתון" fill="none" stroke="#111827" d="M414 124 Q426 107 447 108 Q459 90 481 95 Q503 93 515 108 Q534 109 540 125 Q534 145 510 146 H438 Q419 145 414 124 Z"/>
+
+  <circle data-id="angel-left-head" data-name="ראש מלאך שמאלי" fill="none" stroke="#111827" cx="479" cy="167" r="10"/>
+  <path data-id="angel-left-body" data-name="גוף מלאך שמאלי" fill="none" stroke="#111827" d="M470 177 Q479 187 488 178 L496 205 Q480 218 462 206 Z"/>
+  <path data-id="angel-left-wing-left" data-name="כנף שמאלית של מלאך שמאלי" fill="none" stroke="#111827" d="M470 176 Q447 164 443 143 Q460 146 474 161 Q475 170 470 176 Z"/>
+  <path data-id="angel-left-wing-right" data-name="כנף ימנית של מלאך שמאלי" fill="none" stroke="#111827" d="M488 175 Q500 154 518 149 Q518 167 507 181 Q495 181 488 175 Z"/>
+
+  <circle data-id="angel-right-head" data-name="ראש מלאך ימני" fill="none" stroke="#111827" cx="631" cy="132" r="10"/>
+  <path data-id="angel-right-body" data-name="גוף מלאך ימני" fill="none" stroke="#111827" d="M622 142 Q631 153 640 144 L648 170 Q632 184 614 172 Z"/>
+  <path data-id="angel-right-wing-left" data-name="כנף שמאלית של מלאך ימני" fill="none" stroke="#111827" d="M622 141 Q601 130 598 110 Q614 113 626 127 Q627 136 622 141 Z"/>
+  <path data-id="angel-right-wing-right" data-name="כנף ימנית של מלאך ימני" fill="none" stroke="#111827" d="M640 140 Q652 121 669 115 Q669 132 659 146 Q648 146 640 140 Z"/>
+
+  <path data-id="moon" data-name="ירח" fill="none" stroke="#111827" d="M727 48 Q706 64 713 89 Q731 105 755 93 Q740 89 734 76 Q728 62 727 48 Z"/>
+  <path data-id="star-1" data-name="כוכב 1" fill="none" stroke="#111827" d="M365 82 L372 96 L387 98 L376 109 L379 124 L365 116 L351 124 L354 109 L343 98 L358 96 Z"/>
+  <path data-id="star-2" data-name="כוכב 2" fill="none" stroke="#111827" d="M544 20 L549 31 L561 33 L552 41 L554 53 L544 47 L534 53 L536 41 L527 33 L539 31 Z"/>
+  <path data-id="star-3" data-name="כוכב 3" fill="none" stroke="#111827" d="M781 131 L787 143 L800 145 L790 153 L793 166 L781 159 L769 166 L772 153 L762 145 L775 143 Z"/>
+</svg>
