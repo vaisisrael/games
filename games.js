@@ -4,7 +4,7 @@
 
   // ====== CONFIG ======
   const CONTROL_API =
-    "https://script.google.com/macros/s/AKfycbzp9U5WvIJsGBAkJtPdHgYek3lueCi0YIGFDMT66V8girgqUqdNA_xZqZLEGioJEZb7cA/exec";
+    "https://script.google.com/macros/s/AKfycbzp9U5WvlJsGBAkJtPdHgYek3lueCi0YIGFDMT66V8girgqUqdNA_xZqZLEGi0JEZb7cA/exec";
 
   // version for cache busting (also used when loading game modules)
   const BUILD_VERSION = (() => {
@@ -42,7 +42,7 @@
     if (document.getElementById(id)) return;
 
     const link = document.createElement("link");
-    link.id = id;
+    link.id = "pg-rubik-font";
     link.rel = "stylesheet";
     link.href =
       "https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&display=swap&subset=hebrew";
@@ -217,7 +217,6 @@
   outline: 3px solid rgba(37,99,235,.22) !important;
   outline-offset: 2px !important;
 }
-
 [data-parasha-games][data-pg-tabs="1"] .game{
   border: 1px solid var(--pg-border) !important;
   border-radius: 16px !important;
