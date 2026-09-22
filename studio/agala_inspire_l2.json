@@ -1,0 +1,14 @@
+{
+  "zoom": { "x": 458, "y": 278, "w": 204, "h": 204 },
+  "palette": ["#7c4a11", "#b45309", "#f59e0b", "#fde68a", "#9ca3af", "#60a5fa", "#16a34a", "#111827"],
+  "fills": {
+    "front-wheel-tire": 2,
+    "front-wheel-spoke-1": 1,
+    "front-wheel-spoke-2": 1,
+    "front-wheel-spoke-3": 1,
+    "front-wheel-spoke-4": 1,
+    "front-wheel-spoke-5": 1,
+    "front-wheel-spoke-6": 1,
+    "front-wheel-hub": 3
+  }
+}

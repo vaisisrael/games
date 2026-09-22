@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" fill="none" stroke="#111827" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round">
+  <line x1="70" y1="430" x2="790" y2="430" />
+
+  <circle data-id="rear-wheel" data-name="גלגל אחורי" cx="300" cy="380" r="84" fill="none" stroke="#111827" />
+  <polygon data-id="rear-spoke-top" data-name="חישור עליון אחורי" points="286,318 314,318 322,366 278,366" fill="none" stroke="#111827" />
+  <polygon data-id="rear-spoke-bottom" data-name="חישור תחתון אחורי" points="278,394 322,394 314,442 286,442" fill="none" stroke="#111827" />
+  <circle data-id="rear-wheel-hub" data-name="מרכז הגלגל האחורי" cx="300" cy="380" r="22" fill="none" stroke="#111827" />
+
+  <circle data-id="front-wheel" data-name="גלגל קדמי" cx="560" cy="380" r="84" fill="none" stroke="#111827" />
+  <polygon data-id="front-spoke-top" data-name="חישור עליון קדמי" points="546,318 574,318 582,366 538,366" fill="none" stroke="#111827" />
+  <polygon data-id="front-spoke-bottom" data-name="חישור תחתון קדמי" points="538,394 582,394 574,442 546,442" fill="none" stroke="#111827" />
+  <circle data-id="front-wheel-hub" data-name="מרכז הגלגל הקדמי" cx="560" cy="380" r="22" fill="none" stroke="#111827" />
+
+  <polygon data-id="cart-body-main" data-name="גוף העגלה" points="220,205 585,205 620,285 205,285" fill="none" stroke="#111827" />
+  <polygon data-id="cart-front-panel" data-name="לוח קדמי" points="205,285 220,205 220,330 205,365" fill="none" stroke="#111827" />
+  <polygon data-id="cart-rear-panel" data-name="לוח אחורי" points="585,205 620,285 620,360 585,300" fill="none" stroke="#111827" />
+  <polygon data-id="draw-pole" data-name="מוט משיכה" points="72,268 218,246 218,274 72,296" fill="none" stroke="#111827" />
+
+  <path data-id="cargo-sack-left" data-name="שק שמאלי" d="M260 156 C248 162 244 179 248 195 C252 214 270 222 288 220 C309 217 321 205 323 189 C325 171 314 157 298 151 C286 147 271 148 260 156 Z" fill="none" stroke="#111827" />
+  <path data-id="cargo-sack-right" data-name="שק ימני" d="M335 148 C323 154 318 171 320 188 C322 208 338 220 358 221 C381 222 399 208 401 189 C404 170 395 154 380 146 C367 139 348 141 335 148 Z" fill="none" stroke="#111827" />
+  <rect data-id="cargo-crate" data-name="ארגז" x="408" y="150" width="92" height="66" rx="4" ry="4" fill="none" stroke="#111827" />
+  <path data-id="cargo-jar" data-name="כד" d="M523 132 C513 132 508 142 509 152 L509 168 C500 176 497 187 497 198 C497 214 509 226 526 227 C543 228 557 215 557 198 C557 186 553 176 545 168 L545 152 C546 142 540 132 530 132 Z" fill="none" stroke="#111827" />
+</svg>

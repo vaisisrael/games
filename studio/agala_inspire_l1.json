@@ -1,0 +1,10 @@
+{
+  "zoom": { "x": 460, "y": 280, "w": 200, "h": 200 },
+  "palette": ["#b45309", "#f59e0b", "#fde68a", "#9ca3af", "#60a5fa", "#16a34a", "#ef4444", "#111827"],
+  "fills": {
+    "front-wheel": 1,
+    "front-spoke-top": 0,
+    "front-spoke-bottom": 0,
+    "front-wheel-hub": 2
+  }
+}

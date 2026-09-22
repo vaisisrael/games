@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" fill="none" stroke="#111827" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+  <line x1="70" y1="430" x2="790" y2="430" />
+
+  <circle data-id="rear-wheel-tire" data-name="צמיג אחורי" cx="300" cy="380" r="86" fill="none" stroke="#111827" />
+  <polygon data-id="rear-wheel-spoke-1" data-name="חישור אחורי עליון" points="294,300 306,300 309,346 291,346" fill="none" stroke="#111827" />
+  <polygon data-id="rear-wheel-spoke-2" data-name="חישור אחורי ימני עליון" points="340,322 349,331 320,366 308,358" fill="none" stroke="#111827" />
+  <polygon data-id="rear-wheel-spoke-3" data-name="חישור אחורי ימני תחתון" points="347,429 338,438 308,401 320,393" fill="none" stroke="#111827" />
+  <polygon data-id="rear-wheel-spoke-4" data-name="חישור אחורי תחתון" points="291,414 309,414 306,460 294,460" fill="none" stroke="#111827" />
+  <polygon data-id="rear-wheel-spoke-5" data-name="חישור אחורי שמאלי תחתון" points="253,438 244,429 272,393 284,401" fill="none" stroke="#111827" />
+  <polygon data-id="rear-wheel-spoke-6" data-name="חישור אחורי שמאלי עליון" points="244,331 253,322 284,358 272,366" fill="none" stroke="#111827" />
+  <circle data-id="rear-wheel-hub" data-name="מרכז גלגל אחורי" cx="300" cy="380" r="24" fill="none" stroke="#111827" />
+
+  <circle data-id="front-wheel-tire" data-name="צמיג קדמי" cx="560" cy="380" r="86" fill="none" stroke="#111827" />
+  <polygon data-id="front-wheel-spoke-1" data-name="חישור קדמי עליון" points="554,300 566,300 569,346 551,346" fill="none" stroke="#111827" />
+  <polygon data-id="front-wheel-spoke-2" data-name="חישור קדמי ימני עליון" points="600,322 609,331 580,366 568,358" fill="none" stroke="#111827" />
+  <polygon data-id="front-wheel-spoke-3" data-name="חישור קדמי ימני תחתון" points="607,429 598,438 568,401 580,393" fill="none" stroke="#111827" />
+  <polygon data-id="front-wheel-spoke-4" data-name="חישור קדמי תחתון" points="551,414 569,414 566,460 554,460" fill="none" stroke="#111827" />
+  <polygon data-id="front-wheel-spoke-5" data-name="חישור קדמי שמאלי תחתון" points="513,438 504,429 532,393 544,401" fill="none" stroke="#111827" />
+  <polygon data-id="front-wheel-spoke-6" data-name="חישור קדמי שמאלי עליון" points="504,331 513,322 544,358 532,366" fill="none" stroke="#111827" />
+  <circle data-id="front-wheel-hub" data-name="מרכז גלגל קדמי" cx="560" cy="380" r="24" fill="none" stroke="#111827" />
+
+  <polygon data-id="cart-side-toprail" data-name="מסגרת עליונה" points="220,205 585,205 603,242 212,242" fill="none" stroke="#111827" />
+  <polygon data-id="cart-side-plank-1" data-name="לוח צד 1" points="212,242 304,242 300,285 205,285" fill="none" stroke="#111827" />
+  <polygon data-id="cart-side-plank-2" data-name="לוח צד 2" points="304,242 398,242 393,285 300,285" fill="none" stroke="#111827" />
+  <polygon data-id="cart-side-plank-3" data-name="לוח צד 3" points="398,242 492,242 486,285 393,285" fill="none" stroke="#111827" />
+  <polygon data-id="cart-side-plank-4" data-name="לוח צד 4" points="492,242 603,242 620,285 486,285" fill="none" stroke="#111827" />
+  <polygon data-id="cart-side-front-post" data-name="עמוד קדמי" points="205,285 220,205 220,330 205,365" fill="none" stroke="#111827" />
+  <polygon data-id="cart-side-rear-post" data-name="עמוד אחורי" points="585,205 620,285 620,360 585,300" fill="none" stroke="#111827" />
+  <polygon data-id="cart-bottom-beam" data-name="קורה תחתונה" points="232,286 604,286 586,309 227,309" fill="none" stroke="#111827" />
+  <polygon data-id="pole-main" data-name="מוט משיכה" points="72,268 218,246 218,274 72,296" fill="none" stroke="#111827" />
+  <ellipse data-id="pole-tip-ring" data-name="טבעת קצה" cx="58" cy="281" rx="12" ry="18" fill="none" stroke="#111827" />
+
+  <path data-id="cargo-sack-left-top" data-name="קשר שק שמאלי" d="M271 144 C276 138 286 138 291 144 C292 151 286 156 281 158 C276 156 270 151 271 144 Z" fill="none" stroke="#111827" />
+  <path data-id="cargo-sack-left-body" data-name="גוף שק שמאלי" d="M258 156 C246 162 242 180 247 196 C252 214 270 222 288 219 C307 216 318 204 320 189 C322 171 311 157 295 151 C283 147 269 148 258 156 Z" fill="none" stroke="#111827" />
+  <path data-id="cargo-sack-left-base" data-name="תחתית שק שמאלי" d="M255 208 C267 218 296 219 314 210 C309 220 295 228 279 229 C266 229 258 222 255 208 Z" fill="none" stroke="#111827" />
+
+  <path data-id="cargo-sack-right-top" data-name="קשר שק ימני" d="M349 136 C354 130 365 130 370 136 C371 144 364 148 359 150 C354 148 348 143 349 136 Z" fill="none" stroke="#111827" />
+  <path data-id="cargo-sack-right-body" data-name="גוף שק ימני" d="M335 148 C323 154 318 171 320 188 C322 208 338 220 358 221 C381 222 399 208 401 189 C404 170 395 154 380 146 C367 139 348 141 335 148 Z" fill="none" stroke="#111827" />
+  <path data-id="cargo-sack-right-base" data-name="תחתית שק ימני" d="M327 209 C342 220 378 222 396 212 C390 223 373 230 355 230 C340 230 331 223 327 209 Z" fill="none" stroke="#111827" />
+
+  <rect data-id="cargo-crate-front" data-name="חזית הארגז" x="408" y="150" width="74" height="66" rx="4" ry="4" fill="none" stroke="#111827" />
+  <polygon data-id="cargo-crate-side" data-name="צד הארגז" points="482,150 505,160 505,222 482,216" fill="none" stroke="#111827" />
+  <polygon data-id="cargo-crate-lid" data-name="מכסה הארגז" points="408,150 482,150 505,160 429,160" fill="none" stroke="#111827" />
+
+  <path data-id="cargo-jar-neck" data-name="צוואר הכד" d="M515 133 C514 141 516 151 518 160 L536 160 C538 151 540 141 539 133 Z" fill="none" stroke="#111827" />
+  <path data-id="cargo-jar-body" data-name="גוף הכד" d="M510 160 C500 168 496 181 496 196 C496 215 509 228 526 228 C543 228 557 215 557 196 C557 181 553 168 543 160 Z" fill="none" stroke="#111827" />
+  <path data-id="cargo-jar-band" data-name="פס הכד" d="M503 189 C510 184 521 182 527 182 C535 182 545 184 551 189 C545 194 535 196 527 196 C519 196 509 194 503 189 Z" fill="none" stroke="#111827" />
+
+  <line x1="428" y1="172" x2="482" y2="172" />
+  <line x1="428" y1="194" x2="482" y2="194" />
+  <line x1="444" y1="150" x2="444" y2="216" />
+</svg>
