@@ -326,7 +326,7 @@
   }
 
   // ====== TABS (single active) ======
-  function initTabs(root, onOpenChange) {
+  function initTabs(root, onOpenChange, initialGameId = "") {
     const tabs = Array.from(root.querySelectorAll(".pg-tab"));
     const bodies = Array.from(root.querySelectorAll(".game .game-body"));
 
@@ -359,6 +359,26 @@
       activeBody = body;
       activeTab = tabEl;
 
+      try {
+        window.dispatchEvent(
+          new CustomEvent("parasha-game-active", {
+            detail: { gameId }
+          })
+        );
+      } catch (_) {}
+
+      try {
+        if (window.parent && window.parent !== window) {
+          window.parent.postMessage(
+            {
+              type: "parasha-game-active",
+              gameId
+            },
+            "*"
+          );
+        }
+      } catch (_) {}
+
       await onOpenChange(body, true);
     }
 
@@ -368,6 +388,16 @@
         activateTab(tab);
       });
     });
+
+    if (initialGameId) {
+      const initialTab = tabs.find(
+        tab => tab.dataset.game === initialGameId
+      );
+
+      if (initialTab) {
+        void activateTab(initialTab);
+      }
+    }
   }
 
   // ====== Resolve module from registry ======
@@ -471,7 +501,15 @@
       controllers.set(gameId, { reset: () => {} });
     }
 
-    initTabs(root, onOpenChange);
+    const requestedGameId =
+      new URLSearchParams(window.location.search)
+        .get("game") || "";
+
+    initTabs(
+      root,
+      onOpenChange,
+      requestedGameId
+    );
   }
 
   if (document.readyState === "loading") {
