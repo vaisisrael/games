@@ -1,0 +1,29 @@
+{
+  "zoom": {
+    "x": 325,
+    "y": 115,
+    "w": 210,
+    "h": 205
+  },
+  "palette": [
+    "#60a5fa",
+    "#1d4ed8",
+    "#a78bfa",
+    "#16a34a",
+    "#f59e0b",
+    "#ef4444",
+    "#9ca3af",
+    "#111827"
+  ],
+  "fills": {
+    "frog-head-left": 3,
+    "frog-head-right": 3,
+    "eye-left": 4,
+    "eye-right": 4,
+    "pupil-left": 7,
+    "pupil-right": 7,
+    "mouth-upper": 5,
+    "mouth-lower": 2,
+    "spot-center": 1
+  }
+}

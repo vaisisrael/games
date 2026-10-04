@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 520" fill="none" stroke="#111827" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+<path data-id="water-left" data-name="מים משמאל" d="M35 420 C115 398 185 442 270 418 C340 398 395 420 430 432" fill="none"/>
+<path data-id="water-right" data-name="מים מימין" d="M430 432 C515 402 600 448 690 420 C750 402 800 414 830 430" fill="none"/>
+<path data-id="water-ripple-left" data-name="אדווה שמאלית" d="M55 458 Q120 438 185 458 Q245 476 300 456" fill="none"/>
+<path data-id="water-ripple-right" data-name="אדווה ימנית" d="M560 462 Q625 438 690 458 Q755 475 815 452" fill="none"/>
+<path data-id="lily-pad-left" data-name="חצי עלה נופר שמאל" d="M245 405 C275 360 355 342 430 350 L430 446 C350 450 278 438 245 405 Z" fill="none"/>
+<path data-id="lily-pad-right" data-name="חצי עלה נופר ימין" d="M430 350 C505 340 585 365 610 410 C575 438 505 448 430 446 Z" fill="none"/>
+<path data-id="frog-body-left" data-name="גוף הצפרדע שמאל" d="M430 200 C365 202 314 245 314 305 C314 365 360 410 430 410 Z" fill="none"/>
+<path data-id="frog-body-right" data-name="גוף הצפרדע ימין" d="M430 200 C495 202 546 245 546 305 C546 365 500 410 430 410 Z" fill="none"/>
+<path data-id="frog-head-left" data-name="ראש הצפרדע שמאל" d="M430 123 A92 92 0 0 0 338 215 A92 92 0 0 0 430 307 Z" fill="none"/>
+<path data-id="frog-head-right" data-name="ראש הצפרדע ימין" d="M430 123 A92 92 0 0 1 522 215 A92 92 0 0 1 430 307 Z" fill="none"/>
+<circle data-id="eye-left" data-name="עין שמאל" cx="390" cy="160" r="28" fill="none"/>
+<circle data-id="eye-right" data-name="עין ימין" cx="470" cy="160" r="28" fill="none"/>
+<circle data-id="pupil-left" data-name="אישון שמאל" cx="394" cy="164" r="9" fill="none"/>
+<circle data-id="pupil-right" data-name="אישון ימין" cx="466" cy="164" r="9" fill="none"/>
+<path data-id="mouth-upper" data-name="שפה עליונה" d="M382 236 Q430 272 478 236 Q430 255 382 236 Z" fill="none"/>
+<path data-id="mouth-lower" data-name="שפה תחתונה" d="M382 236 Q430 290 478 236 Q430 272 382 236 Z" fill="none"/>
+<ellipse data-id="belly" data-name="בטן הצפרדע" cx="430" cy="330" rx="58" ry="48" fill="none"/>
+<path data-id="front-leg-left" data-name="רגל קדמית שמאל" d="M352 292 C315 305 300 340 314 365 C331 383 358 370 372 342 L388 315 Z" fill="none"/>
+<path data-id="front-foot-left" data-name="כף רגל קדמית שמאל" d="M314 365 Q296 374 286 363 Q304 355 314 345 Q318 358 314 365 Z" fill="none"/>
+<path data-id="front-leg-right" data-name="רגל קדמית ימין" d="M508 292 C545 305 560 340 546 365 C529 383 502 370 488 342 L472 315 Z" fill="none"/>
+<path data-id="front-foot-right" data-name="כף רגל קדמית ימין" d="M546 365 Q564 374 574 363 Q556 355 546 345 Q542 358 546 365 Z" fill="none"/>
+<path data-id="back-leg-left" data-name="רגל אחורית שמאל" d="M346 350 C294 350 260 378 266 412 C294 430 345 417 380 390 Z" fill="none"/>
+<path data-id="back-foot-left" data-name="כף רגל אחורית שמאל" d="M266 412 Q240 426 222 414 Q244 400 270 394 Q276 405 266 412 Z" fill="none"/>
+<path data-id="back-leg-right" data-name="רגל אחורית ימין" d="M514 350 C566 350 600 378 594 412 C566 430 515 417 480 390 Z" fill="none"/>
+<path data-id="back-foot-right" data-name="כף רגל אחורית ימין" d="M594 412 Q620 426 638 414 Q616 400 590 394 Q584 405 594 412 Z" fill="none"/>
+<path data-id="reed-left-stem" data-name="גבעול קנה שמאל" d="M112 410 C105 330 110 245 126 165 C142 245 145 330 138 410 Z" fill="none"/>
+<path data-id="reed-left-leaf" data-name="עלה קנה שמאל" d="M122 285 Q72 255 62 218 Q108 230 130 260 Z" fill="none"/>
+<path data-id="reed-right-stem" data-name="גבעול קנה ימין" d="M720 410 C714 320 720 230 738 145 C754 235 755 325 746 410 Z" fill="none"/>
+<path data-id="reed-right-leaf" data-name="עלה קנה ימין" d="M742 270 Q792 238 806 202 Q758 214 734 245 Z" fill="none"/>
+<ellipse data-id="spot-left" data-name="כתם גוף שמאל" cx="382" cy="286" rx="18" ry="12" fill="none"/>
+<ellipse data-id="spot-right" data-name="כתם גוף ימין" cx="478" cy="286" rx="18" ry="12" fill="none"/>
+<ellipse data-id="spot-center" data-name="כתם גוף מרכזי" cx="430" cy="270" rx="16" ry="11" fill="none"/>
+</svg>
